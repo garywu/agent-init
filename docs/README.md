@@ -7,7 +7,9 @@ Welcome to the claude-init documentation. This collection of guides provides com
 ### By Task
 
 - **Setting up a new project?** → Start with [Project Structure Patterns](project-structure-patterns.md)
+- **Scaffolding projects quickly?** → Use [Project Scaffolding Patterns](project-scaffolding-patterns.md)
 - **Supporting multiple environments?** → See [Environment Adaptation Patterns](environment-adaptation-patterns.md)
+- **Making scripts work in CI?** → Follow [CI Environment Patterns](ci-environment-patterns.md)
 - **Making CLIs interactive?** → Use [Interactive CLI Tools](interactive-cli-tools.md)
 - **Preserving context across sessions?** → Read [Context Preservation Patterns](context-preservation-patterns.md)
 - **Using modern CLI tools effectively?** → See [Recommended Tools for Claude](recommended-tools-for-claude.md)
@@ -16,6 +18,9 @@ Welcome to the claude-init documentation. This collection of guides provides com
 - **Setting up Git workflows?** → Use [Git Workflow Patterns](git-workflow-patterns.md)
 - **Configuring shells?** → See [Shell Configuration Patterns](shell-configuration-patterns.md)
 - **Adding monitoring?** → Implement [Monitoring and Observability Patterns](monitoring-observability-patterns.md)
+- **Creating proper .gitignore?** → Reference [Gitignore Patterns](gitignore-patterns.md)
+- **Consistent code style?** → Apply [EditorConfig Patterns](editorconfig-patterns.md)
+- **Writing robust tests?** → Use [Test Helper Patterns](test-helper-patterns.md)
 - **Adding linting/formatting?** → See [Linting and Formatting Guide](linting-and-formatting.md)
 - **Creating tests?** → Check [Testing Framework Guide](testing-framework-guide.md)
 - **Setting up CI/CD?** → Read [GitHub Actions Multi-Platform Guide](github-actions-multi-platform.md)
@@ -35,6 +40,9 @@ Welcome to the claude-init documentation. This collection of guides provides com
 - **"How do I prevent email exposure?"** → [Email Privacy Protection](email-privacy-protection.md)
 - **"How do I manage secrets safely?"** → [Secrets Management Patterns](secrets-management-patterns.md)
 - **"How do I configure git hooks?"** → [Git Workflow Patterns](git-workflow-patterns.md)
+- **"What should I put in .gitignore?"** → [Gitignore Patterns](gitignore-patterns.md)
+- **"How do I make scripts work in CI?"** → [CI Environment Patterns](ci-environment-patterns.md)
+- **"How do I ensure consistent code style?"** → [EditorConfig Patterns](editorconfig-patterns.md)
 
 ## 🎯 Core Principles
 
@@ -64,12 +72,15 @@ We provide comprehensive documentation rather than prescriptive scripts because:
 ### Reference Guides
 Comprehensive information about specific topics:
 - [Project Structure Patterns](project-structure-patterns.md) - Organization best practices
+- [Project Scaffolding Patterns](project-scaffolding-patterns.md) - Quick project initialization templates
 - [Environment Adaptation Patterns](environment-adaptation-patterns.md) - CI, platform, and context handling
+- [CI Environment Patterns](ci-environment-patterns.md) - Making scripts work in both interactive and CI environments
 - [Interactive CLI Tools](interactive-cli-tools.md) - fzf, gum, and other UX enhancers
 - [Context Preservation Patterns](context-preservation-patterns.md) - Maintaining state across sessions
 - [Recommended Tools for Claude](recommended-tools-for-claude.md) - Modern CLI tools to leverage
 - [Linting and Formatting Guide](linting-and-formatting.md) - All major languages and tools
 - [Testing Framework Guide](testing-framework-guide.md) - Building robust test suites
+- [Test Helper Patterns](test-helper-patterns.md) - Reusable test utilities and helpers
 - [GitHub Actions Multi-Platform Guide](github-actions-multi-platform.md) - CI/CD across OS
 - [Release Management Patterns](release-management-patterns.md) - Versioning and changelog automation
 - [Error Handling Patterns](error-handling-patterns.md) - Recovery and rollback strategies
@@ -80,6 +91,8 @@ Comprehensive information about specific topics:
 
 ### Development Environment Guides
 - [Git Workflow Patterns](git-workflow-patterns.md) - Advanced git configuration and hooks
+- [Gitignore Patterns](gitignore-patterns.md) - Comprehensive .gitignore templates
+- [EditorConfig Patterns](editorconfig-patterns.md) - Consistent code style across editors
 - [Shell Configuration Patterns](shell-configuration-patterns.md) - Bash, Zsh, Fish setup
 - [Monitoring and Observability Patterns](monitoring-observability-patterns.md) - Metrics, logs, and traces
 
@@ -120,10 +133,12 @@ When adding documentation:
 ### Setting Up a New Project
 
 1. Review [Claude Templates Reference](CLAUDE_TEMPLATES.md)
-2. Apply relevant templates from `/templates`
-3. Set up linting using [Linting and Formatting Guide](linting-and-formatting.md)
-4. Configure CI using [GitHub Actions Guide](github-actions-multi-platform.md)
-5. Add tests following [Testing Framework Guide](testing-framework-guide.md)
+2. Consider using [Project Scaffolding Patterns](project-scaffolding-patterns.md) for quick setup
+3. Apply relevant templates from `/templates`
+4. Add appropriate [.gitignore](gitignore-patterns.md) and [.editorconfig](editorconfig-patterns.md)
+5. Set up linting using [Linting and Formatting Guide](linting-and-formatting.md)
+6. Configure CI using [GitHub Actions Guide](github-actions-multi-platform.md) and [CI Environment Patterns](ci-environment-patterns.md)
+7. Add tests following [Testing Framework Guide](testing-framework-guide.md) with [Test Helper Patterns](test-helper-patterns.md)
 
 ### Debugging an Issue
 
