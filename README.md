@@ -1,6 +1,30 @@
 # Claude Init - Professional Repository Setup
 
+[![Release](https://img.shields.io/github/v/release/garywu/claude-init?include_prereleases&sort=semver&display_name=tag&style=flat-square)](https://github.com/garywu/claude-init/releases/latest)
+[![Stable](https://img.shields.io/badge/channel-stable-green?style=flat-square)](https://github.com/garywu/claude-init/tree/stable)
+[![Beta](https://img.shields.io/badge/channel-beta-orange?style=flat-square)](https://github.com/garywu/claude-init/tree/beta)
+[![Development](https://img.shields.io/badge/channel-main-red?style=flat-square)](https://github.com/garywu/claude-init/tree/main)
+
 This repository provides templates and instructions for Claude to initialize professional development standards in any repository.
+
+## Installation
+
+### Stable Channel (Recommended)
+```bash
+git submodule add -b stable https://github.com/garywu/claude-init.git external/claude-init
+```
+
+### Beta Channel (Early Access)
+```bash
+git submodule add -b beta https://github.com/garywu/claude-init.git external/claude-init
+```
+
+### Development Channel (Latest)
+```bash
+git submodule add https://github.com/garywu/claude-init.git external/claude-init
+```
+
+See [RELEASES.md](RELEASES.md) for detailed release management information.
 
 ## Purpose
 
@@ -11,6 +35,7 @@ When you ask Claude to set up professional development practices, Claude will us
 3. **AI-assisted development** - CLAUDE.md for session continuity
 4. **Comprehensive documentation** - Contributing guidelines, code of conduct
 5. **Automation** - Pre-commit hooks, GitHub Actions, semantic versioning
+6. **Multi-stage releases** - Beta testing before stable releases
 
 ## Instructions for Claude
 
