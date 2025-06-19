@@ -54,6 +54,8 @@ Add your learnings to claude-init so others don't repeat your pain.
 
 **Total time: 3.5 hours. Time for next person: 5 minutes.**
 
+**Key documentation that helped**: [Astro CLI Reference - astro sync](https://docs.astro.build/en/reference/cli-reference/#astro-sync)
+
 ## How to Document Debugging Sessions
 
 ### During Debugging

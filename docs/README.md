@@ -128,8 +128,21 @@ When adding documentation:
 
 ## 🔗 External Resources
 
+### Documentation That Made a Difference
+
+These are the specific documentation pages that helped us solve real problems:
+
+#### The Astro Sync Discovery
+- [Astro CLI Reference - astro sync](https://docs.astro.build/en/reference/cli-reference/#astro-sync) - The page that saved 3.5 hours
+- [Astro Content Collections](https://docs.astro.build/en/guides/content-collections/) - Critical for understanding the sync requirement
+
+#### Platform-Specific Solutions
+- [npm package-lock.json docs](https://docs.npmjs.com/cli/v9/configuring-npm/package-lock-json) - Explains cross-platform issues
+- [GitHub-hosted runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners) - Runner specifications and limitations
+
 ### Official Documentation
-- [Astro Docs](https://astro.build)
+- [Astro Docs](https://docs.astro.build)
+- [Starlight Docs](https://starlight.astro.build)
 - [GitHub Actions Docs](https://docs.github.com/actions)
 - [Node.js Best Practices](https://github.com/goldbergyoni/nodebestpractices)
 
@@ -137,6 +150,7 @@ When adding documentation:
 - [ShellCheck](https://www.shellcheck.net/) - Shell script linting
 - [Prettier](https://prettier.io/) - Code formatting
 - [ESLint](https://eslint.org/) - JavaScript linting
+- [Ruff](https://docs.astral.sh/ruff/) - Fast Python linting
 
 ## 📝 Contributing
 

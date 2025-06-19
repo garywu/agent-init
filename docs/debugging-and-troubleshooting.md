@@ -2,6 +2,13 @@
 
 This guide captures hard-won debugging knowledge from real projects. Learn from these experiences to avoid common pitfalls.
 
+## Debugging Resources
+
+- [How to Debug Bash Scripts](https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html) - Official Bash debugging options
+- [GitHub Actions Debugging](https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/enabling-debug-logging)
+- [Node.js Debugging Guide](https://nodejs.org/en/docs/guides/debugging-getting-started/)
+- [Git Bisect Documentation](https://git-scm.com/docs/git-bisect) - Finding when bugs were introduced
+
 ## Documentation Site Issues
 
 ### The "Missing Pages" Problem

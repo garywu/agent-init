@@ -2,6 +2,13 @@
 
 This guide provides battle-tested patterns for cross-platform CI/CD with GitHub Actions, including platform-specific gotchas and solutions.
 
+## Key Documentation References
+
+- [GitHub Actions Documentation](https://docs.github.com/en/actions)
+- [GitHub-hosted runners specifications](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners)
+- [Environment variables reference](https://docs.github.com/en/actions/learn-github-actions/environment-variables)
+- [Workflow syntax](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions)
+
 ## Multi-Platform Matrix Strategy
 
 ### Basic Setup
@@ -134,6 +141,8 @@ jobs:
 ## Cross-Platform Node.js Setup
 
 ### The Package-Lock Problem
+
+**Documentation that explains this**: [npm-install docs on package-lock.json](https://docs.npmjs.com/cli/v9/configuring-npm/package-lock-json#package-lockjson-vs-npm-shrinkwrapjson)
 
 ```yaml
 - name: Setup Node.js

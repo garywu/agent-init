@@ -2,6 +2,13 @@
 
 This guide shows how to build a comprehensive testing framework for shell-based projects, based on real-world experience.
 
+## Essential Documentation References
+
+- [Bash Manual - Shell Functions](https://www.gnu.org/software/bash/manual/html_node/Shell-Functions.html)
+- [ShellCheck Wiki](https://www.shellcheck.net/wiki/Home) - Common shell script issues
+- [Google Shell Style Guide](https://google.github.io/styleguide/shellguide.html)
+- [Advanced Bash-Scripting Guide](https://tldp.org/LDP/abs/html/)
+
 ## Framework Architecture
 
 ### Core Components

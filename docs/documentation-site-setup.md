@@ -13,6 +13,15 @@ This guide captures hard-learned lessons from setting up Astro/Starlight documen
 - But only homepage and 404 page were generated
 - All 17 content pages were missing from the build
 
+### The Original Documentation That Saved Us
+
+After hours of debugging, we found the answer in:
+- [Astro Content Collections Guide](https://docs.astro.build/en/guides/content-collections/)
+- [Starlight Getting Started](https://starlight.astro.build/getting-started/)
+- Specifically: [Astro's build command documentation](https://docs.astro.build/en/reference/cli-reference/#astro-sync)
+
+The critical detail: **"The astro sync command generates TypeScript types for all Astro modules. It should be run before building to ensure types are up to date."**
+
 ### The Solution
 
 ```json
@@ -440,3 +449,19 @@ files.forEach(file => {
 ```
 
 Remember: **The astro sync command is not optional for content collections!**
+
+## Additional Resources
+
+### Official Documentation
+- [Astro Documentation](https://docs.astro.build/)
+- [Starlight Documentation](https://starlight.astro.build/)
+- [Astro Content Collections](https://docs.astro.build/en/guides/content-collections/)
+- [GitHub Pages Documentation](https://docs.github.com/en/pages)
+
+### Community Resources
+- [Astro Discord](https://astro.build/chat)
+- [Starlight GitHub Discussions](https://github.com/withastro/starlight/discussions)
+
+### Related Guides
+- [Astro Deployment Guides](https://docs.astro.build/en/guides/deploy/)
+- [GitHub Actions for GitHub Pages](https://github.com/actions/deploy-pages)

@@ -2,6 +2,21 @@
 
 This guide provides reference commands for linting and formatting various file types without requiring a Makefile. These commands can be integrated into any build system or run standalone.
 
+## Tool Documentation References
+
+### Linters
+- [ESLint Documentation](https://eslint.org/docs/latest/)
+- [ShellCheck Documentation](https://www.shellcheck.net/)
+- [markdownlint Rules](https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md)
+- [yamllint Documentation](https://yamllint.readthedocs.io/)
+- [Ruff Documentation](https://docs.astral.sh/ruff/)
+
+### Formatters
+- [Prettier Documentation](https://prettier.io/docs/en/)
+- [Black Documentation](https://black.readthedocs.io/)
+- [shfmt Documentation](https://github.com/mvdan/sh#shfmt)
+- [nixpkgs-fmt](https://github.com/nix-community/nixpkgs-fmt)
+
 ## Quick Reference
 
 ### Shell Scripts
