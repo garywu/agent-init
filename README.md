@@ -7,6 +7,34 @@
 
 This repository provides templates and instructions for Claude to initialize professional development standards in any repository.
 
+## Core Design Principle
+
+**Claude-init is an information resource, not a decision-making tool.**
+
+This repository provides comprehensive documentation and reference materials for Claude CLI to use when setting up projects. Key principles:
+
+1. **Information over Implementation** - We provide extensive documentation about tools, patterns, and best practices rather than executable scripts that make assumptions.
+
+2. **Context-Aware Application** - The Claude CLI applying these templates has no prior knowledge about the specific repository. By providing information rather than rigid scripts, Claude can make intelligent decisions based on the actual project context.
+
+3. **Maximum Flexibility** - Every project is different. We document multiple approaches, tools, and patterns so Claude can choose the most appropriate ones for each situation.
+
+4. **Deferred Decision Making** - We don't make decisions now about things we can't know. Instead, we provide the information needed to make those decisions when the context is available.
+
+### For Claude CLI
+When applying these templates, use the documentation to understand available options and make context-appropriate choices based on:
+- The project's existing structure and tools
+- The programming languages in use
+- The team's stated preferences
+- The project's specific requirements
+
+### For Contributors
+When adding to claude-init, focus on:
+- Documenting multiple approaches rather than prescribing one
+- Explaining when and why to use different tools
+- Providing examples and patterns, not rigid implementations
+- Teaching concepts that Claude can adapt to any situation
+
 ## Installation
 
 ### Stable Channel (Recommended)
@@ -37,37 +65,40 @@ When you ask Claude to set up professional development practices, Claude will us
 5. **Automation** - Pre-commit hooks, GitHub Actions, semantic versioning
 6. **Multi-stage releases** - Beta testing before stable releases
 
-## Instructions for Claude
+## Guidelines for Claude CLI
 
-### When encountering an EMPTY DIRECTORY:
+Use the information in this repository to make intelligent decisions based on project context. Here's what to consider:
 
-1. First, check if it should be a git repository
-2. Copy all templates from this repository
-3. Initialize git and create initial commit
-4. Set up pre-commit hooks
-5. Customize README.md for the specific project
-6. Create CLAUDE.md to track the session
+### Project Assessment
 
-### When encountering an EMPTY REPOSITORY (already has .git):
+First, understand what you're working with:
+- **Empty directory**: May need complete initialization including git setup
+- **Empty repository**: Already has git but may lack professional structure
+- **Existing repository**: Has code and possibly some tooling already
 
-1. Check for any existing files (README, LICENSE, .gitignore)
-2. Copy templates but don't overwrite existing files
-3. Set up GitHub-specific features (labels, issue templates)
-4. Install pre-commit hooks
-5. Create initial commit with professional structure
-6. Create CLAUDE.md to track ongoing work
+### Available Resources
 
-### When encountering an EXISTING REPOSITORY:
+This repository provides:
+- **Templates**: Starting points that should be customized for each project
+- **Documentation**: Explanations of tools, patterns, and best practices
+- **Examples**: Multiple approaches to common problems
+- **Guidelines**: When and why to use different solutions
 
-1. Analyze current structure and tooling
-2. Create CLAUDE.md first to document findings
-3. Selectively add missing professional elements:
-   - Add .github/ templates if missing
-   - Add pre-commit configuration if missing
-   - Add Makefile if it would be helpful
-   - Add CONTRIBUTING.md and SECURITY.md if missing
-4. Create issues for any problems found
-5. Don't overwrite existing configurations without asking
+### Decision Making
+
+Consider these factors when applying templates:
+- **Language ecosystem**: Different languages have different conventions (npm for JS, pip for Python, cargo for Rust)
+- **Existing tools**: Work with what's already there rather than replacing
+- **Project size**: Solo projects need different processes than team projects
+- **Domain requirements**: Web apps, CLI tools, libraries all have different needs
+
+### Key Principles
+
+1. **CLAUDE.md is essential**: Always create this for session continuity
+2. **Issues before implementation**: Track work properly
+3. **Respect existing choices**: Don't override without good reason
+4. **Document decisions**: Explain why you chose specific approaches
+5. **Progressive enhancement**: Start simple, add complexity as needed
 
 ## Available Templates
 
@@ -142,3 +173,49 @@ These tools are pre-installed on the system:
 3. **Use GitHub CLI (`gh`)** - For issue and PR management  
 4. **Run linters before committing** - Maintain code quality
 5. **Document as you go** - Keep everything up to date
+
+## Contributing to Claude-Init
+
+When contributing to this repository, remember our core principle: **provide information, not prescriptions**.
+
+### What to Contribute
+
+- **Multiple approaches**: Document different ways to solve problems
+- **Context guides**: Explain when to use which approach
+- **Tool documentation**: How tools work, not just commands
+- **Pattern libraries**: Common patterns with explanations
+- **Decision trees**: Help Claude make intelligent choices
+
+### What to Avoid
+
+- **Rigid scripts**: That assume one way is right
+- **Hardcoded values**: That won't work everywhere  
+- **Single solutions**: Without alternatives
+- **Assumptions**: About project structure or preferences
+
+### Example Contribution
+
+Instead of:
+```bash
+# Bad: Prescriptive script
+npm install -g eslint prettier
+echo '{"extends": "airbnb"}' > .eslintrc
+```
+
+Provide:
+```markdown
+## JavaScript Linting Options
+
+1. **ESLint** - Highly configurable, many presets available
+   - Popular configs: airbnb, standard, recommended
+   - When to use: Most JavaScript projects
+   - Considerations: Some teams have strong preferences
+
+2. **Biome** - Fast, all-in-one formatter and linter
+   - When to use: New projects wanting simplicity
+   - Considerations: Less ecosystem support
+
+[Include examples, trade-offs, and integration guides]
+```
+
+This empowers Claude to make appropriate choices based on actual project context.
