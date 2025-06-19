@@ -1,10 +1,10 @@
 #!/bin/bash
-# Enhanced claude-init setup script with project type detection
+# claude-init setup script with project type detection
 
 set -e
 
-echo "🚀 Claude-Init Enhanced Setup"
-echo "============================"
+echo "🚀 Claude-Init Setup"
+echo "===================="
 
 # Get the directory where this script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -144,7 +144,7 @@ if [ ! -d ".git" ]; then
     echo "🔧 Initializing git repository..."
     git init
     git add -A
-    git commit -m "Initial commit with claude-init enhanced setup"
+    git commit -m "Initial commit with claude-init setup"
 fi
 
 # Ask about release management setup
