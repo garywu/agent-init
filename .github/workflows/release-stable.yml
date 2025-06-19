@@ -1,0 +1,235 @@
+name: Stable Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      beta_version:
+        description: 'Beta version to promote (e.g., v1.2.3-beta.4)'
+        required: true
+        type: string
+      release_notes:
+        description: 'Additional release notes (optional)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  promote-stable:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate input
+        run: |
+          # Validate beta version format
+          if ! [[ "${{ inputs.beta_version }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-beta\.[0-9]+$ ]]; then
+            echo "Error: Invalid beta version format. Expected: v1.2.3-beta.4"
+            exit 1
+          fi
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+      - name: Verify beta tag exists
+        run: |
+          git fetch --all --tags
+          if ! git tag -l "${{ inputs.beta_version }}" | grep -q .; then
+            echo "Error: Beta version ${{ inputs.beta_version }} not found"
+            exit 1
+          fi
+
+      - name: Checkout stable branch
+        run: |
+          git checkout -B stable origin/stable || git checkout -b stable
+
+      - name: Merge beta version
+        run: |
+          # Checkout the beta tag
+          git checkout "${{ inputs.beta_version }}"
+          BETA_COMMIT=$(git rev-parse HEAD)
+          
+          # Return to stable and merge
+          git checkout stable
+          git merge $BETA_COMMIT --no-edit -m "chore(release): promote ${{ inputs.beta_version }} to stable"
+
+      - name: Calculate stable version
+        id: version
+        run: |
+          # Extract stable version from beta version
+          BETA_VERSION="${{ inputs.beta_version }}"
+          STABLE_VERSION=${BETA_VERSION%-beta.*}
+          
+          echo "stable_version=${STABLE_VERSION}" >> $GITHUB_OUTPUT
+          echo "Stable version: ${STABLE_VERSION}"
+
+      - name: Generate comprehensive release notes
+        id: notes
+        run: |
+          STABLE_VERSION="${{ steps.version.outputs.stable_version }}"
+          BETA_VERSION="${{ inputs.beta_version }}"
+          
+          # Find previous stable version
+          PREV_STABLE=$(git tag -l "v*" | grep -v "beta" | grep -v "rc" | sort -V | tail -2 | head -1 || echo "v0.0.0")
+          
+          # Generate release notes
+          cat > RELEASE_NOTES.md << EOF
+          ## Stable Release ${STABLE_VERSION}
+          
+          This stable release has been thoroughly tested through beta version ${BETA_VERSION}.
+          
+          ${{ inputs.release_notes }}
+          
+          ### Changes since ${PREV_STABLE}
+          
+          EOF
+          
+          # Get all commits between previous stable and this release
+          echo "#### 🚀 Features" >> RELEASE_NOTES.md
+          git log ${PREV_STABLE}..HEAD --grep="^feat" --pretty=format:"- %s (%h)" >> RELEASE_NOTES.md || echo "- No features" >> RELEASE_NOTES.md
+          
+          echo -e "\n\n#### 🐛 Bug Fixes" >> RELEASE_NOTES.md
+          git log ${PREV_STABLE}..HEAD --grep="^fix" --pretty=format:"- %s (%h)" >> RELEASE_NOTES.md || echo "- No fixes" >> RELEASE_NOTES.md
+          
+          echo -e "\n\n#### 📚 Documentation" >> RELEASE_NOTES.md
+          git log ${PREV_STABLE}..HEAD --grep="^docs" --pretty=format:"- %s (%h)" >> RELEASE_NOTES.md || echo "- No documentation changes" >> RELEASE_NOTES.md
+          
+          echo -e "\n\n#### ⚠️ Breaking Changes" >> RELEASE_NOTES.md
+          git log ${PREV_STABLE}..HEAD --grep="BREAKING CHANGE\|^feat!\|^fix!" --pretty=format:"- %s (%h)" >> RELEASE_NOTES.md || echo "- No breaking changes" >> RELEASE_NOTES.md
+          
+          # Add installation instructions
+          cat >> RELEASE_NOTES.md << EOF
+          
+          ### Installation
+          
+          For new projects:
+          \`\`\`bash
+          git submodule add -b stable https://github.com/${{ github.repository }}.git
+          \`\`\`
+          
+          To update existing projects:
+          \`\`\`bash
+          git submodule update --remote --merge
+          \`\`\`
+          
+          ### Beta Testing
+          
+          This release was tested as ${BETA_VERSION} before promotion to stable.
+          
+          EOF
+          
+          # Add contributor acknowledgments
+          echo "### Contributors" >> RELEASE_NOTES.md
+          echo "" >> RELEASE_NOTES.md
+          git log ${PREV_STABLE}..HEAD --pretty=format:"%an" | sort | uniq | sed 's/^/- @/' >> RELEASE_NOTES.md
+
+      - name: Update VERSION file
+        run: |
+          echo "${{ steps.version.outputs.stable_version }}" > VERSION
+          git add VERSION
+          git commit -m "chore(release): ${{ steps.version.outputs.stable_version }}" || echo "No changes to commit"
+
+      - name: Update CHANGELOG
+        run: |
+          if [[ -f CHANGELOG.md ]]; then
+            # Create temporary file with new release info
+            cat > CHANGELOG.tmp.md << EOF
+          ## [${{ steps.version.outputs.stable_version }}] - $(date +%Y-%m-%d)
+          
+          _Promoted from ${{ inputs.beta_version }}_
+          
+          EOF
+            
+            # Extract changes from release notes
+            sed -n '/### Changes since/,/### Installation/p' RELEASE_NOTES.md | sed '1d;$d' >> CHANGELOG.tmp.md
+            
+            echo "" >> CHANGELOG.tmp.md
+            
+            # Append existing changelog
+            cat CHANGELOG.md >> CHANGELOG.tmp.md
+            mv CHANGELOG.tmp.md CHANGELOG.md
+            
+            git add CHANGELOG.md
+            git commit -m "docs(changelog): add ${{ steps.version.outputs.stable_version }} release notes"
+          fi
+
+      - name: Push stable branch
+        run: |
+          git push origin stable
+
+      - name: Create stable tag
+        run: |
+          git tag -a "${{ steps.version.outputs.stable_version }}" -m "Stable release ${{ steps.version.outputs.stable_version }}"
+          git push origin "${{ steps.version.outputs.stable_version }}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.stable_version }}
+          name: ${{ steps.version.outputs.stable_version }}
+          body_path: RELEASE_NOTES.md
+          prerelease: false
+          target_commitish: stable
+
+      - name: Create announcement issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const stableVersion = '${{ steps.version.outputs.stable_version }}';
+            const betaVersion = '${{ inputs.beta_version }}';
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🎉 Stable Release ${stableVersion} Now Available`,
+              body: `We're excited to announce that **${stableVersion}** is now available as a stable release!
+              
+              ## Release Information
+              - **Version**: ${stableVersion}
+              - **Promoted from**: ${betaVersion}
+              - **Branch**: stable
+              - **Date**: ${new Date().toISOString().split('T')[0]}
+              
+              ## What's New
+              [View the full release notes](https://github.com/${context.repo.owner}/${context.repo.repo}/releases/tag/${stableVersion})
+              
+              ## Upgrading
+              
+              To upgrade to the latest stable version:
+              
+              \`\`\`bash
+              cd your-project
+              git submodule update --remote --merge
+              \`\`\`
+              
+              ## Feedback
+              
+              If you encounter any issues or have feedback, please:
+              - [Report bugs](https://github.com/${context.repo.owner}/${context.repo.repo}/issues/new?labels=bug)
+              - [Request features](https://github.com/${context.repo.owner}/${context.repo.repo}/issues/new?labels=enhancement)
+              
+              Thank you to all our contributors and beta testers who made this release possible! 🙏
+              `,
+              labels: ['stable-release', 'announcement']
+            });
+
+      - name: Sync branches
+        run: |
+          # Merge stable back to beta
+          git checkout beta
+          git merge stable --no-edit -m "chore: sync stable changes back to beta"
+          git push origin beta
+          
+          # Merge beta back to main
+          git checkout main
+          git merge beta --no-edit -m "chore: sync beta changes back to main"
+          git push origin main

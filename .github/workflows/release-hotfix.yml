@@ -1,0 +1,269 @@
+name: Hotfix Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      severity:
+        description: 'Hotfix severity'
+        required: true
+        type: choice
+        options:
+          - critical
+          - high
+          - medium
+      description:
+        description: 'Brief description of the fix'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  create-hotfix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout stable branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: stable
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+      - name: Get current version
+        id: current
+        run: |
+          # Get the latest stable tag
+          CURRENT_VERSION=$(git describe --tags --abbrev=0 --match "v*" | grep -v "beta" | grep -v "rc" || echo "v0.0.0")
+          echo "version=${CURRENT_VERSION}" >> $GITHUB_OUTPUT
+          
+          # Extract version parts
+          VERSION=${CURRENT_VERSION#v}
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+          
+          # Increment patch version for hotfix
+          PATCH=$((PATCH + 1))
+          HOTFIX_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+          
+          echo "hotfix_version=${HOTFIX_VERSION}" >> $GITHUB_OUTPUT
+          echo "Current version: ${CURRENT_VERSION}"
+          echo "Hotfix version: ${HOTFIX_VERSION}"
+
+      - name: Create hotfix branch
+        run: |
+          BRANCH_NAME="hotfix/${{ steps.current.outputs.hotfix_version }}"
+          git checkout -b "$BRANCH_NAME"
+          echo "branch_name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Create hotfix PR
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const currentVersion = '${{ steps.current.outputs.version }}';
+            const hotfixVersion = '${{ steps.current.outputs.hotfix_version }}';
+            const severity = '${{ inputs.severity }}';
+            const description = '${{ inputs.description }}';
+            
+            // Create PR
+            const { data: pr } = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 Hotfix ${hotfixVersion}: ${description}`,
+              head: '${{ steps.create-branch.outputs.branch_name }}',
+              base: 'stable',
+              body: `## Hotfix Information
+              
+              **Version**: ${currentVersion} → ${hotfixVersion}
+              **Severity**: ${severity}
+              **Description**: ${description}
+              
+              ## Checklist
+              
+              - [ ] Fix has been implemented
+              - [ ] Tests have been added/updated
+              - [ ] Documentation has been updated (if needed)
+              - [ ] Fix has been verified locally
+              
+              ## Release Process
+              
+              Once this PR is merged, the hotfix will be:
+              1. Tagged as ${hotfixVersion}
+              2. Released to the stable channel
+              3. Backported to beta and main branches
+              
+              ## Testing Instructions
+              
+              _Please add specific testing instructions here_
+              
+              ---
+              
+              ⚠️ **This is a ${severity} severity hotfix and should be expedited through review.**
+              `,
+              draft: false
+            });
+            
+            // Add labels
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              labels: ['hotfix', severity, 'priority']
+            });
+            
+            return pr.number;
+
+      - name: Create tracking issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const hotfixVersion = '${{ steps.current.outputs.hotfix_version }}';
+            const severity = '${{ inputs.severity }}';
+            const description = '${{ inputs.description }}';
+            const prNumber = ${{ steps.pr.outputs.result }};
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 Hotfix ${hotfixVersion} in Progress`,
+              body: `A ${severity} severity hotfix is currently being prepared.
+              
+              ## Details
+              - **Version**: ${hotfixVersion}
+              - **Description**: ${description}
+              - **PR**: #${prNumber}
+              - **Started**: ${new Date().toISOString()}
+              
+              ## Process
+              1. [ ] Hotfix implemented in PR #${prNumber}
+              2. [ ] Tests passing
+              3. [ ] PR reviewed and approved
+              4. [ ] Merged to stable
+              5. [ ] Released as ${hotfixVersion}
+              6. [ ] Backported to beta
+              7. [ ] Backported to main
+              
+              ## Impact
+              _To be filled by the implementer_
+              
+              ## Rollback Plan
+              If this hotfix causes issues, rollback to the previous stable version using:
+              \`\`\`bash
+              git checkout stable
+              git reset --hard ${currentVersion}
+              git push --force-with-lease origin stable
+              \`\`\`
+              `,
+              labels: ['hotfix', severity, 'tracking']
+            });
+
+  # This job runs after the hotfix PR is merged
+  release-hotfix:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'hotfix')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+      - name: Extract version from PR title
+        id: version
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          VERSION=$(echo "$PR_TITLE" | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' || echo "")
+          
+          if [[ -z "$VERSION" ]]; then
+            echo "Error: Could not extract version from PR title"
+            exit 1
+          fi
+          
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Create hotfix tag
+        run: |
+          git tag -a "${{ steps.version.outputs.version }}" -m "Hotfix release ${{ steps.version.outputs.version }}"
+          git push origin "${{ steps.version.outputs.version }}"
+
+      - name: Generate release notes
+        run: |
+          cat > RELEASE_NOTES.md << EOF
+          ## Hotfix Release ${{ steps.version.outputs.version }}
+          
+          This is an emergency hotfix release addressing critical issues.
+          
+          ### Fixed Issues
+          ${{ github.event.pull_request.body }}
+          
+          ### Installation
+          
+          To update to this hotfix:
+          \`\`\`bash
+          git submodule update --remote --merge
+          \`\`\`
+          
+          ### Verification
+          
+          Please verify that the hotfix resolves the issue without introducing new problems.
+          EOF
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: ${{ steps.version.outputs.version }} (Hotfix)
+          body_path: RELEASE_NOTES.md
+          prerelease: false
+
+      - name: Backport to beta
+        run: |
+          git checkout beta
+          git merge stable --no-edit -m "chore: backport hotfix ${{ steps.version.outputs.version }} to beta"
+          git push origin beta
+
+      - name: Backport to main
+        run: |
+          git checkout main
+          git merge beta --no-edit -m "chore: backport hotfix ${{ steps.version.outputs.version }} to main"
+          git push origin main
+
+      - name: Close tracking issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const version = '${{ steps.version.outputs.version }}';
+            
+            // Find and close the tracking issue
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'hotfix,tracking',
+              state: 'open'
+            });
+            
+            const trackingIssue = issues.find(issue => 
+              issue.title.includes(version)
+            );
+            
+            if (trackingIssue) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: trackingIssue.number,
+                state: 'closed',
+                body: trackingIssue.body + `\n\n---\n\n✅ **Hotfix completed and released at ${new Date().toISOString()}**`
+              });
+            }
