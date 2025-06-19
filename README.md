@@ -74,20 +74,37 @@ When you ask Claude to set up professional development practices, Claude will us
 ```
 templates/
 ├── .github/
-│   ├── ISSUE_TEMPLATE/        # Bug report, feature request, etc.
-│   ├── workflows/ci.yml       # GitHub Actions CI/CD
+│   ├── ISSUE_TEMPLATE/           # Bug report, feature request, etc.
+│   ├── workflows/                # GitHub Actions CI/CD
+│   │   ├── ci.yml               # Continuous integration
+│   │   ├── release-beta.yml     # Beta release workflow
+│   │   └── release-stable.yml   # Stable release workflow
 │   └── pull_request_template.md
-├── CLAUDE.md                  # AI session tracking
-├── CONTRIBUTING.md            # Contribution guidelines  
-├── SECURITY.md               # Security policy
-├── Makefile                  # Common development tasks
-├── .pre-commit-config.yaml   # Code quality hooks
-├── .editorconfig            # Editor configuration
-├── .gitignore               # Comprehensive ignore patterns
-├── .yamllint                # YAML linting rules
-├── .releaserc.json          # Semantic release config
-└── README.md                # Project template
+├── scripts/
+│   └── session/                  # Session management tools
+│       ├── session-start.sh
+│       ├── session-end.sh
+│       ├── session-status.sh
+│       └── session-log.sh
+├── docs/                         # Documentation templates
+│   ├── astro.config.mjs         # Astro documentation site
+│   └── package.json             # Docs dependencies
+├── CLAUDE.md                     # AI session tracking
+├── CONTRIBUTING.md               # Contribution guidelines  
+├── SECURITY.md                  # Security policy
+├── Makefile                     # Common development tasks
+├── .pre-commit-config.yaml      # Code quality hooks
+├── .editorconfig               # Editor configuration
+├── .gitignore                  # Comprehensive ignore patterns
+├── .yamllint                   # YAML linting rules
+├── .releaserc.json             # Semantic release config
+└── README.md                   # Project template
 ```
+
+## Documentation Resources
+
+- **[Linting and Formatting Guide](docs/linting-and-formatting.md)** - Reference for setting up linting without Makefile
+- **[Claude Templates Reference](docs/CLAUDE_TEMPLATES.md)** - Examples and patterns for Claude to use
 
 ## Available CLI Tools
 
