@@ -140,6 +140,7 @@ Our documentation captures real-world debugging experiences and hard-won knowled
 - **[Documentation Index](docs/README.md)** - Start here for navigation and overview
 - **[Project Structure Patterns](docs/project-structure-patterns.md)** - Organization best practices
 - **[Environment Adaptation Patterns](docs/environment-adaptation-patterns.md)** - CI, platform, and context handling
+- **[Interactive CLI Tools](docs/interactive-cli-tools.md)** - fzf, gum, and UX enhancement tools
 - **[Linting and Formatting Guide](docs/linting-and-formatting.md)** - Multi-language reference
 - **[Testing Framework Guide](docs/testing-framework-guide.md)** - Comprehensive testing patterns
 - **[GitHub Actions Multi-Platform](docs/github-actions-multi-platform.md)** - CI/CD across OS platforms
@@ -159,7 +160,7 @@ Our documentation captures real-world debugging experiences and hard-won knowled
 
 ## Available CLI Tools
 
-These tools are pre-installed on the system:
+These tools are pre-installed on the system and can greatly enhance Claude CLI's capabilities:
 
 ### Search & Navigation
 - `rg` (ripgrep) - Ultra-fast search
