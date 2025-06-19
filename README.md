@@ -134,8 +134,24 @@ templates/
 
 ## Documentation Resources
 
-- **[Linting and Formatting Guide](docs/linting-and-formatting.md)** - Reference for setting up linting without Makefile
-- **[Claude Templates Reference](docs/CLAUDE_TEMPLATES.md)** - Examples and patterns for Claude to use
+Our documentation captures real-world debugging experiences and hard-won knowledge:
+
+### 📚 Core Guides
+- **[Documentation Index](docs/README.md)** - Start here for navigation and overview
+- **[Linting and Formatting Guide](docs/linting-and-formatting.md)** - Multi-language linting reference
+- **[Testing Framework Guide](docs/testing-framework-guide.md)** - Comprehensive testing patterns
+- **[GitHub Actions Multi-Platform](docs/github-actions-multi-platform.md)** - CI/CD across OS platforms
+- **[Documentation Site Setup](docs/documentation-site-setup.md)** - Astro/Starlight lessons learned
+
+### 🔍 Problem-Solving Guides
+- **[Debugging and Troubleshooting](docs/debugging-and-troubleshooting.md)** - Common issues and solutions
+- **[Learning from Mistakes](docs/learning-from-mistakes.md)** - How we capture debugging knowledge
+- **[Claude Templates Reference](docs/CLAUDE_TEMPLATES.md)** - Examples and patterns for Claude
+
+### 💡 Key Learnings
+- **3.5 hours debugging Astro** → Documented → **5 minutes for you**
+- **Platform-specific CI failures** → Documented → **Avoid completely**
+- **Complex test frameworks** → Documented → **Copy proven patterns**
 
 ## Available CLI Tools
 
@@ -219,3 +235,38 @@ Provide:
 ```
 
 This empowers Claude to make appropriate choices based on actual project context.
+
+## Learning from Debugging
+
+This repository embodies a key principle: **Every debugging session is a learning opportunity**.
+
+### Our Process
+
+1. **Experience Problems** - We hit real issues in real projects
+2. **Solve Through Debugging** - Sometimes taking hours to find solutions
+3. **Document Everything** - Including what didn't work and why
+4. **Share the Knowledge** - So you can avoid our pain
+
+### Real Examples
+
+- **Astro Documentation Build** (Issue #15)
+  - 3.5 hours debugging missing pages
+  - Root cause: `astro sync` requirement not documented
+  - Solution documented in [Documentation Site Setup](docs/documentation-site-setup.md)
+  
+- **Cross-Platform CI Failures**
+  - Multiple hours debugging package-lock.json issues
+  - Platform-specific behaviors on macOS vs Linux
+  - Solutions in [GitHub Actions Guide](docs/github-actions-multi-platform.md)
+
+- **Test Framework Development**
+  - Iterative refinement over many projects
+  - Patterns for handling CI limitations
+  - Complete framework in [Testing Guide](docs/testing-framework-guide.md)
+
+### The Value Proposition
+
+**Without claude-init**: Spend hours debugging common problems
+**With claude-init**: Find solutions in minutes
+
+Every guide represents hours of debugging condensed into minutes of reading.

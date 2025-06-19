@@ -1,0 +1,442 @@
+# Documentation Site Setup Guide
+
+This guide captures hard-learned lessons from setting up Astro/Starlight documentation sites, including critical build issues and their solutions.
+
+## Critical Knowledge: The Content Collection Sync Issue
+
+**THE MOST IMPORTANT THING TO KNOW**: Astro sites with content collections MUST run `astro sync` before building, or your content pages won't be included in the production build.
+
+### The Problem We Encountered
+
+- Documentation site worked perfectly in development (`npm run dev`)
+- Production build succeeded without errors
+- But only homepage and 404 page were generated
+- All 17 content pages were missing from the build
+
+### The Solution
+
+```json
+// package.json
+{
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro sync && astro check && astro build",
+    "preview": "astro preview"
+  }
+}
+```
+
+**Never skip `astro sync` before building!**
+
+## Complete Starlight Setup
+
+### Initial Setup
+
+```bash
+# Create new docs site
+npm create astro@latest docs -- --template starlight --typescript relaxed
+
+# Or add to existing project
+npm install @astrojs/starlight
+```
+
+### Essential Configuration
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+import starlight from '@astrojs/starlight';
+
+export default defineConfig({
+  // CRITICAL for GitHub Pages
+  site: 'https://username.github.io',
+  base: '/repository-name',
+  
+  integrations: [
+    starlight({
+      title: 'My Documentation',
+      
+      // Use autogenerate for reliability
+      sidebar: {
+        autogenerate: { directory: 'content/docs' },
+      },
+      
+      // Avoid theme customization complexity initially
+      // Default light theme works well
+    }),
+  ],
+});
+```
+
+### Directory Structure
+
+```
+docs/
+├── astro.config.mjs
+├── package.json
+├── tsconfig.json
+├── public/
+│   └── favicon.svg
+└── src/
+    ├── content/
+    │   ├── config.ts          # Content collection config
+    │   └── docs/              # Your documentation pages
+    │       ├── index.mdx      # Homepage
+    │       ├── getting-started.md
+    │       └── guides/
+    │           └── example.md
+    └── env.d.ts
+```
+
+### Content Collection Configuration
+
+```typescript
+// src/content/config.ts
+import { defineCollection } from 'astro:content';
+import { docsSchema } from '@astrojs/starlight/schema';
+
+export const collections = {
+  docs: defineCollection({ schema: docsSchema }),
+};
+```
+
+## GitHub Actions Deployment
+
+### Working CI/CD Configuration
+
+```yaml
+name: Deploy Documentation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        working-directory: ./docs
+        run: |
+          # Remove package-lock to avoid cross-platform issues
+          rm -f package-lock.json
+          npm install
+          
+      - name: Build documentation
+        working-directory: ./docs
+        run: |
+          # CRITICAL: This must include astro sync!
+          npm run build
+          
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ./docs/dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v3
+```
+
+## Common Issues and Solutions
+
+### 1. Missing Content Pages in Build
+
+**Symptoms**: Dev server shows all pages, production build missing content
+
+**Solution**:
+```bash
+# Always run sync before build
+astro sync && astro build
+
+# Or add to build script
+"build": "astro sync && astro check && astro build"
+```
+
+### 2. Cross-Platform Build Failures
+
+**Symptoms**: Works locally (macOS), fails in CI (Linux)
+
+**Causes**:
+- package-lock.json platform-specific dependencies
+- Different Node.js versions
+- Missing system dependencies
+
+**Solutions**:
+```yaml
+# In CI, regenerate package-lock
+- run: |
+    rm -f package-lock.json
+    npm install
+
+# Or use npm ci with exact versions
+# package.json - use exact versions
+"dependencies": {
+  "@astrojs/starlight": "0.15.0",  # not ^0.15.0
+  "astro": "4.0.0"
+}
+```
+
+### 3. Theme Customization Issues
+
+**Problem**: CSS overrides causing build problems
+
+**Solution**: Start with defaults
+```js
+// Start simple
+starlight({
+  title: 'My Docs',
+  // Don't customize theme initially
+})
+
+// Add customization later if needed
+starlight({
+  title: 'My Docs',
+  customCss: ['./src/styles/custom.css'],
+})
+```
+
+### 4. Sidebar Configuration Problems
+
+**Problem**: Manual sidebar config missing pages
+
+**Solution**: Use autogenerate
+```js
+// Avoid manual configuration
+sidebar: [
+  { label: 'Home', link: '/' },
+  { label: 'Guide', link: '/guide' },
+  // Easy to miss pages
+]
+
+// Use autogenerate instead
+sidebar: {
+  autogenerate: { directory: 'content/docs' },
+}
+```
+
+## Testing Documentation Builds
+
+### Local Testing Checklist
+
+```bash
+# 1. Clean build
+rm -rf dist .astro node_modules/.astro
+
+# 2. Fresh install
+rm -f package-lock.json
+npm install
+
+# 3. Test sync explicitly
+npm run astro sync
+
+# 4. Check for content
+find src/content/docs -name "*.md" -o -name "*.mdx" | wc -l
+
+# 5. Build and preview
+npm run build
+npm run preview
+
+# 6. Verify all pages built
+find dist -name "*.html" | wc -l
+```
+
+### Automated Testing
+
+```yaml
+# .github/workflows/test-docs.yml
+name: Test Documentation Build
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Test documentation build
+        working-directory: ./docs
+        run: |
+          npm install
+          npm run build
+          
+          # Verify pages were built
+          PAGE_COUNT=$(find dist -name "*.html" | wc -l)
+          echo "Built $PAGE_COUNT pages"
+          
+          if [ "$PAGE_COUNT" -lt 5 ]; then
+            echo "Error: Expected at least 5 pages, got $PAGE_COUNT"
+            find dist -name "*.html"
+            exit 1
+          fi
+```
+
+## Performance Optimization
+
+### Build Performance
+
+```json
+// package.json
+{
+  "scripts": {
+    // Parallel checking and building
+    "build": "astro sync && concurrently \"astro check\" \"astro build\"",
+    
+    // Skip type checking for faster builds
+    "build:fast": "astro sync && astro build"
+  }
+}
+```
+
+### Caching in CI
+
+```yaml
+- name: Cache Astro
+  uses: actions/cache@v3
+  with:
+    path: |
+      docs/node_modules
+      docs/.astro
+    key: ${{ runner.os }}-astro-${{ hashFiles('docs/package-lock.json') }}
+```
+
+## Debugging Build Issues
+
+### Enable Verbose Logging
+
+```bash
+# Debug mode
+DEBUG=* npm run build
+
+# Astro specific debug
+ASTRO_TELEMETRY_DISABLED=1 npm run build -- --verbose
+```
+
+### Check Content Collections
+
+```js
+// Debug script: check-content.js
+import { getCollection } from 'astro:content';
+
+const docs = await getCollection('docs');
+console.log(`Found ${docs.length} documentation pages:`);
+docs.forEach(doc => {
+  console.log(`  - ${doc.id}: ${doc.data.title}`);
+});
+```
+
+### Common Debug Commands
+
+```bash
+# List all content files
+find src/content -type f -name "*.md*"
+
+# Check if .astro directory exists
+ls -la .astro/
+
+# Verify content types are generated
+cat .astro/types.d.ts | grep "content"
+
+# Check for syntax errors in MDX
+npm run astro check
+```
+
+## Best Practices
+
+1. **Always test production builds locally**
+   ```bash
+   npm run build && npm run preview
+   ```
+
+2. **Version control strategy**
+   - Commit package.json with exact versions
+   - Consider not committing package-lock.json for libraries
+   - Document Node.js version requirement
+
+3. **Content organization**
+   ```
+   src/content/docs/
+   ├── index.mdx          # Homepage
+   ├── getting-started/   # Group related content
+   │   ├── index.md
+   │   ├── installation.md
+   │   └── configuration.md
+   └── guides/
+       └── index.md
+   ```
+
+4. **Frontmatter standards**
+   ```yaml
+   ---
+   title: Page Title
+   description: SEO description
+   sidebar:
+     order: 1
+     label: Custom Sidebar Label  # Optional
+   ---
+   ```
+
+5. **Error prevention**
+   - Run `astro sync` in git pre-commit hook
+   - Add build verification to PR checks
+   - Monitor build output size
+   - Test on fresh clone regularly
+
+## Migration from Other Platforms
+
+### From VitePress/VuePress
+
+```js
+// Key differences:
+// 1. Content in src/content/docs not docs/
+// 2. Use .mdx for components
+// 3. Different frontmatter schema
+
+// Migration script example
+import glob from 'glob';
+import fs from 'fs-extra';
+
+const files = glob.sync('docs/**/*.md');
+files.forEach(file => {
+  let content = fs.readFileSync(file, 'utf-8');
+  
+  // Update frontmatter
+  content = content.replace(/^---\n([\s\S]*?)\n---/, (match, fm) => {
+    // Transform frontmatter
+    return `---\n${transformFrontmatter(fm)}\n---`;
+  });
+  
+  // Update paths
+  const newPath = file.replace('docs/', 'src/content/docs/');
+  fs.outputFileSync(newPath, content);
+});
+```
+
+Remember: **The astro sync command is not optional for content collections!**
