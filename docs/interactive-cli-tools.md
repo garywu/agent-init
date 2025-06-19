@@ -426,6 +426,58 @@ export FZF_CTRL_T_OPTS="
 export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
 ```
 
+## Additional Powerful Tools
+
+### borgbackup - Deduplicating Backup
+
+**What it does**: Creates space-efficient backups with deduplication, encryption, and compression.
+
+**Use Cases**:
+```bash
+# Initialize backup repository
+borg init --encryption=repokey ~/backups/myproject
+
+# Create backup with progress
+backup_project() {
+    borg create --progress --stats \
+        ~/backups/myproject::{hostname}-{now} \
+        ~/projects/myproject \
+        --exclude '*/node_modules' \
+        --exclude '*/__pycache__' \
+        --exclude '*/target'
+}
+
+# Interactive restore
+restore_file() {
+    local archive=$(borg list ~/backups/myproject | fzf | cut -d' ' -f1)
+    local file=$(borg list --short "~/backups/myproject::$archive" | fzf)
+    borg extract "~/backups/myproject::$archive" "$file"
+}
+```
+
+### fswatch - File System Monitor
+
+**What it does**: Monitors file system changes and triggers actions.
+
+**Use Cases**:
+```bash
+# Auto-run tests on file change
+fswatch -o src/ tests/ | xargs -n1 -I{} npm test
+
+# Live reload development
+fswatch_and_reload() {
+    fswatch -o . -e ".*" -i "\\.js$" -i "\\.css$" | \
+        xargs -n1 -I{} browser-sync reload
+}
+
+# Sync changes to remote
+auto_sync() {
+    fswatch -0 . | while read -d "" event; do
+        rsync -avz --exclude='.git' . remote:/path/to/project/
+    done
+}
+```
+
 ## Benefits for Claude CLI
 
 1. **Better User Experience**: Interactive selections instead of typing full paths
@@ -434,5 +486,7 @@ export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
 4. **Discovery**: Preview capabilities help users understand options
 5. **Power Features**: Complex operations become simple
 6. **Cross-platform**: Most tools work on macOS, Linux, and WSL
+7. **Backup Integration**: Automated backups with borgbackup
+8. **File Watching**: Automated workflows with fswatch
 
 These tools transform CLI interactions from memorizing commands to intuitive selection and exploration.
