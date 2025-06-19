@@ -1,9 +1,6 @@
 name: Beta Release
 
 on:
-  schedule:
-    # Every Monday at 9 AM UTC
-    - cron: '0 9 * * 1'
   workflow_dispatch:
     inputs:
       version_type:

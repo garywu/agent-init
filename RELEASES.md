@@ -13,7 +13,7 @@ This document describes the release management process for this project.
 ### 🧪 Beta (`beta` branch)
 - **Purpose**: Testing and early access
 - **Stability**: Mostly stable, suitable for testing
-- **Updates**: Weekly (every Monday)
+- **Updates**: Manual (as needed for testing)
 - **Use when**: You want early access to new features with reasonable stability
 
 ### ✅ Stable (`stable` branch)
@@ -87,10 +87,10 @@ We follow [Semantic Versioning](https://semver.org/):
 ## Release Schedule
 
 ### Beta Releases
-- **When**: Every Monday at 9:00 AM UTC
+- **When**: Manual trigger when ready for testing
 - **What**: All changes from main branch
 - **Version**: Automatic bump based on conventional commits
-- **Testing**: One week testing period before stable promotion
+- **Testing**: Testing period before stable promotion
 
 ### Stable Releases
 - **When**: Monthly or when critical fixes are needed
@@ -144,10 +144,10 @@ Use /api/v2/users instead.
 
 ## Release Process
 
-### 1. Beta Release (Automated)
+### 1. Beta Release (Manual)
 ```mermaid
 graph LR
-    A[Monday 9AM UTC] --> B[Analyze Commits]
+    A[Trigger Workflow] --> B[Analyze Commits]
     B --> C[Determine Version]
     C --> D[Merge main → beta]
     D --> E[Tag Beta Version]

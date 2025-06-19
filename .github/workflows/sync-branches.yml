@@ -6,9 +6,6 @@ on:
     types: [published]
   # Manual trigger
   workflow_dispatch:
-  # Run daily to catch any drift
-  schedule:
-    - cron: '0 0 * * *'
 
 permissions:
   contents: write

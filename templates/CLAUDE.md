@@ -79,8 +79,8 @@ Use these prefixes for automatic versioning:
 - `docs:`, `style:`, `refactor:`, `test:`, `chore:` (no release)
 
 #### Release Schedule
-- **Beta**: Every Monday (automated)
-- **Stable**: Monthly or as needed (manual)
+- **Beta**: Manual (when ready for testing)
+- **Stable**: Manual (after beta validation)
 - **Hotfix**: As needed for critical issues
 
 ## Active Issues
