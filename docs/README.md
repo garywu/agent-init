@@ -9,6 +9,13 @@ Welcome to the claude-init documentation. This collection of guides provides com
 - **Setting up a new project?** → Start with [Project Structure Patterns](project-structure-patterns.md)
 - **Supporting multiple environments?** → See [Environment Adaptation Patterns](environment-adaptation-patterns.md)
 - **Making CLIs interactive?** → Use [Interactive CLI Tools](interactive-cli-tools.md)
+- **Preserving context across sessions?** → Read [Context Preservation Patterns](context-preservation-patterns.md)
+- **Using modern CLI tools effectively?** → See [Recommended Tools for Claude](recommended-tools-for-claude.md)
+- **Protecting email privacy?** → Check [Email Privacy Protection](email-privacy-protection.md)
+- **Managing secrets securely?** → Follow [Secrets Management Patterns](secrets-management-patterns.md)
+- **Setting up Git workflows?** → Use [Git Workflow Patterns](git-workflow-patterns.md)
+- **Configuring shells?** → See [Shell Configuration Patterns](shell-configuration-patterns.md)
+- **Adding monitoring?** → Implement [Monitoring and Observability Patterns](monitoring-observability-patterns.md)
 - **Adding linting/formatting?** → See [Linting and Formatting Guide](linting-and-formatting.md)
 - **Creating tests?** → Check [Testing Framework Guide](testing-framework-guide.md)
 - **Setting up CI/CD?** → Read [GitHub Actions Multi-Platform Guide](github-actions-multi-platform.md)
@@ -22,8 +29,12 @@ Welcome to the claude-init documentation. This collection of guides provides com
 
 - **"My docs site only builds 2 pages"** → [Documentation Site Setup](documentation-site-setup.md#critical-knowledge-the-content-collection-sync-issue)
 - **"CI works locally but fails on GitHub"** → [Platform-Specific Issues](github-actions-multi-platform.md#platform-specific-issues-and-solutions)
+- **"Claude keeps forgetting my pwd"** → [Context Preservation Patterns](context-preservation-patterns.md#the-pwd-problem)
 - **"How do I test shell scripts?"** → [Testing Framework Guide](testing-framework-guide.md)
 - **"Package-lock.json causing CI failures"** → [Cross-Platform Node.js Setup](github-actions-multi-platform.md#cross-platform-nodejs-setup)
+- **"How do I prevent email exposure?"** → [Email Privacy Protection](email-privacy-protection.md)
+- **"How do I manage secrets safely?"** → [Secrets Management Patterns](secrets-management-patterns.md)
+- **"How do I configure git hooks?"** → [Git Workflow Patterns](git-workflow-patterns.md)
 
 ## 🎯 Core Principles
 
@@ -55,11 +66,22 @@ Comprehensive information about specific topics:
 - [Project Structure Patterns](project-structure-patterns.md) - Organization best practices
 - [Environment Adaptation Patterns](environment-adaptation-patterns.md) - CI, platform, and context handling
 - [Interactive CLI Tools](interactive-cli-tools.md) - fzf, gum, and other UX enhancers
+- [Context Preservation Patterns](context-preservation-patterns.md) - Maintaining state across sessions
+- [Recommended Tools for Claude](recommended-tools-for-claude.md) - Modern CLI tools to leverage
 - [Linting and Formatting Guide](linting-and-formatting.md) - All major languages and tools
 - [Testing Framework Guide](testing-framework-guide.md) - Building robust test suites
 - [GitHub Actions Multi-Platform Guide](github-actions-multi-platform.md) - CI/CD across OS
 - [Release Management Patterns](release-management-patterns.md) - Versioning and changelog automation
 - [Error Handling Patterns](error-handling-patterns.md) - Recovery and rollback strategies
+
+### Security and Privacy Guides
+- [Email Privacy Protection](email-privacy-protection.md) - Preventing email exposure in commits
+- [Secrets Management Patterns](secrets-management-patterns.md) - Secure credential handling
+
+### Development Environment Guides
+- [Git Workflow Patterns](git-workflow-patterns.md) - Advanced git configuration and hooks
+- [Shell Configuration Patterns](shell-configuration-patterns.md) - Bash, Zsh, Fish setup
+- [Monitoring and Observability Patterns](monitoring-observability-patterns.md) - Metrics, logs, and traces
 
 ### Problem-Solution Guides
 Based on real debugging experiences:
