@@ -1,0 +1,55 @@
+name: Test
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        node-version: [18, 20]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      
+      - name: Install dependencies
+        run: |
+          if [ -f package.json ]; then
+            npm ci || npm install
+          fi
+      
+      - name: Run linters
+        run: |
+          if [ -f Makefile ] && grep -q "^lint:" Makefile; then
+            make lint
+          elif [ -f package.json ] && grep -q '"lint"' package.json; then
+            npm run lint
+          fi
+      
+      - name: Run tests
+        run: |
+          if [ -f Makefile ] && grep -q "^test:" Makefile; then
+            make test
+          elif [ -f package.json ] && grep -q '"test"' package.json; then
+            npm test
+          fi
+      
+      - name: Build project
+        run: |
+          if [ -f Makefile ] && grep -q "^build:" Makefile; then
+            make build
+          elif [ -f package.json ] && grep -q '"build"' package.json; then
+            npm run build
+          fi

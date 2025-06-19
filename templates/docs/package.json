@@ -1,0 +1,21 @@
+{
+  "name": "project-docs",
+  "version": "0.1.0",
+  "description": "Project documentation site",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro sync && astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check"
+  },
+  "keywords": ["documentation"],
+  "license": "MIT",
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/starlight": "^0.34.4",
+    "astro": "^5.9.4",
+    "typescript": "^5.8.3"
+  }
+}

@@ -40,41 +40,22 @@ detect_project_type() {
 # Function to create .claude directory structure
 setup_claude_dirs() {
     echo "📁 Creating .claude directory structure..."
-    mkdir -p .claude/history .claude/snippets .claude/context
+    mkdir -p .claude/history/sessions
     
-    # Create session.json
+    # Copy README if template exists
+    if [ -f "$SCRIPT_DIR/templates/.claude/README.md" ]; then
+        cp "$SCRIPT_DIR/templates/.claude/README.md" .claude/
+    fi
+    
+    # Initialize with no active session
     cat > .claude/session.json << EOF
 {
-  "current_session": {
-    "date": "$(date +%Y-%m-%d)",
-    "start_time": "$(date +%H:%M:%S)",
-    "project_type": "$1",
-    "primary_focus": "",
-    "active_issues": [],
-    "context": {
-      "working_directory": "$(pwd)"
-    }
-  }
+  "status": "no_active_session"
 }
 EOF
     
-    # Create today's history file
-    cat > .claude/history/$(date +%Y-%m-%d).md << EOF
-# Session Log: $(date +%Y-%m-%d)
-
-## Session Summary
-- **Start Time**: $(date +%H:%M:%S)
-- **Project Type**: $1
-- **Initial Setup**: claude-init enhanced
-
-## Tasks
-- [ ] Review project structure
-- [ ] Set up development environment
-- [ ] Create initial GitHub issues
-
-## Notes
-Project initialized with claude-init enhanced setup.
-EOF
+    echo "✅ Session management initialized"
+    echo "   Run 'make session-start' to begin your first session"
 }
 
 # Main setup flow
@@ -149,6 +130,15 @@ EOF
     chmod +x scripts/health-check.sh
 fi
 
+# Copy session management scripts
+if [ -d "$SCRIPT_DIR/templates/scripts/session" ] && [ ! -d "scripts/session" ]; then
+    echo "📊 Setting up session management scripts..."
+    mkdir -p scripts
+    cp -r "$SCRIPT_DIR/templates/scripts/session" scripts/
+    chmod +x scripts/session/*.sh
+    echo "✅ Session scripts installed"
+fi
+
 # Initialize git if needed
 if [ ! -d ".git" ]; then
     echo "🔧 Initializing git repository..."
@@ -174,6 +164,20 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         bash scripts/setup-releases.sh
     else
         echo "Release setup script not found, skipping..."
+    fi
+fi
+
+# Ask about documentation site setup
+echo ""
+read -p "Would you like to set up a documentation site? (y/n) " -n 1 -r
+echo ""
+
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    if [ -d "$SCRIPT_DIR/templates/docs" ]; then
+        echo "Setting up documentation site..."
+        cp -r "$SCRIPT_DIR/templates/docs" .
+        echo "✅ Documentation site created in ./docs"
+        echo "   Run 'cd docs && npm install && npm run dev' to start"
     fi
 fi
 

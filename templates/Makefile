@@ -7,6 +7,24 @@ help: ## Show this help message
 	@echo 'Targets:'
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-15s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
+# Session Management
+.PHONY: session-start
+session-start: ## Start a new development session
+	@./scripts/session/session-start.sh
+
+.PHONY: session-end
+session-end: ## End the current session
+	@./scripts/session/session-end.sh
+
+.PHONY: session-status
+session-status: ## Show current session status
+	@./scripts/session/session-status.sh
+
+.PHONY: session-log
+session-log: ## Add entry to session log (usage: make session-log MSG="message")
+	@if [ -z "$(MSG)" ]; then echo "Usage: make session-log MSG=\"your message\""; exit 1; fi
+	@./scripts/session/session-log.sh "$(MSG)"
+
 .PHONY: init
 init: ## Initialize project dependencies
 	@echo "Initializing project..."

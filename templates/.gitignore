@@ -12,6 +12,10 @@ Thumbs.db
 .Trash-*
 .nfs*
 
+# Claude Session Management
+.claude/
+!.claude/README.md
+
 # IDE and Editor Files
 .idea/
 .vscode/
