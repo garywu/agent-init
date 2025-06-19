@@ -7,6 +7,7 @@ Welcome to the claude-init documentation. This collection of guides provides com
 ### By Task
 
 - **Setting up a new project?** → Start with [Project Structure Patterns](project-structure-patterns.md)
+- **Supporting multiple environments?** → See [Environment Adaptation Patterns](environment-adaptation-patterns.md)
 - **Adding linting/formatting?** → See [Linting and Formatting Guide](linting-and-formatting.md)
 - **Creating tests?** → Check [Testing Framework Guide](testing-framework-guide.md)
 - **Setting up CI/CD?** → Read [GitHub Actions Multi-Platform Guide](github-actions-multi-platform.md)
@@ -50,6 +51,7 @@ We provide comprehensive documentation rather than prescriptive scripts because:
 ### Reference Guides
 Comprehensive information about specific topics:
 - [Project Structure Patterns](project-structure-patterns.md) - Organization best practices
+- [Environment Adaptation Patterns](environment-adaptation-patterns.md) - CI, platform, and context handling
 - [Linting and Formatting Guide](linting-and-formatting.md) - All major languages and tools
 - [Testing Framework Guide](testing-framework-guide.md) - Building robust test suites
 - [GitHub Actions Multi-Platform Guide](github-actions-multi-platform.md) - CI/CD across OS
