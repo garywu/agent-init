@@ -6,11 +6,12 @@ Welcome to the claude-init documentation. This collection of guides provides com
 
 ### By Task
 
-- **Setting up a new project?** → Start with [Claude Templates Reference](CLAUDE_TEMPLATES.md)
+- **Setting up a new project?** → Start with [Project Structure Patterns](project-structure-patterns.md)
 - **Adding linting/formatting?** → See [Linting and Formatting Guide](linting-and-formatting.md)
 - **Creating tests?** → Check [Testing Framework Guide](testing-framework-guide.md)
 - **Setting up CI/CD?** → Read [GitHub Actions Multi-Platform Guide](github-actions-multi-platform.md)
 - **Building documentation site?** → Follow [Documentation Site Setup](documentation-site-setup.md)
+- **Managing releases?** → Use [Release Management Patterns](release-management-patterns.md)
 - **Debugging issues?** → Consult [Debugging and Troubleshooting](debugging-and-troubleshooting.md)
 - **Learning from experience?** → Study [Learning from Mistakes](learning-from-mistakes.md)
 
@@ -48,9 +49,11 @@ We provide comprehensive documentation rather than prescriptive scripts because:
 
 ### Reference Guides
 Comprehensive information about specific topics:
+- [Project Structure Patterns](project-structure-patterns.md) - Organization best practices
 - [Linting and Formatting Guide](linting-and-formatting.md) - All major languages and tools
 - [Testing Framework Guide](testing-framework-guide.md) - Building robust test suites
 - [GitHub Actions Multi-Platform Guide](github-actions-multi-platform.md) - CI/CD across OS
+- [Release Management Patterns](release-management-patterns.md) - Versioning and changelog automation
 
 ### Problem-Solution Guides
 Based on real debugging experiences:

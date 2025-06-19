@@ -138,10 +138,12 @@ Our documentation captures real-world debugging experiences and hard-won knowled
 
 ### 📚 Core Guides
 - **[Documentation Index](docs/README.md)** - Start here for navigation and overview
-- **[Linting and Formatting Guide](docs/linting-and-formatting.md)** - Multi-language linting reference
+- **[Project Structure Patterns](docs/project-structure-patterns.md)** - Organization best practices
+- **[Linting and Formatting Guide](docs/linting-and-formatting.md)** - Multi-language reference
 - **[Testing Framework Guide](docs/testing-framework-guide.md)** - Comprehensive testing patterns
 - **[GitHub Actions Multi-Platform](docs/github-actions-multi-platform.md)** - CI/CD across OS platforms
 - **[Documentation Site Setup](docs/documentation-site-setup.md)** - Astro/Starlight lessons learned
+- **[Release Management Patterns](docs/release-management-patterns.md)** - Semantic versioning automation
 
 ### 🔍 Problem-Solving Guides
 - **[Debugging and Troubleshooting](docs/debugging-and-troubleshooting.md)** - Common issues and solutions
