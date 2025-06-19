@@ -145,6 +145,7 @@ Our documentation captures real-world debugging experiences and hard-won knowled
 - **[GitHub Actions Multi-Platform](docs/github-actions-multi-platform.md)** - CI/CD across OS platforms
 - **[Documentation Site Setup](docs/documentation-site-setup.md)** - Astro/Starlight lessons learned
 - **[Release Management Patterns](docs/release-management-patterns.md)** - Semantic versioning automation
+- **[Error Handling Patterns](docs/error-handling-patterns.md)** - Recovery and rollback strategies
 
 ### 🔍 Problem-Solving Guides
 - **[Debugging and Troubleshooting](docs/debugging-and-troubleshooting.md)** - Common issues and solutions

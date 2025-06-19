@@ -13,6 +13,7 @@ Welcome to the claude-init documentation. This collection of guides provides com
 - **Setting up CI/CD?** → Read [GitHub Actions Multi-Platform Guide](github-actions-multi-platform.md)
 - **Building documentation site?** → Follow [Documentation Site Setup](documentation-site-setup.md)
 - **Managing releases?** → Use [Release Management Patterns](release-management-patterns.md)
+- **Handling errors gracefully?** → See [Error Handling Patterns](error-handling-patterns.md)
 - **Debugging issues?** → Consult [Debugging and Troubleshooting](debugging-and-troubleshooting.md)
 - **Learning from experience?** → Study [Learning from Mistakes](learning-from-mistakes.md)
 
@@ -56,6 +57,7 @@ Comprehensive information about specific topics:
 - [Testing Framework Guide](testing-framework-guide.md) - Building robust test suites
 - [GitHub Actions Multi-Platform Guide](github-actions-multi-platform.md) - CI/CD across OS
 - [Release Management Patterns](release-management-patterns.md) - Versioning and changelog automation
+- [Error Handling Patterns](error-handling-patterns.md) - Recovery and rollback strategies
 
 ### Problem-Solution Guides
 Based on real debugging experiences:
