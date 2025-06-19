@@ -1,0 +1,88 @@
+# GitHub Release Configuration
+# This file configures how GitHub auto-generates release notes
+
+changelog:
+  # Exclude certain labels from release notes
+  exclude:
+    labels:
+      - ignore-for-release
+      - duplicate
+      - invalid
+      - wontfix
+    authors:
+      - dependabot
+      - github-actions
+
+  # Categorize pull requests in release notes
+  categories:
+    - title: 🚀 New Features
+      labels:
+        - enhancement
+        - feature
+        - feat
+
+    - title: 🐛 Bug Fixes
+      labels:
+        - bug
+        - fix
+        - bugfix
+
+    - title: 📚 Documentation
+      labels:
+        - documentation
+        - docs
+
+    - title: 🎨 UI/UX Improvements
+      labels:
+        - ui
+        - ux
+        - design
+
+    - title: ⚡ Performance Improvements
+      labels:
+        - performance
+        - optimization
+
+    - title: 🔒 Security Updates
+      labels:
+        - security
+
+    - title: 🧪 Testing
+      labels:
+        - testing
+        - test
+        - tests
+
+    - title: 🔧 Maintenance
+      labels:
+        - chore
+        - maintenance
+        - refactor
+        - refactoring
+
+    - title: 📦 Dependencies
+      labels:
+        - dependencies
+        - deps
+
+    - title: 🏗️ Infrastructure
+      labels:
+        - infrastructure
+        - ci
+        - cd
+        - ci/cd
+
+    - title: ⚠️ Breaking Changes
+      labels:
+        - breaking-change
+        - breaking
+
+    - title: 🗑️ Deprecations
+      labels:
+        - deprecation
+        - deprecated
+
+    # Default category for uncategorized PRs
+    - title: Other Changes
+      labels:
+        - "*"

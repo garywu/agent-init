@@ -25,6 +25,11 @@ gh pr create            # Create pull request
 # Development
 make test               # Run tests
 make build              # Build project
+
+# Release management
+gh workflow run release-beta.yml      # Trigger beta release
+gh workflow run release-stable.yml    # Promote to stable
+git tag -l                           # List all versions
 ```
 
 ## Workflow Procedure
@@ -57,6 +62,26 @@ make build              # Build project
 - Include test results
 - Ensure all checks pass
 - Request review when ready
+- Use conventional commits for automatic versioning
+
+### 5. Release Management
+
+#### Branch Strategy
+- **main**: Active development (unstable)
+- **beta**: Weekly beta releases (testing)
+- **stable**: Monthly stable releases (production)
+
+#### Conventional Commits
+Use these prefixes for automatic versioning:
+- `feat:` New feature (minor version bump)
+- `fix:` Bug fix (patch version bump)
+- `feat!:` or `BREAKING CHANGE:` (major version bump)
+- `docs:`, `style:`, `refactor:`, `test:`, `chore:` (no release)
+
+#### Release Schedule
+- **Beta**: Every Monday (automated)
+- **Stable**: Monthly or as needed (manual)
+- **Hotfix**: As needed for critical issues
 
 ## Active Issues
 
@@ -104,6 +129,7 @@ The following CLI tools are available and should be used:
 - **Pre-commit hooks**: Configured in `.pre-commit-config.yaml`
 - **CI/CD**: GitHub Actions workflows for testing and deployment
 - **Version**: Following Semantic Versioning (starting at 0.0.1)
+- **Release Channels**: main (dev), beta (weekly), stable (monthly)
 
 ## Notes for Next Session
 

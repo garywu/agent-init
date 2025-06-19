@@ -6,6 +6,9 @@ set -e
 echo "🚀 Claude-Init Enhanced Setup"
 echo "============================"
 
+# Get the directory where this script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 # Function to detect project type
 detect_project_type() {
     if [ -f "package.json" ]; then
@@ -154,6 +157,26 @@ if [ ! -d ".git" ]; then
     git commit -m "Initial commit with claude-init enhanced setup"
 fi
 
+# Ask about release management setup
+echo ""
+read -p "Would you like to set up multi-stage release management? (y/n) " -n 1 -r
+echo ""
+
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    if [ -f "scripts/setup-releases.sh" ]; then
+        echo "Running release setup..."
+        bash scripts/setup-releases.sh
+    elif [ -f "$SCRIPT_DIR/templates/scripts/setup-releases.sh" ]; then
+        echo "Copying and running release setup..."
+        mkdir -p scripts
+        cp "$SCRIPT_DIR/templates/scripts/setup-releases.sh" scripts/
+        chmod +x scripts/setup-releases.sh
+        bash scripts/setup-releases.sh
+    else
+        echo "Release setup script not found, skipping..."
+    fi
+fi
+
 echo ""
 echo "✨ Setup complete!"
 echo ""
@@ -162,5 +185,9 @@ echo "1. Review and customize CLAUDE.md"
 echo "2. Source aliases: source .claude-aliases"
 echo "3. Create your first issue: gh issue create"
 echo "4. Run health check: ./scripts/health-check.sh"
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "5. Configure branch protection rules in GitHub"
+    echo "6. Test release workflows (see RELEASES.md)"
+fi
 echo ""
 echo "Happy coding with Claude! 🚀"
