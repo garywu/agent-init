@@ -1,0 +1,34 @@
+{
+  "id": "session-20250619-183646-35455",
+  "started": "2025-06-19T23:36:46Z",
+  "status": "active",
+  "previous_session": null,
+  "project_info": {
+    "type": "unknown",
+    "primary_language": "unknown",
+    "frameworks": "",
+    "maturity_score": 0,
+    "path": "/Volumes/Data/Work/admin/external/claude-init"
+  },
+  "git_status": {
+    "branch": "none",
+    "uncommitted_changes": 0,
+    "sync_status": "not a git repo",
+    "last_commit": "N/A"
+  },
+  "workspace": {
+    "total_files": 67,
+    "total_directories": 22,
+    "size": "452K"
+  },
+  "github_issues": [],
+  "activities": [],
+  "issues_worked": [],
+  "files_modified": [],
+  "commands_executed": [],
+  "health_score_start": 0,
+  "health_score_current": 0,
+  "session_type": "development",
+  "goals": [],
+  "notes": []
+}

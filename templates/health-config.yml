@@ -1,0 +1,178 @@
+# Health Assessment Configuration
+# Customize thresholds and weights for your project
+
+# Overall scoring weights (must sum to 100)
+weights:
+  code_quality: 25
+  test_coverage: 20
+  security: 25
+  performance: 15
+  maintenance: 10
+  documentation: 5
+
+# Score thresholds for status levels
+thresholds:
+  excellent: 90
+  good: 70
+  attention: 50
+  critical: 0
+
+# Code Quality Configuration
+code_quality:
+  # Linting rules severity
+  error_weight: 10     # Points deducted per error
+  warning_weight: 2    # Points deducted per warning
+  
+  # Complexity thresholds
+  max_complexity: 10   # Maximum cyclomatic complexity
+  max_file_length: 500 # Maximum lines per file
+  max_function_length: 50 # Maximum lines per function
+  
+  # Style checks
+  enforce_formatting: true
+  require_type_checking: true
+
+# Test Coverage Configuration  
+test_coverage:
+  # Minimum coverage thresholds
+  min_total_coverage: 80
+  min_branch_coverage: 70
+  min_function_coverage: 80
+  
+  # Test requirements
+  require_unit_tests: true
+  require_integration_tests: false
+  require_e2e_tests: false
+
+# Security Configuration
+security:
+  # Vulnerability severity weights
+  critical_weight: 25
+  high_weight: 15
+  medium_weight: 8
+  low_weight: 3
+  
+  # Security checks
+  check_secrets: true
+  check_dependencies: true
+  check_docker: true
+  check_api_security: true
+  
+  # Allowed vulnerability counts
+  max_critical: 0
+  max_high: 0
+  max_medium: 5
+  max_low: 10
+
+# Performance Configuration
+performance:
+  # Web performance budgets
+  max_bundle_size_mb: 5
+  max_chunk_size_kb: 500
+  max_load_time_s: 3
+  
+  # Image optimization
+  max_image_size_kb: 200
+  require_modern_formats: true
+  
+  # Build performance
+  max_build_time_s: 60
+  enable_caching: true
+
+# Maintenance Configuration
+maintenance:
+  # Dependency management
+  max_outdated_days: 180
+  max_major_behind: 2
+  
+  # Code organization
+  require_readme: true
+  require_license: true
+  require_changelog: false
+  
+  # Git hygiene
+  max_uncommitted_days: 7
+  require_gitignore: true
+
+# Documentation Configuration
+documentation:
+  # Documentation requirements
+  require_readme: true
+  require_api_docs: true
+  require_examples: false
+  
+  # Code documentation
+  min_comment_ratio: 15  # Percentage of commented lines
+  require_jsdoc: true
+  require_type_definitions: true
+
+# Language-specific overrides
+languages:
+  javascript:
+    # Override general settings for JS projects
+    test_coverage:
+      min_total_coverage: 85
+    code_quality:
+      require_eslint: true
+      require_prettier: true
+      
+  python:
+    # Python-specific settings
+    test_coverage:
+      min_total_coverage: 90
+    code_quality:
+      require_black: true
+      require_flake8: true
+      require_mypy: true
+      
+  go:
+    # Go-specific settings
+    test_coverage:
+      min_total_coverage: 80
+    code_quality:
+      require_gofmt: true
+      require_golint: true
+
+# Reporting Configuration
+reporting:
+  # Output formats
+  formats:
+    - markdown
+    - json
+    - html
+    
+  # Report details
+  include_trends: true
+  include_recommendations: true
+  include_action_items: true
+  
+  # Notification settings
+  fail_on_critical: true
+  fail_threshold: 60
+
+# Custom checks (optional)
+custom_checks:
+  # Add your own checks here
+  # - name: "Custom Security Check"
+  #   script: "./scripts/custom-security.sh"
+  #   weight: 10
+  #   enabled: true
+
+# Exclusions
+exclude:
+  # Paths to exclude from analysis
+  paths:
+    - node_modules
+    - .git
+    - dist
+    - build
+    - coverage
+    - "*.min.js"
+    - "*.bundle.js"
+    
+  # File patterns to ignore
+  patterns:
+    - "test/**/*"
+    - "**/*.test.*"
+    - "**/*.spec.*"
+    - "**/mocks/**"

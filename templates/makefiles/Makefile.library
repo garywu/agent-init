@@ -1,0 +1,389 @@
+# Makefile for Library Projects
+# Supports JavaScript/TypeScript, Python, Go, and Rust libraries
+
+# Colors
+BLUE := \033[0;34m
+GREEN := \033[0;32m
+YELLOW := \033[1;33m
+RED := \033[0;31m
+NC := \033[0m
+
+# Language detection
+HAS_PACKAGE_JSON := $(shell [ -f "package.json" ] && echo "yes")
+HAS_SETUP_PY := $(shell [ -f "setup.py" ] || [ -f "pyproject.toml" ] && echo "yes")
+HAS_GO_MOD := $(shell [ -f "go.mod" ] && echo "yes")
+HAS_CARGO_TOML := $(shell [ -f "Cargo.toml" ] && echo "yes")
+
+# Determine primary language
+ifeq ($(HAS_PACKAGE_JSON),yes)
+    PRIMARY_LANG := javascript
+else ifeq ($(HAS_SETUP_PY),yes)
+    PRIMARY_LANG := python
+else ifeq ($(HAS_GO_MOD),yes)
+    PRIMARY_LANG := go
+else ifeq ($(HAS_CARGO_TOML),yes)
+    PRIMARY_LANG := rust
+else
+    PRIMARY_LANG := unknown
+endif
+
+.DEFAULT_GOAL := help
+
+.PHONY: help
+help: ## Show this help message
+	@echo '$(BLUE)Library Project Makefile$(NC)'
+	@echo '======================='
+	@echo ''
+	@echo '$(GREEN)Detected Language:$(NC) $(PRIMARY_LANG)'
+	@echo ''
+	@echo '$(YELLOW)Available Commands:$(NC)'
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(BLUE)%-20s$(NC) %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+
+# ========== Development ==========
+
+.PHONY: dev
+dev: ## Start development environment
+	@echo "$(BLUE)Starting development environment...$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@npm run dev || npm run watch || echo "Configure dev script in package.json"
+else ifeq ($(PRIMARY_LANG),python)
+	@pip install -e . || echo "Run in virtual environment"
+else ifeq ($(PRIMARY_LANG),go)
+	@go run ./examples/main.go || echo "No example found"
+else ifeq ($(PRIMARY_LANG),rust)
+	@cargo watch -x build || cargo build
+endif
+
+.PHONY: build
+build: ## Build the library
+	@echo "$(BLUE)Building library...$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@npm run build || echo "Configure build script"
+else ifeq ($(PRIMARY_LANG),python)
+	@python -m build || python setup.py build
+else ifeq ($(PRIMARY_LANG),go)
+	@go build ./...
+else ifeq ($(PRIMARY_LANG),rust)
+	@cargo build --release
+endif
+
+.PHONY: test
+test: ## Run tests
+	@echo "$(BLUE)Running tests...$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@npm test
+else ifeq ($(PRIMARY_LANG),python)
+	@pytest || python -m pytest
+else ifeq ($(PRIMARY_LANG),go)
+	@go test -v ./...
+else ifeq ($(PRIMARY_LANG),rust)
+	@cargo test
+endif
+
+.PHONY: test-watch
+test-watch: ## Run tests in watch mode
+	@echo "$(BLUE)Running tests in watch mode...$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@npm test -- --watch
+else ifeq ($(PRIMARY_LANG),python)
+	@pytest-watch || ptw
+else ifeq ($(PRIMARY_LANG),rust)
+	@cargo watch -x test
+else
+	@echo "Watch mode not configured for $(PRIMARY_LANG)"
+endif
+
+.PHONY: test-coverage
+test-coverage: ## Run tests with coverage
+	@echo "$(BLUE)Running tests with coverage...$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@npm test -- --coverage
+else ifeq ($(PRIMARY_LANG),python)
+	@pytest --cov=. --cov-report=html --cov-report=term
+else ifeq ($(PRIMARY_LANG),go)
+	@go test -v -coverprofile=coverage.out ./...
+	@go tool cover -html=coverage.out -o coverage.html
+else ifeq ($(PRIMARY_LANG),rust)
+	@cargo tarpaulin --out Html
+endif
+
+# ========== Code Quality ==========
+
+.PHONY: lint
+lint: ## Run linters
+	@echo "$(BLUE)Running linters...$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@npm run lint || npx eslint .
+else ifeq ($(PRIMARY_LANG),python)
+	@flake8 . && mypy .
+else ifeq ($(PRIMARY_LANG),go)
+	@golangci-lint run ./...
+else ifeq ($(PRIMARY_LANG),rust)
+	@cargo clippy -- -D warnings
+endif
+
+.PHONY: format
+format: ## Format code
+	@echo "$(BLUE)Formatting code...$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@npm run format || npx prettier --write .
+else ifeq ($(PRIMARY_LANG),python)
+	@black . && isort .
+else ifeq ($(PRIMARY_LANG),go)
+	@go fmt ./...
+else ifeq ($(PRIMARY_LANG),rust)
+	@cargo fmt
+endif
+
+.PHONY: type-check
+type-check: ## Run type checking
+	@echo "$(BLUE)Type checking...$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@npx tsc --noEmit || echo "TypeScript not configured"
+else ifeq ($(PRIMARY_LANG),python)
+	@mypy .
+else ifeq ($(PRIMARY_LANG),rust)
+	@cargo check
+else
+	@echo "Type checking not applicable for $(PRIMARY_LANG)"
+endif
+
+# ========== Documentation ==========
+
+.PHONY: docs
+docs: ## Generate documentation
+	@echo "$(BLUE)Generating documentation...$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@npm run docs || npx typedoc || npx jsdoc -c jsdoc.json
+else ifeq ($(PRIMARY_LANG),python)
+	@sphinx-build -b html docs docs/_build || pdoc --html --output-dir docs .
+else ifeq ($(PRIMARY_LANG),go)
+	@godoc -http=:6060 &
+	@echo "Documentation server running at http://localhost:6060"
+else ifeq ($(PRIMARY_LANG),rust)
+	@cargo doc --no-deps --open
+endif
+
+.PHONY: docs-serve
+docs-serve: docs ## Serve documentation locally
+	@echo "$(BLUE)Serving documentation...$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@npx serve docs || python -m http.server -d docs 8000
+else ifeq ($(PRIMARY_LANG),python)
+	@cd docs/_build/html && python -m http.server
+else ifeq ($(PRIMARY_LANG),rust)
+	@cd target/doc && python -m http.server
+endif
+
+.PHONY: examples
+examples: ## Run examples
+	@echo "$(BLUE)Running examples...$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@node examples/basic.js || echo "No examples found"
+else ifeq ($(PRIMARY_LANG),python)
+	@python examples/basic.py || echo "No examples found"
+else ifeq ($(PRIMARY_LANG),go)
+	@go run examples/main.go || echo "No examples found"
+else ifeq ($(PRIMARY_LANG),rust)
+	@cargo run --example basic || echo "No examples found"
+endif
+
+# ========== Publishing ==========
+
+.PHONY: version
+version: ## Show current version
+	@echo "$(BLUE)Current version:$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@node -p "require('./package.json').version"
+else ifeq ($(PRIMARY_LANG),python)
+	@python -c "import tomli; print(tomli.load(open('pyproject.toml', 'rb'))['project']['version'])" 2>/dev/null || \
+	 python setup.py --version 2>/dev/null || echo "Version not found"
+else ifeq ($(PRIMARY_LANG),go)
+	@grep -E "^module" go.mod | cut -d' ' -f2
+else ifeq ($(PRIMARY_LANG),rust)
+	@grep "^version" Cargo.toml | head -1 | cut -d'"' -f2
+endif
+
+.PHONY: version-bump
+version-bump: ## Bump version (usage: make version-bump TYPE=patch|minor|major)
+	@echo "$(BLUE)Bumping version...$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@npm version $(TYPE)
+else ifeq ($(PRIMARY_LANG),python)
+	@bump2version $(TYPE) || bumpversion $(TYPE) || echo "Install bump2version"
+else ifeq ($(PRIMARY_LANG),rust)
+	@cargo bump $(TYPE)
+else
+	@echo "Version bumping not configured for $(PRIMARY_LANG)"
+endif
+
+.PHONY: publish-check
+publish-check: lint test docs ## Pre-publish checks
+	@echo "$(GREEN)Pre-publish checks passed!$(NC)"
+
+.PHONY: publish-dry
+publish-dry: publish-check ## Dry run of publish
+	@echo "$(BLUE)Publishing (dry run)...$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@npm publish --dry-run
+else ifeq ($(PRIMARY_LANG),python)
+	@python -m build
+	@twine check dist/*
+else ifeq ($(PRIMARY_LANG),rust)
+	@cargo publish --dry-run
+else
+	@echo "Publishing not configured for $(PRIMARY_LANG)"
+endif
+
+.PHONY: publish
+publish: publish-check ## Publish to package registry
+	@echo "$(RED)Publishing to registry...$(NC)"
+	@echo "$(YELLOW)Are you sure? Press Ctrl+C to cancel, Enter to continue$(NC)"
+	@read _
+ifeq ($(PRIMARY_LANG),javascript)
+	@npm publish
+else ifeq ($(PRIMARY_LANG),python)
+	@python -m build
+	@twine upload dist/*
+else ifeq ($(PRIMARY_LANG),go)
+	@echo "Go modules are published by pushing tags"
+	@echo "Run: git tag v$(shell cat VERSION) && git push --tags"
+else ifeq ($(PRIMARY_LANG),rust)
+	@cargo publish
+endif
+
+# ========== Dependencies ==========
+
+.PHONY: deps-install
+deps-install: ## Install dependencies
+	@echo "$(BLUE)Installing dependencies...$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@npm install
+else ifeq ($(PRIMARY_LANG),python)
+	@pip install -e ".[dev]" || pip install -r requirements-dev.txt
+else ifeq ($(PRIMARY_LANG),go)
+	@go mod download
+else ifeq ($(PRIMARY_LANG),rust)
+	@cargo build
+endif
+
+.PHONY: deps-update
+deps-update: ## Update dependencies
+	@echo "$(BLUE)Updating dependencies...$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@npm update
+else ifeq ($(PRIMARY_LANG),python)
+	@pip install --upgrade -e ".[dev]"
+else ifeq ($(PRIMARY_LANG),go)
+	@go get -u ./...
+else ifeq ($(PRIMARY_LANG),rust)
+	@cargo update
+endif
+
+.PHONY: deps-audit
+deps-audit: ## Audit dependencies for vulnerabilities
+	@echo "$(BLUE)Auditing dependencies...$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@npm audit
+else ifeq ($(PRIMARY_LANG),python)
+	@safety check || pip-audit
+else ifeq ($(PRIMARY_LANG),go)
+	@govulncheck ./...
+else ifeq ($(PRIMARY_LANG),rust)
+	@cargo audit
+endif
+
+# ========== Maintenance ==========
+
+.PHONY: clean
+clean: ## Clean build artifacts
+	@echo "$(BLUE)Cleaning build artifacts...$(NC)"
+	@rm -rf dist build target coverage* htmlcov .coverage *.egg-info
+	@find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	@find . -type f -name "*.pyc" -delete 2>/dev/null || true
+	@echo "$(GREEN)Clean complete!$(NC)"
+
+.PHONY: setup
+setup: ## Set up development environment
+	@echo "$(BLUE)Setting up development environment...$(NC)"
+	@make deps-install
+	@make install-hooks
+	@echo "$(GREEN)Setup complete!$(NC)"
+
+.PHONY: install-hooks
+install-hooks: ## Install git hooks
+	@echo "$(BLUE)Installing git hooks...$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@npx husky install || echo "Husky not configured"
+else
+	@pre-commit install || echo "pre-commit not configured"
+endif
+
+# ========== Analysis ==========
+
+.PHONY: size
+size: ## Analyze library size
+	@echo "$(BLUE)Analyzing library size...$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@npx size-limit || npm run size
+else ifeq ($(PRIMARY_LANG),rust)
+	@cargo bloat --release
+else
+	@du -sh dist/* build/* target/* 2>/dev/null || echo "Build the library first"
+endif
+
+.PHONY: benchmark
+benchmark: ## Run benchmarks
+	@echo "$(BLUE)Running benchmarks...$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@npm run bench || node benchmarks/index.js
+else ifeq ($(PRIMARY_LANG),python)
+	@python -m pytest benchmarks/ || python benchmarks/run.py
+else ifeq ($(PRIMARY_LANG),go)
+	@go test -bench=. -benchmem ./...
+else ifeq ($(PRIMARY_LANG),rust)
+	@cargo bench
+endif
+
+.PHONY: compatibility
+compatibility: ## Check compatibility
+	@echo "$(BLUE)Checking compatibility...$(NC)"
+ifeq ($(PRIMARY_LANG),javascript)
+	@npx browserslist || echo "Configure browserslist"
+else ifeq ($(PRIMARY_LANG),python)
+	@tox || echo "Configure tox for multi-version testing"
+else
+	@echo "Compatibility testing not configured"
+endif
+
+# ========== CI/CD ==========
+
+.PHONY: ci
+ci: lint test build docs ## Run all CI checks
+	@echo "$(GREEN)All CI checks passed!$(NC)"
+
+.PHONY: pre-release
+pre-release: ci version-bump ## Prepare for release
+	@echo "$(GREEN)Ready for release!$(NC)"
+	@echo "Next steps:"
+	@echo "1. Review CHANGELOG.md"
+	@echo "2. Commit version bump"
+	@echo "3. Create git tag"
+	@echo "4. Run 'make publish'"
+
+# ========== Help Aliases ==========
+
+.PHONY: b
+b: build ## Alias for build
+
+.PHONY: t
+t: test ## Alias for test
+
+.PHONY: l
+l: lint ## Alias for lint
+
+.PHONY: d
+d: docs ## Alias for docs
+
+.PHONY: p
+p: publish ## Alias for publish

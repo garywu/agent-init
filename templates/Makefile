@@ -7,23 +7,41 @@ help: ## Show this help message
 	@echo 'Targets:'
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-15s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-# Session Management
+# Enhanced Session Management
 .PHONY: session-start
-session-start: ## Start a new development session
+session-start: ## Start tracked development session with project analysis
 	@./scripts/session/session-start.sh
 
 .PHONY: session-end
-session-end: ## End the current session
+session-end: ## End session with comprehensive summary
 	@./scripts/session/session-end.sh
 
 .PHONY: session-status
-session-status: ## Show current session status
+session-status: ## Show current session status and recent activities
 	@./scripts/session/session-status.sh
 
 .PHONY: session-log
-session-log: ## Add entry to session log (usage: make session-log MSG="message")
+session-log: ## Log activity to current session (usage: make session-log MSG="message")
 	@if [ -z "$(MSG)" ]; then echo "Usage: make session-log MSG=\"your message\""; exit 1; fi
 	@./scripts/session/session-log.sh "$(MSG)"
+
+.PHONY: session-health
+session-health: ## Run project health check and update session
+	@./scripts/project-detector.sh . human && \
+	./scripts/session/session-log.sh "Ran project health check" "analysis"
+
+# GitHub Integration
+.PHONY: github-link
+github-link: ## Link current session to GitHub issues
+	@./scripts/github-integration.sh link-issues
+
+.PHONY: github-sync
+github-sync: ## Sync session with recent commits
+	@./scripts/github-integration.sh link-commits
+
+.PHONY: pr-gen
+pr-gen: ## Generate PR description from session
+	@./scripts/github-integration.sh pr-description
 
 .PHONY: init
 init: ## Initialize project dependencies
@@ -151,8 +169,14 @@ issue: ## Create a new GitHub issue
 	@gh issue create
 
 .PHONY: pr
-pr: ## Create a new pull request
-	@gh pr create
+pr: ## Create a pull request with session context
+	@if [ -f .claude/session.json ]; then \
+		./scripts/github-integration.sh pr-description > .pr-description.tmp && \
+		gh pr create --body-file .pr-description.tmp && \
+		rm -f .pr-description.tmp; \
+	else \
+		gh pr create; \
+	fi
 
 .PHONY: todo
 todo: ## Show all TODO items in code

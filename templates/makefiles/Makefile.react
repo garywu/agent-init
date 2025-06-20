@@ -1,0 +1,294 @@
+# Makefile for React/Next.js Projects
+# Optimized for modern React development with TypeScript
+
+# Colors
+BLUE := \033[0;34m
+GREEN := \033[0;32m
+YELLOW := \033[1;33m
+RED := \033[0;31m
+NC := \033[0m
+
+# Project detection
+IS_NEXTJS := $(shell [ -f "next.config.js" ] || [ -f "next.config.ts" ] && echo "yes")
+IS_VITE := $(shell [ -f "vite.config.js" ] || [ -f "vite.config.ts" ] && echo "yes")
+HAS_TYPESCRIPT := $(shell [ -f "tsconfig.json" ] && echo "yes")
+HAS_STORYBOOK := $(shell [ -d ".storybook" ] && echo "yes")
+HAS_CYPRESS := $(shell [ -f "cypress.config.js" ] || [ -f "cypress.config.ts" ] && echo "yes")
+HAS_PLAYWRIGHT := $(shell [ -f "playwright.config.ts" ] && echo "yes")
+
+.DEFAULT_GOAL := help
+
+.PHONY: help
+help: ## Show this help message
+	@echo '$(BLUE)React/Next.js Project Makefile$(NC)'
+	@echo '=============================='
+	@echo ''
+	@echo '$(GREEN)Detected Configuration:$(NC)'
+	@echo '  Next.js: $(IS_NEXTJS)'
+	@echo '  Vite: $(IS_VITE)'
+	@echo '  TypeScript: $(HAS_TYPESCRIPT)'
+	@echo '  Storybook: $(HAS_STORYBOOK)'
+	@echo '  Cypress: $(HAS_CYPRESS)'
+	@echo '  Playwright: $(HAS_PLAYWRIGHT)'
+	@echo ''
+	@echo '$(YELLOW)Available Commands:$(NC)'
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(BLUE)%-20s$(NC) %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+
+# ========== Development ==========
+
+.PHONY: dev
+dev: ## Start development server
+	@echo "$(BLUE)Starting development server...$(NC)"
+ifeq ($(IS_NEXTJS),yes)
+	@npm run dev || yarn dev || pnpm dev
+else ifeq ($(IS_VITE),yes)
+	@npm run dev || yarn dev || pnpm dev
+else
+	@npm start || yarn start || pnpm start
+endif
+
+.PHONY: build
+build: ## Build for production
+	@echo "$(BLUE)Building for production...$(NC)"
+	@npm run build || yarn build || pnpm build
+
+.PHONY: preview
+preview: build ## Preview production build
+	@echo "$(BLUE)Previewing production build...$(NC)"
+ifeq ($(IS_NEXTJS),yes)
+	@npm run start || yarn start || pnpm start
+else ifeq ($(IS_VITE),yes)
+	@npm run preview || yarn preview || pnpm preview
+else
+	@npx serve -s build || npx serve -s dist
+endif
+
+.PHONY: analyze
+analyze: ## Analyze bundle size
+	@echo "$(BLUE)Analyzing bundle size...$(NC)"
+ifeq ($(IS_NEXTJS),yes)
+	@ANALYZE=true npm run build
+else
+	@npm run build && npx source-map-explorer 'build/static/js/*.js' || echo "Install source-map-explorer for bundle analysis"
+endif
+
+# ========== Testing ==========
+
+.PHONY: test
+test: ## Run unit tests
+	@echo "$(BLUE)Running tests...$(NC)"
+	@npm test || yarn test || pnpm test
+
+.PHONY: test-watch
+test-watch: ## Run tests in watch mode
+	@npm test -- --watch || yarn test --watch || pnpm test -- --watch
+
+.PHONY: test-coverage
+test-coverage: ## Run tests with coverage
+	@echo "$(BLUE)Running tests with coverage...$(NC)"
+	@npm test -- --coverage --watchAll=false || yarn test --coverage --watchAll=false
+
+.PHONY: test-e2e
+test-e2e: ## Run E2E tests
+	@echo "$(BLUE)Running E2E tests...$(NC)"
+ifeq ($(HAS_CYPRESS),yes)
+	@npm run cypress:run || yarn cypress:run
+else ifeq ($(HAS_PLAYWRIGHT),yes)
+	@npm run test:e2e || npx playwright test
+else
+	@echo "No E2E test configuration found"
+endif
+
+.PHONY: test-e2e-ui
+test-e2e-ui: ## Open E2E test UI
+ifeq ($(HAS_CYPRESS),yes)
+	@npm run cypress:open || yarn cypress:open
+else ifeq ($(HAS_PLAYWRIGHT),yes)
+	@npx playwright test --ui
+else
+	@echo "No E2E test configuration found"
+endif
+
+# ========== Code Quality ==========
+
+.PHONY: lint
+lint: ## Run ESLint
+	@echo "$(BLUE)Running ESLint...$(NC)"
+	@npm run lint || npx eslint . --ext .js,.jsx,.ts,.tsx
+
+.PHONY: lint-fix
+lint-fix: ## Fix ESLint errors
+	@echo "$(BLUE)Fixing ESLint errors...$(NC)"
+	@npm run lint -- --fix || npx eslint . --ext .js,.jsx,.ts,.tsx --fix
+
+.PHONY: format
+format: ## Format code with Prettier
+	@echo "$(BLUE)Formatting code...$(NC)"
+	@npx prettier --write "**/*.{js,jsx,ts,tsx,json,css,scss,md}"
+
+.PHONY: format-check
+format-check: ## Check code formatting
+	@npx prettier --check "**/*.{js,jsx,ts,tsx,json,css,scss,md}"
+
+.PHONY: type-check
+type-check: ## Run TypeScript type checking
+ifeq ($(HAS_TYPESCRIPT),yes)
+	@echo "$(BLUE)Type checking...$(NC)"
+	@npx tsc --noEmit
+else
+	@echo "TypeScript not configured"
+endif
+
+# ========== Component Development ==========
+
+.PHONY: storybook
+storybook: ## Start Storybook
+ifeq ($(HAS_STORYBOOK),yes)
+	@echo "$(BLUE)Starting Storybook...$(NC)"
+	@npm run storybook || yarn storybook
+else
+	@echo "Storybook not configured"
+endif
+
+.PHONY: storybook-build
+storybook-build: ## Build Storybook
+ifeq ($(HAS_STORYBOOK),yes)
+	@echo "$(BLUE)Building Storybook...$(NC)"
+	@npm run build-storybook || yarn build-storybook
+else
+	@echo "Storybook not configured"
+endif
+
+.PHONY: component
+component: ## Create new component (usage: make component NAME=Button)
+	@if [ -z "$(NAME)" ]; then echo "Usage: make component NAME=ComponentName"; exit 1; fi
+	@echo "$(BLUE)Creating component $(NAME)...$(NC)"
+	@mkdir -p src/components/$(NAME)
+	@echo "import React from 'react';" > src/components/$(NAME)/$(NAME).tsx
+	@echo "" >> src/components/$(NAME)/$(NAME).tsx
+	@echo "interface $(NAME)Props {" >> src/components/$(NAME)/$(NAME).tsx
+	@echo "  // Add props here" >> src/components/$(NAME)/$(NAME).tsx
+	@echo "}" >> src/components/$(NAME)/$(NAME).tsx
+	@echo "" >> src/components/$(NAME)/$(NAME).tsx
+	@echo "export const $(NAME): React.FC<$(NAME)Props> = ({}) => {" >> src/components/$(NAME)/$(NAME).tsx
+	@echo "  return <div>$(NAME) Component</div>;" >> src/components/$(NAME)/$(NAME).tsx
+	@echo "};" >> src/components/$(NAME)/$(NAME).tsx
+	@echo "" > src/components/$(NAME)/$(NAME).test.tsx
+	@echo "export { $(NAME) } from './$(NAME)';" > src/components/$(NAME)/index.ts
+	@echo "$(GREEN)Component $(NAME) created!$(NC)"
+
+# ========== Performance ==========
+
+.PHONY: lighthouse
+lighthouse: build ## Run Lighthouse audit
+	@echo "$(BLUE)Running Lighthouse audit...$(NC)"
+	@npx lighthouse http://localhost:3000 --view || echo "Start the server first with 'make preview'"
+
+.PHONY: lighthouse-ci
+lighthouse-ci: ## Run Lighthouse CI
+	@echo "$(BLUE)Running Lighthouse CI...$(NC)"
+	@npx lhci autorun || echo "Configure Lighthouse CI first"
+
+# ========== Dependencies ==========
+
+.PHONY: deps-check
+deps-check: ## Check for outdated dependencies
+	@echo "$(BLUE)Checking dependencies...$(NC)"
+	@npm outdated || true
+
+.PHONY: deps-update
+deps-update: ## Update dependencies
+	@echo "$(BLUE)Updating dependencies...$(NC)"
+	@npm update
+	@npm audit fix
+
+.PHONY: deps-clean
+deps-clean: ## Clean and reinstall dependencies
+	@echo "$(BLUE)Cleaning dependencies...$(NC)"
+	@rm -rf node_modules package-lock.json yarn.lock pnpm-lock.yaml
+	@npm install || yarn install || pnpm install
+
+# ========== Next.js Specific ==========
+
+ifeq ($(IS_NEXTJS),yes)
+.PHONY: next-info
+next-info: ## Show Next.js info
+	@npx next info
+
+.PHONY: next-telemetry-disable
+next-telemetry-disable: ## Disable Next.js telemetry
+	@npx next telemetry disable
+
+.PHONY: api-routes
+api-routes: ## List API routes
+	@echo "$(BLUE)API Routes:$(NC)"
+	@find pages/api app/api -name "*.ts" -o -name "*.js" 2>/dev/null | sort || echo "No API routes found"
+endif
+
+# ========== Deployment ==========
+
+.PHONY: docker-build
+docker-build: ## Build Docker image
+	@echo "$(BLUE)Building Docker image...$(NC)"
+	@docker build -t $(shell basename $(CURDIR)):latest .
+
+.PHONY: docker-run
+docker-run: docker-build ## Run in Docker
+	@echo "$(BLUE)Running Docker container...$(NC)"
+	@docker run -p 3000:3000 $(shell basename $(CURDIR)):latest
+
+# ========== Utilities ==========
+
+.PHONY: clean
+clean: ## Clean build artifacts
+	@echo "$(BLUE)Cleaning build artifacts...$(NC)"
+	@rm -rf build dist .next out coverage .turbo .cache
+	@rm -rf storybook-static
+	@find . -name "*.log" -delete
+	@echo "$(GREEN)Clean complete!$(NC)"
+
+.PHONY: env-check
+env-check: ## Check environment variables
+	@echo "$(BLUE)Environment Variables:$(NC)"
+	@[ -f .env.local ] && echo "✓ .env.local exists" || echo "✗ .env.local missing"
+	@[ -f .env.development ] && echo "✓ .env.development exists" || echo "✗ .env.development missing"
+	@[ -f .env.production ] && echo "✓ .env.production exists" || echo "✗ .env.production missing"
+
+.PHONY: routes
+routes: ## List all routes (Next.js)
+ifeq ($(IS_NEXTJS),yes)
+	@echo "$(BLUE)Routes:$(NC)"
+	@find pages app -name "*.tsx" -o -name "*.jsx" -o -name "*.ts" -o -name "*.js" 2>/dev/null | grep -E "(page|route)\." | sort || echo "Using app directory"
+else
+	@echo "$(BLUE)Routes:$(NC)"
+	@find src -name "*.tsx" -o -name "*.jsx" | grep -i route | sort || echo "No route files found"
+endif
+
+# ========== Git Hooks ==========
+
+.PHONY: install-hooks
+install-hooks: ## Install git hooks
+	@echo "$(BLUE)Installing git hooks...$(NC)"
+	@npx husky install || echo "Husky not configured"
+	@echo "$(GREEN)Git hooks installed!$(NC)"
+
+.PHONY: pre-commit
+pre-commit: lint-fix format type-check ## Run pre-commit checks
+	@echo "$(GREEN)Pre-commit checks passed!$(NC)"
+
+# ========== Help Aliases ==========
+
+.PHONY: d
+d: dev ## Alias for dev
+
+.PHONY: b
+b: build ## Alias for build
+
+.PHONY: t
+t: test ## Alias for test
+
+.PHONY: l
+l: lint ## Alias for lint
+
+.PHONY: f
+f: format ## Alias for format
