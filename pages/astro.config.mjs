@@ -21,15 +21,38 @@ export default defineConfig({
 			sidebar: [
 				{
 					label: 'Getting Started',
-					autogenerate: { directory: 'guides' },
+					items: [
+						{ label: 'Getting Started', slug: 'guides/getting-started' },
+						{ label: 'Project Structure', slug: 'reference/project-structure' },
+					],
+				},
+				{
+					label: 'Workflow',
+					autogenerate: { directory: 'guides/workflow' },
+				},
+				{
+					label: 'Development',
+					autogenerate: { directory: 'guides/development' },
+				},
+				{
+					label: 'Tools',
+					autogenerate: { directory: 'guides/tools' },
+				},
+				{
+					label: 'Security',
+					autogenerate: { directory: 'guides/security' },
+				},
+				{
+					label: 'Deployment',
+					autogenerate: { directory: 'guides/deployment' },
+				},
+				{
+					label: 'Documentation',
+					autogenerate: { directory: 'guides/documentation' },
 				},
 				{
 					label: 'Reference',
 					autogenerate: { directory: 'reference' },
-				},
-				{
-					label: 'Best Practices',
-					autogenerate: { directory: 'best-practices' },
 				},
 			],
 			
