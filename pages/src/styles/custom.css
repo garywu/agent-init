@@ -1,0 +1,32 @@
+/* Custom styles for documentation site */
+
+/* Improve readability */
+:root {
+  --sl-content-width: 50rem;
+}
+
+/* Add subtle hover effects for better UX */
+.sl-sidebar a:hover {
+  background-color: var(--sl-color-gray-6);
+}
+
+/* Better code block styling */
+pre {
+  border: 1px solid var(--sl-color-gray-5);
+}
+
+/* Improve hero section spacing */
+.hero {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+/* Better link visibility */
+a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.1em;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}

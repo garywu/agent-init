@@ -43,12 +43,20 @@ The critical detail: **"The astro sync command generates TypeScript types for al
 ### Initial Setup
 
 ```bash
-# Create new docs site
-npm create astro@latest docs -- --template starlight --typescript relaxed
+# IMPORTANT: When creating docs as part of an existing repository,
+# DO NOT include the --git flag to avoid creating a separate repo
+
+# Create docs site in a subdirectory (part of current repo)
+npm create astro@latest docs -- --template starlight --typescript relaxed --skip-houston
+
+# Or if you need to create in current directory
+npm create astro@latest . -- --template starlight --typescript relaxed --skip-houston
 
 # Or add to existing project
 npm install @astrojs/starlight
 ```
+
+**Note**: Omit the `--git` flag when the documentation should be part of an existing repository, not a separate one.
 
 ### Essential Configuration
 
