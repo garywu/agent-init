@@ -30,16 +30,32 @@ This is a Starlight documentation site configured with all the best practices fr
    npm run build
    ```
 
-## Configuration
+## Configuration Checklist
 
-Before deploying, update the following in `astro.config.mjs`:
+Before deploying, **YOU MUST** update the following:
 
+### 1. In `astro.config.mjs`:
 ```javascript
-site: 'https://YOUR_USERNAME.github.io',
-base: '/YOUR_REPOSITORY_NAME',
+// ⚠️ REPLACE THESE WITH YOUR ACTUAL VALUES
+site: 'https://YOUR_USERNAME.github.io',    // Your GitHub username
+base: '/YOUR_REPOSITORY_NAME',              // Exact repo name (case-sensitive!)
+
+// Also update in starlight config:
+social: [
+  { icon: 'github', href: 'https://github.com/YOUR_USERNAME/YOUR_REPO' },
+],
 ```
 
-Also update the GitHub URL in the hero actions and social links.
+### 2. In `src/content/docs/index.mdx`:
+- Update GitHub repository URLs in hero actions
+- Update repository URLs in example commands
+- Update links in "Get Involved" section
+
+### 3. Verify Configuration:
+- [ ] GitHub username is correct
+- [ ] Repository name matches EXACTLY (including case)
+- [ ] All placeholder URLs have been replaced
+- [ ] Run `npm run dev` and check styles load correctly
 
 ## Project Structure
 

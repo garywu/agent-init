@@ -4,8 +4,20 @@
 
 This guide addresses the complex issue of broken internal links when deploying Astro documentation sites (especially with Starlight) to GitHub Pages. This problem has caused multiple failed attempts and significant debugging time, so this comprehensive guide should prevent future occurrences.
 
-## The Problem
+## The Problems
 
+### Problem 1: Missing Styles
+**Symptom**: Documentation site loads but without any CSS styling, appears as plain HTML.
+
+**Cause**: Base path in `astro.config.mjs` doesn't match the actual repository name.
+
+**Solution**: Update configuration with exact values:
+```javascript
+site: 'https://YOUR-GITHUB-USERNAME.github.io',
+base: '/YOUR-EXACT-REPO-NAME',  // Case-sensitive!
+```
+
+### Problem 2: Broken Internal Links
 **Symptom**: Documentation site builds successfully but internal links return 404 errors in production, while working fine locally.
 
 **Example**: Links like `https://username.github.io/repository-name/section/page/` return 404, but `https://username.github.io/section/page/` would work (if it existed).

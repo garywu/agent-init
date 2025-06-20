@@ -2,9 +2,10 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
 export default defineConfig({
-  // Update these values for your project
-  site: 'https://yourusername.github.io',
-  base: '/your-repo-name',
+  // ⚠️ CRITICAL: Update these values for your project!
+  // Without correct values, styles and links will be broken in production
+  site: 'https://yourusername.github.io',  // Replace 'yourusername' with your GitHub username
+  base: '/your-repo-name',                  // Replace with exact repository name (case-sensitive!)
   output: 'static',
   integrations: [
     starlight({

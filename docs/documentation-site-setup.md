@@ -66,9 +66,9 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
 export default defineConfig({
-  // CRITICAL for GitHub Pages
-  site: 'https://username.github.io',
-  base: '/repository-name',
+  // CRITICAL for GitHub Pages - UPDATE THESE VALUES!
+  site: 'https://username.github.io',  // ⚠️ Replace 'username' with actual GitHub username
+  base: '/repository-name',             // ⚠️ Replace with exact repository name (case-sensitive)
   
   integrations: [
     starlight({
@@ -183,7 +183,25 @@ jobs:
 
 ## Common Issues and Solutions
 
-### 1. Missing Content Pages in Build
+### 1. Missing Styles/CSS in Production
+
+**Symptoms**: Site loads but without any styling, looks like plain HTML
+
+**Cause**: Base path in `astro.config.mjs` doesn't match repository name
+
+**Solution**:
+```js
+// astro.config.mjs
+export default defineConfig({
+  site: 'https://YOUR-GITHUB-USERNAME.github.io',  // ← Update this
+  base: '/YOUR-EXACT-REPO-NAME',                   // ← Update this (case-sensitive!)
+  // ...
+});
+```
+
+**Important**: The base path must match your repository name EXACTLY, including case sensitivity.
+
+### 2. Missing Content Pages in Build
 
 **Symptoms**: Dev server shows all pages, production build missing content
 
