@@ -30,6 +30,8 @@ Welcome to the claude-init documentation. This collection of guides provides com
 - **Debugging issues?** → Consult [Debugging and Troubleshooting](debugging-and-troubleshooting.md)
 - **Learning from experience?** → Study [Learning from Mistakes](learning-from-mistakes.md)
 - **Setting up Python projects?** → Follow [Python Environment Setup](python-environment-setup.md)
+- **Configuring ShellCheck?** → See [ShellCheck Best Practices](shellcheck-best-practices.md)
+- **Building validation systems?** → Use [Building Validation Systems](building-validation-systems.md)
 
 ### By Problem
 
@@ -45,6 +47,8 @@ Welcome to the claude-init documentation. This collection of guides provides com
 - **"How do I make scripts work in CI?"** → [CI Environment Patterns](ci-environment-patterns.md)
 - **"How do I ensure consistent code style?"** → [EditorConfig Patterns](editorconfig-patterns.md)
 - **"Python conflicts between Homebrew/Nix?"** → [Python Environment Setup](python-environment-setup.md)
+- **"How do I fix ShellCheck warnings?"** → [ShellCheck Best Practices](shellcheck-best-practices.md)
+- **"How do I validate my environment?"** → [Building Validation Systems](building-validation-systems.md)
 
 ## 🎯 Core Principles
 
@@ -98,6 +102,8 @@ Comprehensive information about specific topics:
 - [Shell Configuration Patterns](shell-configuration-patterns.md) - Bash, Zsh, Fish setup
 - [Python Environment Setup](python-environment-setup.md) - Virtual environments and pipx
 - [Monitoring and Observability Patterns](monitoring-observability-patterns.md) - Metrics, logs, and traces
+- [ShellCheck Best Practices](shellcheck-best-practices.md) - Shell script static analysis configuration
+- [Building Validation Systems](building-validation-systems.md) - Environment and dependency validation
 
 ### Problem-Solution Guides
 Based on real debugging experiences:

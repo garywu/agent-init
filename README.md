@@ -147,6 +147,9 @@ Our documentation captures real-world debugging experiences and hard-won knowled
 - **[Documentation Site Setup](docs/documentation-site-setup.md)** - Astro/Starlight lessons learned
 - **[Release Management Patterns](docs/release-management-patterns.md)** - Semantic versioning automation
 - **[Error Handling Patterns](docs/error-handling-patterns.md)** - Recovery and rollback strategies
+- **[ShellCheck Best Practices](docs/shellcheck-best-practices.md)** - Shell script static analysis
+- **[Building Validation Systems](docs/building-validation-systems.md)** - Environment validation frameworks
+- **[Python Environment Setup](docs/python-environment-setup.md)** - Virtual environments and pipx
 
 ### 🔍 Problem-Solving Guides
 - **[Debugging and Troubleshooting](docs/debugging-and-troubleshooting.md)** - Common issues and solutions
