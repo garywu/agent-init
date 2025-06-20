@@ -458,6 +458,54 @@ files.forEach(file => {
 
 Remember: **The astro sync command is not optional for content collections!**
 
+## Subdirectory Documentation Sites
+
+When setting up documentation as a subdirectory of an existing repository:
+
+### 1. Repository Structure
+```bash
+your-project/
+├── .github/
+│   └── workflows/
+│       └── deploy-docs.yml    # Workflow MUST be here, not in docs/.github/
+├── src/                       # Your main project code
+├── docs/                      # Documentation site subdirectory
+│   ├── package.json
+│   ├── astro.config.mjs
+│   └── src/
+│       └── content/
+└── README.md
+```
+
+### 2. GitHub Actions Configuration
+```yaml
+# .github/workflows/deploy-docs.yml
+env:
+  BUILD_PATH: "./docs"  # Point to subdirectory
+
+jobs:
+  build:
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          cache-dependency-path: docs/package-lock.json
+          
+      - name: Install dependencies
+        working-directory: ${{ env.BUILD_PATH }}
+        run: npm install
+        
+      - name: Build
+        working-directory: ${{ env.BUILD_PATH }}
+        run: npm run build
+```
+
+### 3. Common Pitfalls
+- ❌ Don't put workflows in `docs/.github/workflows/` - GitHub won't find them
+- ❌ Don't use `--git` flag when creating in subdirectory
+- ✅ Do configure `working-directory` in all workflow steps
+- ✅ Do set `cache-dependency-path` for Node.js setup
+
 ## Additional Resources
 
 ### Official Documentation
