@@ -10,7 +10,7 @@ export default defineConfig({
 	
 	integrations: [
 		starlight({
-			title: 'Agent-Init Documentation',
+			title: 'Agent Init',
 			description: 'Professional development standards and workflows for AI-assisted projects',
 			
 			social: [
