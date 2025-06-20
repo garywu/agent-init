@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  BUILD_PATH: "."
+  BUILD_PATH: "./pages"
 
 jobs:
   build:
@@ -32,18 +32,21 @@ jobs:
         with:
           node-version: "20"
           cache: npm
+          cache-dependency-path: pages/package-lock.json
 
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v4
 
       - name: Install dependencies
+        working-directory: ${{ env.BUILD_PATH }}
         run: |
           # Remove package-lock to avoid cross-platform issues
           rm -f package-lock.json
           npm install
 
       - name: Build with Astro
+        working-directory: ${{ env.BUILD_PATH }}
         run: |
           # CRITICAL: This includes astro sync!
           npm run build
