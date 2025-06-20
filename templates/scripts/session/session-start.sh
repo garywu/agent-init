@@ -22,37 +22,38 @@ mkdir -p "${HISTORY_DIR}"
 
 # Function to get git status summary
 get_git_status() {
-    cd "$PROJECT_ROOT"
-    local branch=$(git branch --show-current 2>/dev/null || echo "main")
-    local changes=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
-    local ahead_behind=$(git status -sb 2>/dev/null | grep -oE '(ahead|behind) [0-9]+' || echo "up to date")
-    echo "{\"branch\": \"$branch\", \"changes\": $changes, \"sync\": \"$ahead_behind\"}"
+  cd "$PROJECT_ROOT"
+  local branch=$(git branch --show-current 2>/dev/null || echo "main")
+  local changes=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+  local ahead_behind=$(git status -sb 2>/dev/null | grep -oE '(ahead|behind) [0-9]+' || echo "up to date")
+  echo "{\"branch\": \"$branch\", \"changes\": $changes, \"sync\": \"$ahead_behind\"}"
 }
 
 # Function to get system info
 get_system_info() {
-    local os=$(uname -s)
-    local arch=$(uname -m)
-    local shell=$(basename "$SHELL")
-    local node_version=$(node --version 2>/dev/null || echo "not installed")
-    local python_version=$(python3 --version 2>/dev/null | cut -d' ' -f2 || echo "not installed")
-    echo "{\"os\": \"$os\", \"arch\": \"$arch\", \"shell\": \"$shell\", \"node\": \"$node_version\", \"python\": \"$python_version\"}"
+  local os=$(uname -s)
+  local arch=$(uname -m)
+  local shell=$(basename "$SHELL")
+  local node_version=$(node --version 2>/dev/null || echo "not installed")
+  local python_version=$(python3 --version 2>/dev/null | cut -d' ' -f2 || echo "not installed")
+  echo "{\"os\": \"$os\", \"arch\": \"$arch\", \"shell\": \"$shell\", \"node\": \"$node_version\", \"python\": \"$python_version\"}"
 }
 
 # Initialize or update session file
 if [[ -f "$SESSION_FILE" ]]; then
-    # Read existing session
-    EXISTING_SESSION=$(cat "$SESSION_FILE")
-    EXISTING_ID=$(echo "$EXISTING_SESSION" | jq -r '.id // empty' 2>/dev/null || echo "")
+  # Read existing session
+  EXISTING_SESSION=$(cat "$SESSION_FILE")
+  EXISTING_ID=$(echo "$EXISTING_SESSION" | jq -r '.id // empty' 2>/dev/null || echo "")
 else
-    EXISTING_ID=""
+  EXISTING_ID=""
 fi
 
 # Generate new session ID
 SESSION_ID="${NOW}_$$"
 
 # Create session data
-SESSION_DATA=$(cat <<EOF
+SESSION_DATA=$(
+  cat <<EOF
 {
   "id": "$SESSION_ID",
   "started": "$NOW",
@@ -68,13 +69,13 @@ EOF
 )
 
 # Write session file
-echo "$SESSION_DATA" | jq '.' > "$SESSION_FILE"
+echo "$SESSION_DATA" | jq '.' >"$SESSION_FILE"
 
 # Create or append to daily history log
 HISTORY_FILE="${HISTORY_DIR}/${TODAY}.md"
 
 if [[ ! -f "$HISTORY_FILE" ]]; then
-    cat > "$HISTORY_FILE" <<EOF
+  cat >"$HISTORY_FILE" <<EOF
 # Session Log - ${TODAY}
 
 ## Sessions
@@ -83,7 +84,7 @@ EOF
 fi
 
 # Append session start to history
-cat >> "$HISTORY_FILE" <<EOF
+cat >>"$HISTORY_FILE" <<EOF
 
 ### Session Started: ${NOW}
 
@@ -110,9 +111,9 @@ echo "• Last commit: $(git log -1 --pretty=format:'%h %s' 2>/dev/null || echo 
 
 # Show recent todos if any
 if command -v rg &>/dev/null && rg -q "TODO|FIXME" . 2>/dev/null; then
-    echo ""
-    echo -e "${YELLOW}Recent TODOs:${NC}"
-    rg "TODO|FIXME" . -m 3 2>/dev/null || true
+  echo ""
+  echo -e "${YELLOW}Recent TODOs:${NC}"
+  rg "TODO|FIXME" . -m 3 2>/dev/null || true
 fi
 
 echo ""
