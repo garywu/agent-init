@@ -5,16 +5,16 @@ import starlight from '@astrojs/starlight';
 // https://astro.build/config
 export default defineConfig({
 	// CRITICAL for GitHub Pages deployment
-	site: 'https://username.github.io',
-	base: '/repository-name', // Replace with your actual repository name
+	site: 'https://garywu.github.io',
+	base: '/claude-init', // Matches the repository name
 	
 	integrations: [
 		starlight({
-			title: 'Documentation',
-			description: 'Professional documentation site built with Starlight',
+			title: 'Agent-Init Documentation',
+			description: 'Professional development standards and workflows for AI-assisted projects',
 			
 			social: [
-				{ icon: 'github', label: 'GitHub', href: 'https://github.com/username/repository-name' },
+				{ icon: 'github', label: 'GitHub', href: 'https://github.com/garywu/claude-init' },
 			],
 			
 			// Use autogenerate for better link handling
