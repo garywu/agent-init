@@ -1,0 +1,63 @@
+# EditorConfig for Library/Package Projects  
+# Optimized for reusable code and contributor experience
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+# Library code (2-space for consistency across contributors)
+[*.{js,ts}]
+indent_size = 2
+
+[*.{jsx,tsx}]
+indent_size = 2
+
+# Type definitions
+[*.d.ts]
+indent_size = 2
+
+# Python libraries (follow ecosystem standards)
+[*.py]
+indent_size = 4
+
+# Go libraries (use tabs per Go convention)
+[*.go]
+indent_style = tab
+indent_size = 4
+
+# Rust libraries  
+[*.rs]
+indent_size = 4
+
+# Configuration and metadata
+[*.{json,jsonc}]
+indent_size = 2
+
+[*.{yml,yaml}]
+indent_size = 2
+
+# Build scripts (minimal complexity expected)
+[*.{sh,bash}]
+indent_size = 2
+
+# Build files
+[Makefile]
+indent_style = tab
+
+# Documentation (consistent with project)
+[*.md]
+indent_size = 2
+trim_trailing_whitespace = false
+
+# Examples and demos
+[examples/**/*.{js,ts}]
+indent_size = 2
+
+[demos/**/*.{js,ts}]
+indent_size = 2

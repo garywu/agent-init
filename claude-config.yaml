@@ -1,0 +1,191 @@
+# Claude CLI Master Configuration
+# This file provides instant decision-making for EditorConfig setup
+
+version: "1.0"
+objective: "Eliminate all EditorConfig pre-commit errors"
+
+# Project Type Detection Rules
+project_detection:
+  web:
+    required_indicators:
+      - files: ["package.json"]
+        content_patterns: ["react", "vue", "angular", "next", "vite", "svelte"]
+    optional_indicators:
+      - directories: ["src", "public", "static"]
+      - files: ["webpack.config.js", "vite.config.js", "next.config.js"]
+    excludes:
+      - backend_indicators: ["requirements.txt", "go.mod", "server/", "api/"]
+    
+  infrastructure:
+    required_indicators:
+      - files: ["Dockerfile", "docker-compose.yml", "Makefile"]
+      - shell_script_count: ">3"
+      - directories: ["scripts", "terraform", "ansible", ".github/workflows"]
+    keywords_in_repo_name: ["admin", "infra", "ops", "deploy", "config", "tools"]
+    
+  backend:
+    required_indicators:
+      - files: ["requirements.txt", "go.mod", "pyproject.toml"]
+      - package_json_patterns: ["express", "fastify", "koa", "nestjs"]
+    directories: ["controllers", "routes", "models", "migrations", "prisma"]
+    
+  fullstack:
+    conditions:
+      - web_indicators: true
+        backend_indicators: true
+      - directories: ["frontend", "backend", "client", "server"]
+      - monorepo_files: ["lerna.json", "nx.json", "turbo.json"]
+    
+  library:
+    required_indicators:
+      - package_json_fields: ["main", "module", "exports"]
+      - directories: ["lib", "dist", "build"]
+    repo_name_suffixes: ["-lib", "-sdk", "-utils", "-core", "-package"]
+
+# EditorConfig Templates
+templates:
+  web:
+    file: ".editorconfig-web"
+    description: "2-space indentation, web-focused"
+    shell_scripts: 2
+    primary_languages: ["js", "ts", "css", "html"]
+    
+  infrastructure:
+    file: ".editorconfig-infrastructure"
+    description: "4-space shells/Python, 2-space configs"
+    shell_scripts: 4
+    primary_languages: ["sh", "bash", "py"]
+    
+  backend:
+    file: ".editorconfig-backend"
+    description: "4-space server languages, 2-space configs"
+    shell_scripts: 4
+    primary_languages: ["py", "go", "js", "ts"]
+    
+  fullstack:
+    file: ".editorconfig-fullstack"
+    description: "Language-specific rules for mixed projects"
+    shell_scripts: 4
+    primary_languages: ["mixed"]
+    
+  library:
+    file: ".editorconfig-library"
+    description: "2-space default, ecosystem-appropriate"
+    shell_scripts: 2
+    primary_languages: ["js", "ts", "py"]
+
+# Language-Specific Rules
+language_rules:
+  javascript:
+    extensions: [".js", ".jsx", ".mjs", ".cjs"]
+    indent_spaces: 2
+    ecosystem_standard: "web"
+    
+  typescript:
+    extensions: [".ts", ".tsx", ".d.ts"]
+    indent_spaces: 2
+    ecosystem_standard: "web"
+    
+  python:
+    extensions: [".py", ".pyi"]
+    indent_spaces: 4
+    ecosystem_standard: "PEP 8"
+    
+  shell:
+    extensions: [".sh", ".bash", ".zsh", ".fish"]
+    indent_spaces: "context_dependent"
+    rules:
+      web_project: 2
+      infrastructure_project: 4
+      backend_project: 4
+      fullstack_project: 4
+      library_project: 2
+      
+  configuration:
+    extensions: [".json", ".jsonc", ".yml", ".yaml"]
+    indent_spaces: 2
+    reason: "readability_standard"
+
+# Error Prevention
+error_patterns:
+  mixed_indentation:
+    pattern: "same_file_multiple_indent_sizes"
+    action: "auto_fix_to_project_standard"
+    
+  wrong_shell_indentation:
+    pattern: "shell_script_wrong_spaces"
+    action: "apply_context_appropriate_indentation"
+    
+  missing_editorconfig:
+    pattern: "no_editorconfig_file"
+    action: "auto_detect_and_apply_template"
+    
+  line_too_long:
+    pattern: "exceeds_max_line_length"
+    action: "break_lines_appropriately"
+
+# Auto-fix Commands
+auto_fix:
+  shell_scripts:
+    command: "fix-shell-indentation.py"
+    description: "Normalize shell script indentation"
+    
+  python_files:
+    command: "black"
+    fallback: "manual_4_space_conversion"
+    
+  javascript_files:
+    command: "prettier --write"
+    fallback: "manual_2_space_conversion"
+
+# Validation Commands
+validation:
+  editorconfig_check:
+    command: "editorconfig-checker ."
+    description: "Validate all files against .editorconfig"
+    
+  pre_commit_check:
+    command: "pre-commit run --all-files editorconfig-checker"
+    description: "Run pre-commit EditorConfig validation"
+
+# Quick Decision Tree
+decision_tree:
+  steps:
+    1:
+      check: "package.json with frontend frameworks"
+      if_true: "check_for_backend_code"
+      if_false: "step_2"
+      
+    2:
+      check: "infrastructure indicators"
+      if_true: "infrastructure_template"
+      if_false: "step_3"
+      
+    3:
+      check: "backend indicators"
+      if_true: "backend_template"
+      if_false: "step_4"
+      
+    4:
+      check: "library indicators"
+      if_true: "library_template"
+      if_false: "fullstack_template"  # safe default
+
+# Performance Settings
+performance:
+  cache_project_type: true
+  cache_duration: "session"
+  batch_validation: true
+  
+# Emergency Fallbacks
+emergency:
+  uncertain_project_type: "fullstack"
+  missing_template: "fullstack"
+  validation_failure: "auto_fix_then_retry"
+  
+# Success Metrics
+success_criteria:
+  zero_editorconfig_errors: true
+  instant_detection: "<1_second"
+  automatic_resolution: true
+  no_user_intervention: true
