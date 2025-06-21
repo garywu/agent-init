@@ -132,6 +132,47 @@ templates/
 └── README.md                   # Project template
 ```
 
+## Smart EditorConfig System
+
+Claude-init includes an intelligent EditorConfig system that eliminates indentation conflicts across different project types:
+
+### 🎯 Zero-Error Configuration
+
+The system provides project-type-specific EditorConfig templates that prevent all pre-commit hook failures:
+
+```
+templates/editorconfig-variants/
+├── .editorconfig-web           # 2-space for frontend projects
+├── .editorconfig-infrastructure # 4-space for systems/DevOps
+├── .editorconfig-backend       # 4-space for server applications
+├── .editorconfig-fullstack     # Language-specific rules
+└── .editorconfig-library       # Ecosystem-appropriate standards
+```
+
+### 📊 Intelligent Project Detection
+
+Claude CLI can automatically detect project type and apply the correct configuration:
+
+- **Web Projects**: React, Vue, Angular → 2-space indentation
+- **Infrastructure**: Docker, Terraform, shell scripts → 4-space for scripts
+- **Backend**: Python, Go servers → 4-space following language standards
+- **Full-Stack**: Mixed rules based on file location and type
+- **Libraries**: Follows ecosystem conventions
+
+### 🔧 Key Features
+
+1. **Automatic Detection**: `scripts/setup-editorconfig.sh` analyzes project and applies correct template
+2. **Evolution Support**: Handles project growth (e.g., web → full-stack)
+3. **Conflict Resolution**: Eliminates global vs project-specific indentation conflicts
+4. **Claude CLI Integration**: Provides exact commands for zero-error operation
+
+### 📚 Documentation
+
+- **[Claude Decision Matrix](docs/CLAUDE_DECISION_MATRIX.md)** - Instant patterns for project type detection
+- **[Project Evolution Patterns](docs/PROJECT_EVOLUTION_PATTERNS.md)** - Handles growing complexity
+- **[Claude CLI Integration](docs/CLAUDE_CLI_INTEGRATION.md)** - Zero-error commands and patterns
+- **[Master Config](claude-config.yaml)** - YAML-based rules for quick reference
+
 ## Documentation Resources
 
 Our documentation captures real-world debugging experiences and hard-won knowledge:
