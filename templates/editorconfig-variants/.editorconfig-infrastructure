@@ -1,50 +1,101 @@
-# EditorConfig for Infrastructure/Systems Projects
-# Optimized for shell scripts, Python, DevOps tools
+# EditorConfig for Infrastructure/DevOps Projects
+# EditorConfig is awesome: https://EditorConfig.org
+#
+# PROJECT-SPECIFIC CONFIGURATION
+# This overrides global dotfiles settings for infrastructure projects.
+# See: https://garywu.github.io/dotfiles/reference/editorconfig-strategy/
 
+# top-most EditorConfig file (stops hierarchy traversal)
 root = true
 
+# Universal settings for all files
 [*]
 charset = utf-8
 end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
 indent_style = space
+indent_size = 2
+
+# Infrastructure-specific: Shell scripts use 4 spaces
+# Rationale: Infrastructure team convention for improved readability in complex scripts
+[*.{sh,bash,zsh}]
+indent_size = 4
+keep_permissions = true
+
+# PowerShell for Windows infrastructure
+[*.{ps1,psm1,psd1}]
 indent_size = 4
 
-# Systems languages (4-space standard)
-[*.{sh,bash,zsh,fish}]
-indent_size = 4
-max_line_length = 120
-
+# Python automation scripts
 [*.py]
 indent_size = 4
-max_line_length = 88
+max_line_length = 88  # Black formatter default
 
-[*.{rb,php}]
+# Go for infrastructure tools
+[*.go]
+indent_style = tab
 indent_size = 4
 
-# Configuration files (2-space for readability)
+# Infrastructure as Code
+[*.{tf,tfvars}]
+indent_size = 2
+
+# Kubernetes/Docker Compose YAML
 [*.{yml,yaml}]
 indent_size = 2
+# YAML requires spaces, not tabs
+indent_style = space
 
-[*.{json,jsonc}]
+# Dockerfile
+[Dockerfile*]
 indent_size = 2
 
-[*.toml]
-indent_size = 4
+# JSON configuration files
+[*.json]
+indent_size = 2
 
-# Build files
+# TOML configuration files
+[*.toml]
+indent_size = 2
+
+# Makefile - requires tabs
 [Makefile]
 indent_style = tab
 
-[*.mk]
-indent_style = tab
-
-# Documentation
-[*.md]
+# Configuration files
+[*.{conf,cfg,ini}]
 indent_size = 2
+
+# Environment files
+[.env*]
+indent_style = unset
+quote_type = unset
+# Preserve exact formatting
 trim_trailing_whitespace = false
 
-# Web assets (if any in infra projects)
-[*.{js,ts,html,css}]
-indent_size = 2
+# nginx configuration
+[*.{nginx,conf}]
+indent_size = 4
+
+# Markdown documentation
+[*.md]
+trim_trailing_whitespace = false  # Preserve line breaks
+max_line_length = 80
+
+# Don't apply text transformations to binary files
+[*.{ico,png,jpg,jpeg,gif,webp,svg,ttf,woff,woff2,eot,pdf,mp4,mp3}]
+indent_style = unset
+indent_size = unset
+end_of_line = unset
+trim_trailing_whitespace = false
+charset = unset
+insert_final_newline = false
+
+# Package manager lock files - preserve exact format
+[{package-lock.json,yarn.lock,pnpm-lock.yaml,Gemfile.lock,Cargo.lock}]
+indent_style = unset
+indent_size = unset
+trim_trailing_whitespace = false
+insert_final_newline = unset
+EOF < /dev/null

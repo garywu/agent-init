@@ -1,75 +1,172 @@
-# EditorConfig for Full-Stack Projects
-# Handles multiple languages with appropriate standards
+# EditorConfig for Full-Stack/Multi-Language Projects
+# EditorConfig is awesome: https://EditorConfig.org
+#
+# PROJECT-SPECIFIC CONFIGURATION
+# This provides language-specific rules for mixed-technology projects.
+# See: https://garywu.github.io/dotfiles/reference/editorconfig-strategy/
 
+# top-most EditorConfig file (stops hierarchy traversal)
 root = true
 
+# Universal settings for all files
 [*]
 charset = utf-8
 end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
 indent_style = space
-indent_size = 2
+indent_size = 2  # Default for most files
 
-# Frontend languages (2-space web standard)
-[*.{js,jsx,ts,tsx}]
-indent_size = 2
-
-[*.{vue,svelte}]
-indent_size = 2
+# Frontend Technologies (Web Standards)
+[*.{js,jsx,ts,tsx,mjs,cjs}]
+indent_size = 2  # JavaScript ecosystem standard
 
 [*.{css,scss,sass,less}]
-indent_size = 2
+indent_size = 2  # CSS ecosystem standard
 
-[*.{html,htm}]
-indent_size = 2
+[*.{html,htm,vue}]
+indent_size = 2  # Template standard
+trim_trailing_whitespace = false  # Preserve HTML spacing
 
-# Backend languages (4-space systems standard)
+# Backend Technologies (Systems Standards)
 [*.py]
-indent_size = 4
-max_line_length = 88
+indent_size = 4  # Python PEP 8
+max_line_length = 88  # Black formatter
 
-[*.{sh,bash,zsh,fish}]
-indent_size = 4
-max_line_length = 120
+[*.{sh,bash,zsh}]
+indent_size = 4  # Infrastructure convention for complex scripts
+keep_permissions = true
 
-[*.{rb,php,java,c,cpp,h,hpp}]
-indent_size = 4
-
-# Go uses tabs (language convention)
 [*.go]
-indent_style = tab
+indent_style = tab  # Go language convention
 indent_size = 4
 
-# Rust uses 4 spaces
+[*.{java,kt,kts}]
+indent_size = 4  # JVM ecosystem
+continuation_indent_size = 8
+
+[*.{cs,fs}]
+indent_size = 4  # .NET ecosystem
+
 [*.rs]
-indent_size = 4
+indent_size = 4  # Rust convention
+max_line_length = 100
 
-# Configuration files (2-space for readability)
+[*.{rb,rake}]
+indent_size = 2  # Ruby convention
+
+[*.php]
+indent_size = 4  # PHP standard
+
+# Configuration & Data Files
 [*.{json,jsonc}]
-indent_size = 2
+indent_size = 2  # Readable configuration
 
 [*.{yml,yaml}]
-indent_size = 2
+indent_size = 2  # YAML standard
+indent_style = space  # YAML requires spaces
 
 [*.toml]
-indent_size = 4
+indent_size = 2  # TOML standard
 
-[*.ini]
-indent_size = 4
+[*.xml]
+indent_size = 2  # XML standard
 
-# Build files
+# Database & Query Languages
+[*.sql]
+indent_size = 2
+max_line_length = off  # SQL can have long lines
+
+[*.{graphql,gql}]
+indent_size = 2
+
+# Infrastructure as Code
+[*.{tf,tfvars}]
+indent_size = 2  # Terraform standard
+
+[Dockerfile*]
+indent_size = 2  # Docker standard
+
+# Build & Configuration Files
 [Makefile]
-indent_style = tab
+indent_style = tab  # Make requires tabs
 
-[*.mk]
-indent_style = tab
+[*.{gradle,groovy}]
+indent_size = 4
+
+[pom.xml]
+indent_size = 2
+
+[*.{csproj,vbproj,fsproj}]
+indent_size = 2
+
+# Package Manager Files
+[{package.json,tsconfig.json}]
+indent_size = 2
+
+[{package-lock.json,yarn.lock,pnpm-lock.yaml}]
+indent_style = unset
+trim_trailing_whitespace = false
+insert_final_newline = unset
+
+[{Pipfile,requirements.txt,pyproject.toml}]
+indent_size = 4  # Python ecosystem
+
+[{Cargo.toml,Cargo.lock}]
+indent_size = 2  # Rust ecosystem
+
+[{go.mod,go.sum}]
+indent_style = tab  # Go ecosystem
 
 # Documentation
 [*.md]
+trim_trailing_whitespace = false  # Preserve line breaks
+max_line_length = 80
+
+[*.{rst,adoc}]
 indent_size = 2
+max_line_length = 80
+
+# Environment & Config Files
+[.env*]
+indent_style = unset
 trim_trailing_whitespace = false
 
-# Database
-[*.sql]
+[*.{conf,cfg,ini}]
 indent_size = 2
+
+# Test Files
+[*.{test,spec}.{js,ts,py,rb,go}]
+# Inherit from language-specific rules above
+max_line_length = 120  # Tests can be longer
+
+# Generated/Vendor Files (preserve exact format)
+[**/node_modules/**]
+indent_style = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
+
+[**/vendor/**]
+indent_style = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
+
+[**/generated/**]
+indent_style = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
+
+[**/migrations/**]
+indent_style = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
+
+# Binary Files
+[*.{ico,png,jpg,jpeg,gif,webp,svg,ttf,woff,woff2,eot,pdf,mp4,mp3,wav}]
+indent_style = unset
+indent_size = unset
+end_of_line = unset
+trim_trailing_whitespace = false
+charset = unset
+insert_final_newline = false
+EOF < /dev/null

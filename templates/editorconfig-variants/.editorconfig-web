@@ -1,41 +1,77 @@
-# EditorConfig for Web/Frontend Projects
-# Optimized for JavaScript, TypeScript, CSS, HTML projects
+# EditorConfig for Web Application Projects
+# EditorConfig is awesome: https://EditorConfig.org
+#
+# PROJECT-SPECIFIC CONFIGURATION
+# This inherits from global dotfiles but can override specific settings.
+# See: https://garywu.github.io/dotfiles/reference/editorconfig-strategy/
 
+# top-most EditorConfig file (stops hierarchy traversal)
 root = true
 
+# Universal settings for all files
 [*]
 charset = utf-8
 end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
 indent_style = space
+indent_size = 2  # Web development standard
+
+# JavaScript/TypeScript/React
+[*.{js,jsx,ts,tsx,mjs,cjs}]
 indent_size = 2
 
-# Web languages (2-space standard)
-[*.{js,jsx,ts,tsx,vue,svelte}]
-indent_size = 2
-
+# CSS/SCSS/SASS/Less
 [*.{css,scss,sass,less}]
 indent_size = 2
 
+# HTML templates
 [*.{html,htm}]
 indent_size = 2
+# Don't trim trailing whitespace in HTML (preserves spacing)
+trim_trailing_whitespace = false
 
-[*.{json,jsonc}]
+# JSON configuration and data files
+[*.json]
 indent_size = 2
 
+# YAML for CI/CD and configuration
 [*.{yml,yaml}]
 indent_size = 2
 
-# Scripts (minimal shell usage in web projects)
+# Shell scripts for web tooling (keep 2-space for consistency)
 [*.{sh,bash}]
 indent_size = 2
 
-# Build files
+# Python (if used for build tools)
+[*.py]
+indent_size = 4
+
+# Makefile
 [Makefile]
 indent_style = tab
 
-# Documentation
+# Markdown documentation
 [*.md]
-indent_size = 2
 trim_trailing_whitespace = false
+
+# Package manager lock files
+[{package-lock.json,yarn.lock,pnpm-lock.yaml}]
+indent_style = unset
+trim_trailing_whitespace = false
+insert_final_newline = unset
+
+# Environment files
+[.env*]
+indent_style = unset
+trim_trailing_whitespace = false
+
+# Binary files
+[*.{ico,png,jpg,jpeg,gif,webp,ttf,woff,woff2,eot,pdf,mp4,mp3}]
+indent_style = unset
+indent_size = unset
+end_of_line = unset
+trim_trailing_whitespace = false
+charset = unset
+insert_final_newline = false
+EOF < /dev/null
