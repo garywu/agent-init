@@ -40,6 +40,33 @@ Added semantic versioning and changelog procedures:
 - Makefile commands for changelog management
 - Release workflow documentation
 
+## Shell Script Troubleshooting
+
+### Common ShellCheck Issues and Fixes
+
+If you encounter shellcheck failures during commits, use the automated fix workflow:
+
+```bash
+# Quick fix for all shell scripts
+make fix-shell
+
+# Then retry your commit
+git add -u && git commit
+```
+
+### Manual Fixes for Specific Issues
+
+- **SC2086**: Quote variables: Use `"$var"` instead of `$var`
+- **SC2292**: Use `[[ ]]` instead of `[ ]` for conditionals
+- **SC2312**: Use `|| true` for commands that might fail in subshells
+
+### Pre-commit Hook Workarounds
+
+If shellcheck blocks your commit:
+1. First try: `make fix-shell`
+2. If critical: `git commit --no-verify` (use sparingly)
+3. Fix issues in next commit
+
 ## Repository Templates
 
 ### CLAUDE.md Template

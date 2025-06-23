@@ -17,24 +17,24 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 log_info() {
-    echo -e "${GREEN}[INFO]${NC} $1"
+  echo -e "${GREEN}[INFO]${NC} $1"
 }
 
 log_warn() {
-    echo -e "${YELLOW}[WARN]${NC} $1"
+  echo -e "${YELLOW}[WARN]${NC} $1"
 }
 
 log_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
+  echo -e "${RED}[ERROR]${NC} $1"
 }
 
 # Function to create CLAUDE.md template documentation
 create_claude_templates_doc() {
-    local target_file="$PAGES_TARGET_DIR/claude-templates.md"
-    
-    log_info "Creating CLAUDE.md templates documentation"
-    
-    cat << 'EOF' > "$target_file"
+  local target_file="$PAGES_TARGET_DIR/claude-templates.md"
+
+  log_info "Creating CLAUDE.md templates documentation"
+
+  cat <<'EOF' >"$target_file"
 ---
 title: CLAUDE.md Templates
 description: Documentation for CLAUDE.md templates that enable effective AI-assisted development
@@ -251,17 +251,17 @@ Create project-specific templates that extend base templates:
 
 Remember: The goal is to provide Claude with comprehensive context about your project, enabling more effective assistance throughout your development workflow.
 EOF
-    
-    log_info "Created: $target_file"
+
+  log_info "Created: $target_file"
 }
 
 # Function to create Makefile documentation
 create_makefile_doc() {
-    local target_file="$PAGES_TARGET_DIR/makefile-commands.md"
-    
-    log_info "Creating Makefile commands documentation"
-    
-    cat << 'EOF' > "$target_file"
+  local target_file="$PAGES_TARGET_DIR/makefile-commands.md"
+
+  log_info "Creating Makefile commands documentation"
+
+  cat <<'EOF' >"$target_file"
 ---
 title: Makefile Commands
 description: Complete reference for agent-init Makefile automation commands
@@ -577,17 +577,17 @@ Use the `## Description` format for custom commands to appear in `make help`.
 
 The Makefile serves as the central automation hub for agent-init projects, providing a consistent interface across different project types and languages.
 EOF
-    
-    log_info "Created: $target_file"
+
+  log_info "Created: $target_file"
 }
 
 # Function to create templates overview
 create_templates_overview() {
-    local target_file="$PAGES_TARGET_DIR/templates-overview.md"
-    
-    log_info "Creating templates overview documentation"
-    
-    cat << 'EOF' > "$target_file"
+  local target_file="$PAGES_TARGET_DIR/templates-overview.md"
+
+  log_info "Creating templates overview documentation"
+
+  cat <<'EOF' >"$target_file"
 ---
 title: Templates Overview
 description: Overview of all templates provided by agent-init for different project types
@@ -804,30 +804,30 @@ All templates should:
 
 The agent-init template system provides a solid foundation for professional development practices while remaining flexible enough to adapt to any project's specific needs.
 EOF
-    
-    log_info "Created: $target_file"
+
+  log_info "Created: $target_file"
 }
 
 # Main function
 main() {
-    cd "$PROJECT_ROOT"
-    
-    log_info "Creating template documentation..."
-    
-    # Create target directory
-    mkdir -p "$PAGES_TARGET_DIR"
-    
-    # Create documentation files
-    create_claude_templates_doc
-    create_makefile_doc
-    create_templates_overview
-    
-    log_info "Template documentation created successfully!"
-    log_info ""
-    log_info "Created files:"
-    log_info "- $PAGES_TARGET_DIR/claude-templates.md"
-    log_info "- $PAGES_TARGET_DIR/makefile-commands.md"
-    log_info "- $PAGES_TARGET_DIR/templates-overview.md"
+  cd "$PROJECT_ROOT"
+
+  log_info "Creating template documentation..."
+
+  # Create target directory
+  mkdir -p "$PAGES_TARGET_DIR"
+
+  # Create documentation files
+  create_claude_templates_doc
+  create_makefile_doc
+  create_templates_overview
+
+  log_info "Template documentation created successfully!"
+  log_info ""
+  log_info "Created files:"
+  log_info "- $PAGES_TARGET_DIR/claude-templates.md"
+  log_info "- $PAGES_TARGET_DIR/makefile-commands.md"
+  log_info "- $PAGES_TARGET_DIR/templates-overview.md"
 }
 
 # Run main function

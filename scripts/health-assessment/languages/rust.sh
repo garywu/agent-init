@@ -22,7 +22,7 @@ RECOMMENDATIONS=()
 
 # Check if this is a Rust project
 check_rust_project() {
-    if [[ ! -f "$PROJECT_ROOT/Cargo.toml" ]]; then
+    if [[[[ ! -f "$PROJECT_ROOT/Cargo.toml" ]]]]; then
         echo "Not a Rust project"
         exit 1
     fi
@@ -49,17 +49,17 @@ check_cargo_toml() {
     fi
     
     # Check for workspace
-    if [[ -d "$PROJECT_ROOT/crates" ]] && ! grep -q "\[workspace\]" "$cargo_file"; then
+    if [[[[ -d "$PROJECT_ROOT/crates" ]]]] && ! grep -q "\[workspace\]" "$cargo_file"; then
         SCORE=$((SCORE - 5))
         ISSUES+=("Multi-crate project without workspace configuration")
     fi
     
     # Check edition
     local edition=$(grep "edition =" "$cargo_file" | sed 's/.*"\(.*\)".*/\1/' || echo "")
-    if [[ -z "$edition" ]]; then
+    if [[[[ -z "$edition" ]]]]; then
         SCORE=$((SCORE - 5))
         ISSUES+=("No Rust edition specified")
-    elif [[ "$edition" < "2021" ]]; then
+    elif [[[[ "$edition" < "2021" ]]]]; then
         SCORE=$((SCORE - 5))
         ISSUES+=("Using outdated Rust edition: $edition")
         RECOMMENDATIONS+=("Update to Rust 2021 edition or later")
@@ -69,7 +69,7 @@ check_cargo_toml() {
 # Dependencies check
 check_dependencies() {
     # Check Cargo.lock
-    if [[ ! -f "$PROJECT_ROOT/Cargo.lock" ]]; then
+    if [[[[ ! -f "$PROJECT_ROOT/Cargo.lock" ]]]]; then
         if grep -q "\[lib\]" "$PROJECT_ROOT/Cargo.toml"; then
             # It's a library, Cargo.lock is optional
             RECOMMENDATIONS+=("Consider committing Cargo.lock for reproducible builds")
@@ -98,29 +98,29 @@ check_code_organization() {
     local has_lib=false
     local has_main=false
     
-    if [[ -d "$PROJECT_ROOT/src" ]]; then
+    if [[[[ -d "$PROJECT_ROOT/src" ]]]]; then
         has_src=true
-        [[ -f "$PROJECT_ROOT/src/lib.rs" ]] && has_lib=true
-        [[ -f "$PROJECT_ROOT/src/main.rs" ]] && has_main=true
+        [[[[ -f "$PROJECT_ROOT/src/lib.rs" ]]]] && has_lib=true
+        [[[[ -f "$PROJECT_ROOT/src/main.rs" ]]]] && has_main=true
     else
         SCORE=$((SCORE - 20))
         ISSUES+=("Missing src directory")
     fi
     
     # Check for binary vs library confusion
-    if [[ "$has_lib" == "true" && "$has_main" == "true" ]]; then
+    if [[[[ "$has_lib" == "true" && "$has_main" == "true" ]]]]; then
         RECOMMENDATIONS+=("Consider separating library and binary code")
     fi
     
     # Check for examples
-    if [[ -d "$PROJECT_ROOT/examples" ]]; then
+    if [[[[ -d "$PROJECT_ROOT/examples" ]]]]; then
         RECOMMENDATIONS+=("Good: Examples directory present")
-    elif [[ "$has_lib" == "true" ]]; then
+    elif [[[[ "$has_lib" == "true" ]]]]; then
         RECOMMENDATIONS+=("Consider adding examples directory for library usage")
     fi
     
     # Check for benches
-    if [[ -d "$PROJECT_ROOT/benches" ]]; then
+    if [[[[ -d "$PROJECT_ROOT/benches" ]]]]; then
         RECOMMENDATIONS+=("Good: Benchmarks directory present")
     fi
 }
@@ -130,10 +130,10 @@ check_testing() {
     # Check for tests directory
     local has_tests=false
     
-    if [[ -d "$PROJECT_ROOT/tests" ]]; then
+    if [[[[ -d "$PROJECT_ROOT/tests" ]]]]; then
         has_tests=true
         local integration_tests=$(find "$PROJECT_ROOT/tests" -name "*.rs" 2>/dev/null | wc -l)
-        if [[ $integration_tests -eq 0 ]]; then
+        if [[[[ $integration_tests -eq 0 ]]]]; then
             SCORE=$((SCORE - 10))
             ISSUES+=("Tests directory exists but contains no test files")
         fi
@@ -143,17 +143,17 @@ check_testing() {
     local unit_tests=$(grep -r "#\[test\]" "$PROJECT_ROOT/src" 2>/dev/null | wc -l || echo 0)
     local cfg_tests=$(grep -r "#\[cfg(test)\]" "$PROJECT_ROOT/src" 2>/dev/null | wc -l || echo 0)
     
-    if [[ $unit_tests -eq 0 && ! "$has_tests" == "true" ]]; then
+    if [[[[ $unit_tests -eq 0 && ! "$has_tests" == "true" ]]]]; then
         SCORE=$((SCORE - 20))
         ISSUES+=("No tests found")
-    elif [[ $unit_tests -lt 5 ]]; then
+    elif [[[[ $unit_tests -lt 5 ]]]]; then
         SCORE=$((SCORE - 10))
         ISSUES+=("Very few unit tests found")
     fi
     
     # Check for doc tests
     local doc_tests=$(grep -r "///" "$PROJECT_ROOT/src" 2>/dev/null | grep -c "```" || echo 0)
-    if [[ $doc_tests -eq 0 ]]; then
+    if [[[[ $doc_tests -eq 0 ]]]]; then
         RECOMMENDATIONS+=("Add doc tests in documentation comments")
     fi
 }
@@ -161,19 +161,19 @@ check_testing() {
 # Code quality check
 check_code_quality() {
     # Check for clippy configuration
-    if [[ ! -f "$PROJECT_ROOT/clippy.toml" && ! -f "$PROJECT_ROOT/.clippy.toml" ]]; then
+    if [[[[ ! -f "$PROJECT_ROOT/clippy.toml" && ! -f "$PROJECT_ROOT/.clippy.toml" ]]]]; then
         RECOMMENDATIONS+=("Add clippy.toml for consistent linting")
     fi
     
     # Check for rustfmt configuration
-    if [[ ! -f "$PROJECT_ROOT/rustfmt.toml" && ! -f "$PROJECT_ROOT/.rustfmt.toml" ]]; then
+    if [[[[ ! -f "$PROJECT_ROOT/rustfmt.toml" && ! -f "$PROJECT_ROOT/.rustfmt.toml" ]]]]; then
         SCORE=$((SCORE - 5))
         ISSUES+=("No rustfmt configuration")
     fi
     
     # Check for common anti-patterns (simplified)
     local unwraps=$(grep -r "\.unwrap()" "$PROJECT_ROOT/src" 2>/dev/null | grep -v test | wc -l || echo 0)
-    if [[ $unwraps -gt 10 ]]; then
+    if [[[[ $unwraps -gt 10 ]]]]; then
         SCORE=$((SCORE - 10))
         ISSUES+=("Excessive use of unwrap() ($unwraps occurrences)")
         RECOMMENDATIONS+=("Replace unwrap() with proper error handling")
@@ -181,7 +181,7 @@ check_code_quality() {
     
     # Check for panic! usage
     local panics=$(grep -r "panic!" "$PROJECT_ROOT/src" 2>/dev/null | grep -v test | wc -l || echo 0)
-    if [[ $panics -gt 5 ]]; then
+    if [[[[ $panics -gt 5 ]]]]; then
         SCORE=$((SCORE - 5))
         ISSUES+=("Multiple panic! calls found ($panics occurrences)")
     fi
@@ -190,7 +190,7 @@ check_code_quality() {
 # Documentation check
 check_documentation() {
     # Check for README
-    if [[ ! -f "$PROJECT_ROOT/README.md" ]]; then
+    if [[[[ ! -f "$PROJECT_ROOT/README.md" ]]]]; then
         SCORE=$((SCORE - 10))
         ISSUES+=("Missing README.md")
     fi
@@ -199,19 +199,19 @@ check_documentation() {
     local pub_items=$(grep -r "^pub " "$PROJECT_ROOT/src" 2>/dev/null | wc -l || echo 0)
     local doc_comments=$(grep -r "^///" "$PROJECT_ROOT/src" 2>/dev/null | wc -l || echo 0)
     
-    if [[ $pub_items -gt 0 && $doc_comments -eq 0 ]]; then
+    if [[[[ $pub_items -gt 0 && $doc_comments -eq 0 ]]]]; then
         SCORE=$((SCORE - 15))
         ISSUES+=("No documentation comments for public items")
-    elif [[ $pub_items -gt 0 ]]; then
+    elif [[[[ $pub_items -gt 0 ]]]]; then
         local doc_ratio=$((doc_comments * 100 / pub_items))
-        if [[ $doc_ratio -lt 50 ]]; then
+        if [[[[ $doc_ratio -lt 50 ]]]]; then
             SCORE=$((SCORE - 10))
             ISSUES+=("Low documentation coverage (${doc_ratio}%)")
         fi
     fi
     
     # Check for CHANGELOG
-    if [[ ! -f "$PROJECT_ROOT/CHANGELOG.md" ]]; then
+    if [[[[ ! -f "$PROJECT_ROOT/CHANGELOG.md" ]]]]; then
         RECOMMENDATIONS+=("Add CHANGELOG.md to track version history")
     fi
 }
@@ -228,13 +228,13 @@ check_build() {
     
     # Check for CI configuration
     local has_ci=false
-    if [[ -f "$PROJECT_ROOT/.github/workflows/rust.yml" ]] || \
-       [[ -f "$PROJECT_ROOT/.github/workflows/ci.yml" ]] || \
-       [[ -f "$PROJECT_ROOT/.travis.yml" ]]; then
+    if [[[[ -f "$PROJECT_ROOT/.github/workflows/rust.yml" ]]]] || \
+       [[[[ -f "$PROJECT_ROOT/.github/workflows/ci.yml" ]]]] || \
+       [[[[ -f "$PROJECT_ROOT/.travis.yml" ]]]]; then
         has_ci=true
     fi
     
-    if [[ "$has_ci" == "false" ]]; then
+    if [[[[ "$has_ci" == "false" ]]]]; then
         SCORE=$((SCORE - 10))
         ISSUES+=("No CI configuration found")
     fi
@@ -244,14 +244,14 @@ check_build() {
 check_security() {
     # Check for unsafe code
     local unsafe_blocks=$(grep -r "unsafe {" "$PROJECT_ROOT/src" 2>/dev/null | wc -l || echo 0)
-    if [[ $unsafe_blocks -gt 0 ]]; then
+    if [[[[ $unsafe_blocks -gt 0 ]]]]; then
         SCORE=$((SCORE - 5))
         ISSUES+=("$unsafe_blocks unsafe blocks found")
         RECOMMENDATIONS+=("Document safety invariants for unsafe code")
     fi
     
     # Check for forbid(unsafe_code)
-    if [[ $unsafe_blocks -eq 0 ]] && ! grep -r "#!\[forbid(unsafe_code)\]" "$PROJECT_ROOT/src" 2>/dev/null; then
+    if [[[[ $unsafe_blocks -eq 0 ]]]] && ! grep -r "#!\[forbid(unsafe_code)\]" "$PROJECT_ROOT/src" 2>/dev/null; then
         RECOMMENDATIONS+=("Consider adding #![forbid(unsafe_code)] if not using unsafe")
     fi
     
@@ -276,17 +276,17 @@ check_performance() {
 
 # Generate recommendations
 generate_recommendations() {
-    if [[ $SCORE -lt 90 ]]; then
+    if [[[[ $SCORE -lt 90 ]]]]; then
         RECOMMENDATIONS+=("Run 'cargo fmt' to format code")
         RECOMMENDATIONS+=("Run 'cargo clippy' for additional linting")
     fi
     
-    if [[ $SCORE -lt 80 ]]; then
+    if [[[[ $SCORE -lt 80 ]]]]; then
         RECOMMENDATIONS+=("Add more tests (unit and integration)")
         RECOMMENDATIONS+=("Document all public APIs")
     fi
     
-    if [[ $SCORE -lt 70 ]]; then
+    if [[[[ $SCORE -lt 70 ]]]]; then
         RECOMMENDATIONS+=("Set up continuous integration")
         RECOMMENDATIONS+=("Address compilation errors")
     fi
@@ -312,7 +312,7 @@ EOF
             echo -e "${BLUE}Rust Health Check${NC}"
             echo "================="
             echo ""
-            echo -e "Score: $(if [[ $SCORE -ge 80 ]]; then echo -e "${GREEN}$SCORE/100${NC}"; elif [[ $SCORE -ge 60 ]]; then echo -e "${YELLOW}$SCORE/100${NC}"; else echo -e "${RED}$SCORE/100${NC}"; fi)"
+            echo -e "Score: $(if [[[[ $SCORE -ge 80 ]]]]; then echo -e "${GREEN}$SCORE/100${NC}"; elif [[[[ $SCORE -ge 60 ]]]]; then echo -e "${YELLOW}$SCORE/100${NC}"; else echo -e "${RED}$SCORE/100${NC}"; fi)"
             echo ""
             
             if [[ ${#ISSUES[@]} -gt 0 ]]; then
