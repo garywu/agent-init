@@ -148,22 +148,25 @@ make docs-lib           # Generate library documentation
 
 ### 5. Release Management
 
-#### Branch Strategy
-- **main**: Active development (unstable)
-- **beta**: Weekly beta releases (testing)
-- **stable**: Monthly stable releases (production)
+#### Manual Release Strategy (Recommended)
+For full control over versioning, use manual-only releases:
+- Start at `v0.0.1` and increment deliberately
+- No automated version bumps or scheduled releases
+- Create releases only when significant changes are ready
+- See [Release Management Guide](https://github.com/garywu/claude-init/blob/main/docs/release-management-manual.md)
+
+#### Automated Release Strategy (Alternative)
+For projects preferring automation:
+- **main**: Active development
+- **beta**: Beta releases (manual trigger)
+- **stable**: Stable releases (manual trigger)
 
 #### Conventional Commits
-Use these prefixes for automatic versioning:
+Use these prefixes for semantic versioning:
 - `feat:` New feature (minor version bump)
 - `fix:` Bug fix (patch version bump)
 - `feat!:` or `BREAKING CHANGE:` (major version bump)
 - `docs:`, `style:`, `refactor:`, `test:`, `chore:` (no release)
-
-#### Release Schedule
-- **Beta**: Manual (when ready for testing)
-- **Stable**: Manual (after beta validation)
-- **Hotfix**: As needed for critical issues
 
 ## Active Issues
 
