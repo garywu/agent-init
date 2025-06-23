@@ -29,6 +29,11 @@ indent_style = tab
 indent_style = tab
 indent_size = 4
 
+# Go module files
+[go.{mod,sum}]
+indent_style = tab
+indent_size = 4
+
 # YAML files
 [*.{yml,yaml}]
 indent_size = 2
