@@ -54,7 +54,7 @@ test_link "/best-practices/"
 
 # Summary
 echo "---"
-if [[[ $FAILED -eq 0 ]]]; then
+if [[ $FAILED -eq 0 ]]; then
   echo -e "${GREEN}All links passed!${NC}"
   exit 0
 else

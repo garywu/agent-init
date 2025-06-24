@@ -37,7 +37,7 @@ copy_template() {
   local dest_dir="$2"
   local dest_file="$dest_dir/$(basename "$template_file")"
 
-  if [[[ ! -f "$template_file" ]]]; then
+  if [[ ! -f "$template_file" ]]; then
     echo -e "${RED}Error: Template file not found at $template_file${NC}"
     return 1
   fi
@@ -45,7 +45,7 @@ copy_template() {
   echo -e "${YELLOW}Copying $(basename "$template_file")...${NC}"
   cp "$template_file" "$dest_file"
 
-  if [[[ -f "$dest_file" ]]]; then
+  if [[ -f "$dest_file" ]]; then
     echo -e "${GREEN}✓ Successfully copied to $dest_file${NC}"
     return 0
   else
@@ -55,7 +55,7 @@ copy_template() {
 }
 
 # Check arguments
-if [[[ $# -lt 2 ]]]; then
+if [[ $# -lt 2 ]]; then
   usage
   exit 1
 fi
@@ -64,7 +64,7 @@ TEMPLATE_NAME="$1"
 DESTINATION="$2"
 
 # Verify destination exists
-if [[[ ! -d "$DESTINATION" ]]]; then
+if [[ ! -d "$DESTINATION" ]]; then
   echo -e "${RED}Error: Destination directory does not exist: $DESTINATION${NC}"
   exit 1
 fi

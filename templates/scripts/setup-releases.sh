@@ -70,7 +70,7 @@ done
 echo ""
 echo "Checking for workflow files..."
 for workflow in release-beta.yml release-stable.yml release-hotfix.yml sync-branches.yml; do
-  if [[[ -f ".github/workflows/$workflow" ]]]; then
+  if [[ -f ".github/workflows/$workflow" ]]; then
     echo -e "  ✅ $workflow exists"
   else
     echo -e "  ❌ $workflow missing"
@@ -106,8 +106,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEMPLATE_DIR="$(dirname "$SCRIPT_DIR")"
 
 for workflow in release-beta.yml release-stable.yml release-hotfix.yml sync-branches.yml; do
-  if [[[ ! -f ".github/workflows/$workflow" ]]]; then
-    if [[[ -f "$TEMPLATE_DIR/.github/workflows/$workflow" ]]]; then
+  if [[ ! -f ".github/workflows/$workflow" ]]; then
+    if [[ -f "$TEMPLATE_DIR/.github/workflows/$workflow" ]]; then
       cp "$TEMPLATE_DIR/.github/workflows/$workflow" ".github/workflows/"
       echo -e "  ${GREEN}✅ Copied $workflow${NC}"
     else
@@ -117,25 +117,25 @@ for workflow in release-beta.yml release-stable.yml release-hotfix.yml sync-bran
 done
 
 # Copy release configuration
-if [[[ ! -f ".github/release.yml" ]]] && [[[ -f "$TEMPLATE_DIR/.github/release.yml" ]]]; then
+if [[ ! -f ".github/release.yml" ]] && [[ -f "$TEMPLATE_DIR/.github/release.yml" ]]; then
   cp "$TEMPLATE_DIR/.github/release.yml" ".github/"
   echo -e "  ${GREEN}✅ Copied release.yml configuration${NC}"
 fi
 
 # Copy RELEASES.md if it doesn't exist
-if [[[ ! -f "RELEASES.md" ]]] && [[[ -f "$TEMPLATE_DIR/RELEASES.md" ]]]; then
+if [[ ! -f "RELEASES.md" ]] && [[ -f "$TEMPLATE_DIR/RELEASES.md" ]]; then
   cp "$TEMPLATE_DIR/RELEASES.md" .
   echo -e "  ${GREEN}✅ Copied RELEASES.md documentation${NC}"
 fi
 
 # Create VERSION file if it doesn't exist
-if [[[ ! -f "VERSION" ]]]; then
+if [[ ! -f "VERSION" ]]; then
   echo "v0.0.1" >VERSION
   echo -e "  ${GREEN}✅ Created VERSION file${NC}"
 fi
 
 # Update .gitignore if needed
-if [[[ -f ".gitignore" ]]]; then
+if [[ -f ".gitignore" ]]; then
   if ! grep -q "^# Release artifacts" .gitignore; then
     echo "" >>.gitignore
     echo "# Release artifacts" >>.gitignore

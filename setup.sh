@@ -11,7 +11,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Function to detect project type
 detect_project_type() {
-  if [[[ -f "package.json" ]]]; then
+  if [[ -f "package.json" ]]; then
     # Node.js project detected
     if grep -q '"next"' package.json 2>/dev/null; then
       echo "nextjs"
@@ -24,13 +24,13 @@ detect_project_type() {
     else
       echo "node"
     fi
-  elif [[[ -f "Cargo.toml" ]]]; then
+  elif [[ -f "Cargo.toml" ]]; then
     echo "rust"
-  elif [[[ -f "go.mod" ]]]; then
+  elif [[ -f "go.mod" ]]; then
     echo "golang"
-  elif [[[ -f "requirements.txt" ]]] || [[[ -f "setup.py" ]]]; then
+  elif [[ -f "requirements.txt" ]] || [[ -f "setup.py" ]]; then
     echo "python"
-  elif [[[ -f "Gemfile" ]]]; then
+  elif [[ -f "Gemfile" ]]; then
     echo "ruby"
   else
     echo "generic"
@@ -43,7 +43,7 @@ setup_claude_dirs() {
   mkdir -p .claude/history/sessions
 
   # Copy README if template exists
-  if [[[ -f "$SCRIPT_DIR/templates/.claude/README.md" ]]]; then
+  if [[ -f "$SCRIPT_DIR/templates/.claude/README.md" ]]; then
     cp "$SCRIPT_DIR/templates/.claude/README.md" .claude/
   fi
 
@@ -63,7 +63,7 @@ PROJECT_TYPE=$(detect_project_type)
 echo "🔍 Detected project type: $PROJECT_TYPE"
 
 # Copy appropriate CLAUDE.md template
-if [[[ -f "templates/CLAUDE-${PROJECT_TYPE}.md" ]]]; then
+if [[ -f "templates/CLAUDE-${PROJECT_TYPE}.md" ]]; then
   echo "📄 Using specialized template for $PROJECT_TYPE"
   cp "templates/CLAUDE-${PROJECT_TYPE}.md" CLAUDE.md
 else
@@ -81,7 +81,7 @@ cp templates/.gitignore .gitignore 2>/dev/null || true
 cp templates/CONTRIBUTING.md CONTRIBUTING.md 2>/dev/null || true
 
 # Create aliases file if it doesn't exist
-if [[[ ! -f ".claude-aliases" ]]]; then
+if [[ ! -f ".claude-aliases" ]]; then
   echo "🔧 Creating .claude-aliases..."
   cat >.claude-aliases <<'EOF'
 #!/bin/bash
@@ -105,7 +105,7 @@ EOF
 fi
 
 # Create health check script
-if [[[ ! -f "scripts/health-check.sh" ]]]; then
+if [[ ! -f "scripts/health-check.sh" ]]; then
   mkdir -p scripts
   echo "🏥 Creating health check script..."
   cat >scripts/health-check.sh <<'EOF'
@@ -131,7 +131,7 @@ EOF
 fi
 
 # Copy session management scripts
-if [[[ -d "$SCRIPT_DIR/templates/scripts/session" ]]] && [[[ ! -d "scripts/session" ]]]; then
+if [[ -d "$SCRIPT_DIR/templates/scripts/session" ]] && [[ ! -d "scripts/session" ]]; then
   echo "📊 Setting up session management scripts..."
   mkdir -p scripts
   cp -r "$SCRIPT_DIR/templates/scripts/session" scripts/
@@ -140,7 +140,7 @@ if [[[ -d "$SCRIPT_DIR/templates/scripts/session" ]]] && [[[ ! -d "scripts/sessi
 fi
 
 # Initialize git if needed
-if [[[ ! -d ".git" ]]]; then
+if [[ ! -d ".git" ]]; then
   echo "🔧 Initializing git repository..."
   git init
   git add -A
@@ -153,10 +153,10 @@ read -p "Would you like to set up multi-stage release management? (y/n) " -n 1 -
 echo ""
 
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-  if [[[ -f "scripts/setup-releases.sh" ]]]; then
+  if [[ -f "scripts/setup-releases.sh" ]]; then
     echo "Running release setup..."
     bash scripts/setup-releases.sh
-  elif [[[ -f "$SCRIPT_DIR/templates/scripts/setup-releases.sh" ]]]; then
+  elif [[ -f "$SCRIPT_DIR/templates/scripts/setup-releases.sh" ]]; then
     echo "Copying and running release setup..."
     mkdir -p scripts
     cp "$SCRIPT_DIR/templates/scripts/setup-releases.sh" scripts/
@@ -173,7 +173,7 @@ read -p "Would you like to set up a documentation site? (y/n) " -n 1 -r
 echo ""
 
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-  if [[[ -d "$SCRIPT_DIR/templates/docs" ]]]; then
+  if [[ -d "$SCRIPT_DIR/templates/docs" ]]; then
     echo "Setting up documentation site..."
     cp -r "$SCRIPT_DIR/templates/docs" .
     echo "✅ Documentation site created in ./docs"
