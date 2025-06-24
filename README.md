@@ -1,15 +1,15 @@
-# Claude Init - Professional Repository Setup
+# Agent Init - Professional Repository Setup
 
-[![Release](https://img.shields.io/github/v/release/garywu/claude-init?include_prereleases&sort=semver&display_name=tag&style=flat-square)](https://github.com/garywu/claude-init/releases/latest)
-[![Stable](https://img.shields.io/badge/channel-stable-green?style=flat-square)](https://github.com/garywu/claude-init/tree/stable)
-[![Beta](https://img.shields.io/badge/channel-beta-orange?style=flat-square)](https://github.com/garywu/claude-init/tree/beta)
-[![Development](https://img.shields.io/badge/channel-main-red?style=flat-square)](https://github.com/garywu/claude-init/tree/main)
+[![Release](https://img.shields.io/github/v/release/garywu/agent-init?include_prereleases&sort=semver&display_name=tag&style=flat-square)](https://github.com/garywu/agent-init/releases/latest)
+[![Stable](https://img.shields.io/badge/channel-stable-green?style=flat-square)](https://github.com/garywu/agent-init/tree/stable)
+[![Beta](https://img.shields.io/badge/channel-beta-orange?style=flat-square)](https://github.com/garywu/agent-init/tree/beta)
+[![Development](https://img.shields.io/badge/channel-main-red?style=flat-square)](https://github.com/garywu/agent-init/tree/main)
 
 This repository provides templates and instructions for Claude to initialize professional development standards in any repository.
 
 ## Core Design Principle
 
-**Claude-init is an information resource, not a decision-making tool.**
+**Agent-init is an information resource, not a decision-making tool.**
 
 This repository provides comprehensive documentation and reference materials for Claude CLI to use when setting up projects. Key principles:
 
@@ -29,7 +29,7 @@ When applying these templates, use the documentation to understand available opt
 - The project's specific requirements
 
 ### For Contributors
-When adding to claude-init, focus on:
+When adding to agent-init, focus on:
 - Documenting multiple approaches rather than prescribing one
 - Explaining when and why to use different tools
 - Providing examples and patterns, not rigid implementations
@@ -39,12 +39,12 @@ When adding to claude-init, focus on:
 
 ### Stable Channel (Recommended)
 ```bash
-git submodule add -b stable https://github.com/garywu/claude-init.git external/claude-init
+git submodule add -b stable https://github.com/garywu/agent-init.git external/agent-init
 ```
 
 ### Beta Channel (Early Access)
 ```bash
-git submodule add -b beta https://github.com/garywu/claude-init.git external/claude-init
+git submodule add -b beta https://github.com/garywu/agent-init.git external/agent-init
 ```
 
 ### Development Channel (Latest)

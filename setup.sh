@@ -1,9 +1,9 @@
 #!/bin/bash
-# claude-init setup script with project type detection
+# agent-init setup script with project type detection
 
 set -e
 
-echo "🚀 Claude-Init Setup"
+echo "🚀 Agent-Init Setup"
 echo "===================="
 
 # Get the directory where this script is located

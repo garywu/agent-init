@@ -1,8 +1,8 @@
-# Claude Development Instructions for claude-init
+# Claude Development Instructions for agent-init
 
 ## Project Overview
 
-claude-init is a repository initialization tool that sets up professional development standards and workflows for new projects. It provides templates and guidelines for AI-assisted development with Claude.
+agent-init is a repository initialization tool that sets up professional development standards and workflows for new projects. It provides templates and guidelines for AI-assisted development with Claude.
 
 ## Enhancements Implemented
 
