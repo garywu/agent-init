@@ -33,7 +33,7 @@ declare -a RECOMMENDATIONS=()
 
 # Utility functions
 log_info() {
-  [[[[ "$VERBOSE" == "true" ]]]] && echo -e "${BLUE}[INFO]${NC} $1" >&2
+  [[  "$VERBOSE" == "true"  ]] && echo -e "${BLUE}[INFO]${NC} $1" >&2
 }
 
 bytes_to_human() {
@@ -41,7 +41,7 @@ bytes_to_human() {
   local units=("B" "KB" "MB" "GB")
   local unit=0
 
-  while [[[[ $bytes -gt 1024 && $unit -lt 3 ]]]]; do
+  while [[  $bytes -gt 1024 && $unit -lt 3  ]]; do
     bytes=$((bytes / 1024))
     ((unit++))
   done
@@ -54,11 +54,11 @@ check_web_performance() {
   log_info "Checking web application performance..."
 
   # Check for performance budgets
-  if [[[[ -f "$PROJECT_ROOT/package.json" ]]]]; then
+  if [[  -f "$PROJECT_ROOT/package.json"  ]]; then
     # Check bundle sizes for JavaScript projects
-    if [[[[ -d "$PROJECT_ROOT/dist" || -d "$PROJECT_ROOT/build" ]]]]; then
+    if [[  -d "$PROJECT_ROOT/dist" || -d "$PROJECT_ROOT/build"  ]]; then
       local build_dir="${PROJECT_ROOT}/dist"
-      [[[[ -d "$PROJECT_ROOT/build" ]]]] && build_dir="$PROJECT_ROOT/build"
+      [[  -d "$PROJECT_ROOT/build"  ]] && build_dir="$PROJECT_ROOT/build"
 
       # Check total bundle size
       local total_size=$(find "$build_dir" -name "*.js" -o -name "*.css" 2>/dev/null | xargs du -cb | tail -1 | cut -f1)
@@ -67,14 +67,14 @@ check_web_performance() {
       # Check individual bundle sizes
       local large_bundles=$(find "$build_dir" -name "*.js" -size +500k 2>/dev/null | wc -l || echo 0)
 
-      if [[[[ $large_bundles -gt 0 ]]]]; then
+      if [[  $large_bundles -gt 0  ]]; then
         PERFORMANCE_METRICS[optimization_score]=$((PERFORMANCE_METRICS[optimization_score] - 15))
         PERFORMANCE_ISSUES+=("Found $large_bundles JavaScript bundles larger than 500KB")
       fi
 
       # Check if code splitting is used
       local chunks=$(find "$build_dir" -name "chunk*.js" -o -name "*chunk*.js" 2>/dev/null | wc -l || echo 0)
-      if [[[[ $chunks -eq 0 && $total_size -gt 1048576 ]]]]; then # 1MB
+      if [[  $chunks -eq 0 && $total_size -gt 1048576  ]]; then # 1MB
         PERFORMANCE_METRICS[optimization_score]=$((PERFORMANCE_METRICS[optimization_score] - 10))
         PERFORMANCE_ISSUES+=("No code splitting detected for large bundle")
       fi
@@ -93,17 +93,17 @@ check_web_performance() {
       has_optimization=true
     fi
 
-    if [[[[ "$has_optimization" == "false" ]]]]; then
+    if [[  "$has_optimization" == "false"  ]]; then
       PERFORMANCE_METRICS[optimization_score]=$((PERFORMANCE_METRICS[optimization_score] - 10))
       PERFORMANCE_ISSUES+=("No compression or minification tools detected")
     fi
 
     # Check for lazy loading
-    if [[[[ -d "$PROJECT_ROOT/src" ]]]]; then
+    if [[  -d "$PROJECT_ROOT/src"  ]]; then
       local lazy_patterns=$(grep -r "lazy\\|Suspense\\|import(" "$PROJECT_ROOT/src" \
         --include="*.js" --include="*.jsx" --include="*.ts" --include="*.tsx" 2>/dev/null | wc -l || echo 0)
 
-      if [[[[ $lazy_patterns -eq 0 ]]]]; then
+      if [[  $lazy_patterns -eq 0  ]]; then
         RECOMMENDATIONS+=("Consider implementing lazy loading for better performance")
       fi
     fi
@@ -118,7 +118,7 @@ check_image_optimization() {
   local image_files=$(find "$PROJECT_ROOT" -type f \( -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" -o -name "*.gif" \) \
     -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/dist/*" -not -path "*/build/*" 2>/dev/null)
 
-  if [[[[ -n "$image_files" ]]]]; then
+  if [[  -n "$image_files"  ]]; then
     local large_images=0
     local unoptimized_count=0
     local total_image_size=0
@@ -128,29 +128,29 @@ check_image_optimization() {
       total_image_size=$((total_image_size + size))
 
       # Check for large images (>500KB)
-      if [[[[ $size -gt 512000 ]]]]; then
+      if [[  $size -gt 512000  ]]; then
         ((large_images++))
       fi
 
       # Basic check for optimization (very simplified)
       # In reality, you'd use tools like imagemagick to check
-      if [[[[ $size -gt 102400 ]]]]; then # >100KB
+      if [[  $size -gt 102400  ]]; then # >100KB
         ((unoptimized_count++))
       fi
     done <<<"$image_files"
 
-    if [[[[ $large_images -gt 5 ]]]]; then
+    if [[  $large_images -gt 5  ]]; then
       PERFORMANCE_METRICS[optimization_score]=$((PERFORMANCE_METRICS[optimization_score] - 10))
       PERFORMANCE_ISSUES+=("Found $large_images images larger than 500KB")
     fi
 
-    if [[[[ $unoptimized_count -gt 10 ]]]]; then
+    if [[  $unoptimized_count -gt 10  ]]; then
       RECOMMENDATIONS+=("Optimize images using tools like imagemin or sharp")
     fi
 
     # Check for modern image formats
     local webp_count=$(find "$PROJECT_ROOT" -name "*.webp" -not -path "*/node_modules/*" 2>/dev/null | wc -l || echo 0)
-    if [[[[ $webp_count -eq 0 && $large_images -gt 0 ]]]]; then
+    if [[  $webp_count -eq 0 && $large_images -gt 0  ]]; then
       RECOMMENDATIONS+=("Consider using modern image formats (WebP, AVIF) for better compression")
     fi
   fi
@@ -161,11 +161,11 @@ check_caching() {
   log_info "Checking caching configuration..."
 
   # Check for service worker (PWA)
-  if [[[[ -f "$PROJECT_ROOT/package.json" ]]]]; then
+  if [[  -f "$PROJECT_ROOT/package.json"  ]]; then
     local has_sw=$(find "$PROJECT_ROOT" -name "service-worker.js" -o -name "serviceWorker.js" -o -name "sw.js" \
       -not -path "*/node_modules/*" 2>/dev/null | wc -l || echo 0)
 
-    if [[[[ $has_sw -eq 0 ]]]]; then
+    if [[  $has_sw -eq 0  ]]; then
       # Check if it's a web app that would benefit from SW
       if grep -q "react\\|vue\\|angular" "$PROJECT_ROOT/package.json" 2>/dev/null; then
         RECOMMENDATIONS+=("Consider implementing a service worker for offline support and caching")
@@ -187,7 +187,7 @@ check_caching() {
   local has_cache_config=false
 
   for config in "${config_files[@]}"; do
-    if [[[[ -f "$PROJECT_ROOT/$config" ]]]]; then
+    if [[  -f "$PROJECT_ROOT/$config"  ]]; then
       if grep -i "cache-control\\|expires\\|etag" "$PROJECT_ROOT/$config" 2>/dev/null | grep -q .; then
         has_cache_config=true
         break
@@ -195,7 +195,7 @@ check_caching() {
     fi
   done
 
-  if [[[[ "$has_cache_config" == "false" ]]]]; then
+  if [[  "$has_cache_config" == "false"  ]]; then
     RECOMMENDATIONS+=("Configure appropriate cache headers for static assets")
   fi
 }
@@ -208,19 +208,19 @@ check_database_performance() {
   local db_files=$(find "$PROJECT_ROOT" -name "*.sql" -o -name "*.prisma" -o -name "*.graphql" \
     -not -path "*/node_modules/*" 2>/dev/null)
 
-  if [[[[ -n "$db_files" ]]]]; then
+  if [[  -n "$db_files"  ]]; then
     # Check for N+1 query patterns (simplified)
     local potential_n1=$(grep -r "SELECT.*FROM.*WHERE.*IN\\|JOIN" "$PROJECT_ROOT" \
       --include="*.js" --include="*.ts" --include="*.py" \
       --exclude-dir=node_modules 2>/dev/null | wc -l || echo 0)
 
-    if [[[[ $potential_n1 -gt 20 ]]]]; then
+    if [[  $potential_n1 -gt 20  ]]; then
       RECOMMENDATIONS+=("Review database queries for potential N+1 problems")
     fi
 
     # Check for index usage
     local index_count=$(grep -i "CREATE.*INDEX\\|INDEX" $db_files 2>/dev/null | wc -l || echo 0)
-    if [[[[ $index_count -eq 0 ]]]]; then
+    if [[  $index_count -eq 0  ]]; then
       PERFORMANCE_METRICS[optimization_score]=$((PERFORMANCE_METRICS[optimization_score] - 10))
       PERFORMANCE_ISSUES+=("No database indexes found")
     fi
@@ -260,7 +260,7 @@ check_monitoring() {
     RECOMMENDATIONS+=("Good: Custom performance metrics detected")
   fi
 
-  if [[[[ "$has_monitoring" == "false" ]]]]; then
+  if [[  "$has_monitoring" == "false"  ]]; then
     PERFORMANCE_METRICS[optimization_score]=$((PERFORMANCE_METRICS[optimization_score] - 10))
     PERFORMANCE_ISSUES+=("No performance monitoring tools detected")
   fi
@@ -275,7 +275,7 @@ check_api_performance() {
     --include="*.js" --include="*.ts" --include="*.py" --include="*.go" \
     --exclude-dir=node_modules 2>/dev/null | wc -l || echo 0)
 
-  if [[[[ $pagination_patterns -lt 5 ]]]]; then
+  if [[  $pagination_patterns -lt 5  ]]; then
     RECOMMENDATIONS+=("Implement pagination for API endpoints returning lists")
   fi
 
@@ -284,13 +284,13 @@ check_api_performance() {
     --include="*.js" --include="*.ts" --include="*.py" \
     --exclude-dir=node_modules 2>/dev/null | wc -l || echo 0)
 
-  if [[[[ $rate_limit -eq 0 ]]]]; then
+  if [[  $rate_limit -eq 0  ]]; then
     PERFORMANCE_METRICS[optimization_score]=$((PERFORMANCE_METRICS[optimization_score] - 5))
     PERFORMANCE_ISSUES+=("No rate limiting detected for APIs")
   fi
 
   # Check for API response compression
-  if [[[[ -f "$PROJECT_ROOT/package.json" ]]]]; then
+  if [[  -f "$PROJECT_ROOT/package.json"  ]]; then
     if ! grep -q "compression" "$PROJECT_ROOT/package.json" 2>/dev/null; then
       RECOMMENDATIONS+=("Enable gzip compression for API responses")
     fi
@@ -301,16 +301,16 @@ check_api_performance() {
 check_build_performance() {
   log_info "Checking build performance..."
 
-  if [[[[ -f "$PROJECT_ROOT/package.json" ]]]]; then
+  if [[  -f "$PROJECT_ROOT/package.json"  ]]; then
     # Check for build caching
-    if [[[[ -f "$PROJECT_ROOT/.gitignore" ]]]]; then
+    if [[  -f "$PROJECT_ROOT/.gitignore"  ]]; then
       if ! grep -q "\\.cache\\|node_modules\\.cache" "$PROJECT_ROOT/.gitignore"; then
         RECOMMENDATIONS+=("Configure build tool caching for faster builds")
       fi
     fi
 
     # Check webpack optimization (if applicable)
-    if [[[[ -f "$PROJECT_ROOT/webpack.config.js" ]]]]; then
+    if [[  -f "$PROJECT_ROOT/webpack.config.js"  ]]; then
       # Check for production optimizations
       if ! grep -q "mode.*production\\|optimization" "$PROJECT_ROOT/webpack.config.js"; then
         PERFORMANCE_METRICS[optimization_score]=$((PERFORMANCE_METRICS[optimization_score] - 10))
@@ -321,7 +321,7 @@ check_build_performance() {
     # Check for parallel processing
     if grep -q "\"build\":" "$PROJECT_ROOT/package.json"; then
       local build_script=$(jq -r '.scripts.build // ""' "$PROJECT_ROOT/package.json")
-      if [[[[ -n "$build_script" ]]]] && ! echo "$build_script" | grep -q "parallel\\|concurrently"; then
+      if [[  -n "$build_script"  ]] && ! echo "$build_script" | grep -q "parallel\\|concurrently"; then
         RECOMMENDATIONS+=("Consider using parallel processing for build tasks")
       fi
     fi
@@ -429,7 +429,7 @@ EOF
 main() {
   log_info "Starting performance analysis for: $PROJECT_ROOT"
 
-  if [[[[ ! -d "$PROJECT_ROOT" ]]]]; then
+  if [[  ! -d "$PROJECT_ROOT"  ]]; then
     echo "Error: Directory not found: $PROJECT_ROOT" >&2
     exit 1
   fi
@@ -458,7 +458,7 @@ main() {
 }
 
 # Script usage
-if [[[[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]]]; then
+if [[  "${1:-}" == "--help" || "${1:-}" == "-h"  ]]; then
   echo "Usage: $0 [PROJECT_PATH] [OUTPUT_FORMAT]"
   echo ""
   echo "Comprehensive performance analysis for projects"

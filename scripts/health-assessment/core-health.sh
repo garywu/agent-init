@@ -47,11 +47,11 @@ declare -a INFO_ITEMS=()
 
 # Utility functions
 log_info() {
-  [[[[ "$VERBOSE" == "true" ]]]] && echo -e "${BLUE}[INFO]${NC} $1" >&2
+  [[  "$VERBOSE" == "true"  ]] && echo -e "${BLUE}[INFO]${NC} $1" >&2
 }
 
 log_success() {
-  [[[[ "$OUTPUT_FORMAT" == "human" ]]]] && echo -e "${GREEN}[SUCCESS]${NC} $1" >&2
+  [[  "$OUTPUT_FORMAT" == "human"  ]] && echo -e "${GREEN}[SUCCESS]${NC} $1" >&2
 }
 
 log_warning() {
@@ -76,7 +76,7 @@ calculate_weighted_score() {
     total_weight=$((total_weight + weight))
   done
 
-  if [[[[ $total_weight -gt 0 ]]]]; then
+  if [[  $total_weight -gt 0  ]]; then
     echo $((total_score / total_weight))
   else
     echo 0
@@ -87,13 +87,13 @@ calculate_weighted_score() {
 get_health_status() {
   local score=$1
 
-  if [[[[ $score -ge 90 ]]]]; then
+  if [[  $score -ge 90  ]]; then
     echo "Excellent"
-  elif [[[[ $score -ge 70 ]]]]; then
+  elif [[  $score -ge 70  ]]; then
     echo "Good"
-  elif [[[[ $score -ge 50 ]]]]; then
+  elif [[  $score -ge 50  ]]; then
     echo "Fair"
-  elif [[[[ $score -ge 30 ]]]]; then
+  elif [[  $score -ge 30  ]]; then
     echo "Poor"
   else
     echo "Critical"
@@ -104,11 +104,11 @@ get_health_status() {
 get_status_color() {
   local score=$1
 
-  if [[[[ $score -ge 90 ]]]]; then
+  if [[  $score -ge 90  ]]; then
     echo "$GREEN"
-  elif [[[[ $score -ge 70 ]]]]; then
+  elif [[  $score -ge 70  ]]; then
     echo "$BLUE"
-  elif [[[[ $score -ge 50 ]]]]; then
+  elif [[  $score -ge 50  ]]; then
     echo "$YELLOW"
   else
     echo "$RED"
@@ -140,11 +140,11 @@ assess_code_quality() {
 
   # Check for TODO/FIXME items
   local todo_count=$(grep -r "TODO\|FIXME\|HACK\|XXX" "$PROJECT_ROOT" --exclude-dir=node_modules --exclude-dir=.git 2>/dev/null | wc -l || echo 0)
-  if [[[[ $todo_count -gt 20 ]]]]; then
+  if [[  $todo_count -gt 20  ]]; then
     score=$((score - 15))
     ISSUES_FOUND[code_quality]+="High number of TODO/FIXME items ($todo_count). "
     ((issues++))
-  elif [[[[ $todo_count -gt 10 ]]]]; then
+  elif [[  $todo_count -gt 10  ]]; then
     score=$((score - 5))
     ((issues++))
   fi
@@ -152,14 +152,14 @@ assess_code_quality() {
   # Check for code complexity (simplified check)
   local long_files=$(find "$PROJECT_ROOT" -name "*.js" -o -name "*.ts" -o -name "*.py" -o -name "*.go" |
     xargs wc -l 2>/dev/null | grep -E "^[[:space:]]*[0-9]{4,}" | wc -l || echo 0)
-  if [[[[ $long_files -gt 5 ]]]]; then
+  if [[  $long_files -gt 5  ]]; then
     score=$((score - 10))
     ISSUES_FOUND[code_quality]+="Multiple files with 1000+ lines. Consider refactoring. "
     ((issues++))
   fi
 
   # Set recommendations
-  if [[[[ $issues -gt 0 ]]]]; then
+  if [[  $issues -gt 0  ]]; then
     RECOMMENDATIONS[code_quality]="Set up linting and formatting tools. Refactor large files. Address TODO items."
   fi
 
@@ -191,22 +191,22 @@ assess_test_coverage() {
   fi
 
   # Check for CI test configuration
-  if [[[[ -f "$PROJECT_ROOT/.github/workflows/"*.yml ]]]]; then
+  if [[  -f "$PROJECT_ROOT/.github/workflows/"*.yml  ]]; then
     local has_test_step=$(grep -l "test\|pytest\|jest\|go test" "$PROJECT_ROOT/.github/workflows/"*.yml 2>/dev/null | wc -l || echo 0)
-    if [[[[ $has_test_step -eq 0 ]]]]; then
+    if [[  $has_test_step -eq 0  ]]; then
       score=$((score - 10))
       ISSUES_FOUND[test_coverage]+="No test execution in CI/CD. "
     fi
   fi
 
   # Check for coverage configuration
-  if [[[[ ! -f "$PROJECT_ROOT/.coveragerc" && ! -f "$PROJECT_ROOT/jest.config.js" ]]]]; then
+  if [[  ! -f "$PROJECT_ROOT/.coveragerc" && ! -f "$PROJECT_ROOT/jest.config.js"  ]]; then
     score=$((score - 10))
     ISSUES_FOUND[test_coverage]+="No coverage configuration found. "
   fi
 
   # Set recommendations
-  if [[[[ $score -lt 70 ]]]]; then
+  if [[  $score -lt 70  ]]; then
     RECOMMENDATIONS[test_coverage]="Add comprehensive test suite. Configure test coverage reporting. Add tests to CI/CD pipeline."
   fi
 
@@ -224,7 +224,7 @@ assess_security() {
   # Check for sensitive data patterns
   local sensitive_patterns=$(grep -r -E "(password|secret|key|token|api_key)\s*=\s*[\"'][^\"']+[\"']" "$PROJECT_ROOT" \
     --exclude-dir=node_modules --exclude-dir=.git --exclude="*.md" 2>/dev/null | wc -l || echo 0)
-  if [[[[ $sensitive_patterns -gt 0 ]]]]; then
+  if [[  $sensitive_patterns -gt 0  ]]; then
     score=$((score - 30))
     CRITICAL_ISSUES+=("Potential hardcoded secrets found!")
     ISSUES_FOUND[security]="Hardcoded secrets detected ($sensitive_patterns occurrences). "
@@ -232,7 +232,7 @@ assess_security() {
   fi
 
   # Check for .env in .gitignore
-  if [[[[ -f "$PROJECT_ROOT/.env" && -f "$PROJECT_ROOT/.gitignore" ]]]]; then
+  if [[  -f "$PROJECT_ROOT/.env" && -f "$PROJECT_ROOT/.gitignore"  ]]; then
     if ! grep -q "^\.env$" "$PROJECT_ROOT/.gitignore"; then
       score=$((score - 20))
       ISSUES_FOUND[security]+=".env file not in .gitignore. "
@@ -241,19 +241,19 @@ assess_security() {
   fi
 
   # Check for dependency vulnerabilities (simplified)
-  if [[[[ -f "$PROJECT_ROOT/package-lock.json" ]]]]; then
+  if [[  -f "$PROJECT_ROOT/package-lock.json"  ]]; then
     local audit_available=$(cd "$PROJECT_ROOT" && npm audit --json 2>/dev/null | jq '.metadata.vulnerabilities.total // 0' || echo 0)
-    if [[[[ $audit_available -gt 10 ]]]]; then
+    if [[  $audit_available -gt 10  ]]; then
       score=$((score - 20))
       ISSUES_FOUND[security]+="High number of npm vulnerabilities. "
-    elif [[[[ $audit_available -gt 0 ]]]]; then
+    elif [[  $audit_available -gt 0  ]]; then
       score=$((score - 10))
       ISSUES_FOUND[security]+="Some npm vulnerabilities found. "
     fi
   fi
 
   # Check for security headers configuration (for web apps)
-  if [[[[ -f "$PROJECT_ROOT/package.json" ]]]] && grep -q "express\|koa\|fastify" "$PROJECT_ROOT/package.json"; then
+  if [[  -f "$PROJECT_ROOT/package.json"  ]] && grep -q "express\|koa\|fastify" "$PROJECT_ROOT/package.json"; then
     if ! grep -r "helmet\|cors" "$PROJECT_ROOT" --include="*.js" --include="*.ts" >/dev/null 2>&1; then
       score=$((score - 10))
       ISSUES_FOUND[security]+="No security headers middleware detected. "
@@ -261,9 +261,9 @@ assess_security() {
   fi
 
   # Set recommendations
-  if [[[[ $critical_issues -gt 0 ]]]]; then
+  if [[  $critical_issues -gt 0  ]]; then
     RECOMMENDATIONS[security]="URGENT: Remove hardcoded secrets. Use environment variables. Add security scanning to CI/CD."
-  elif [[[[ $score -lt 80 ]]]]; then
+  elif [[  $score -lt 80  ]]; then
     RECOMMENDATIONS[security]="Run security audit. Update vulnerable dependencies. Configure security headers."
   fi
 
@@ -278,7 +278,7 @@ assess_performance() {
   local score=100
 
   # Check for build optimization (web projects)
-  if [[[[ -f "$PROJECT_ROOT/package.json" ]]]]; then
+  if [[  -f "$PROJECT_ROOT/package.json"  ]]; then
     # Check for production build configuration
     if ! grep -q "\"build\"" "$PROJECT_ROOT/package.json"; then
       score=$((score - 15))
@@ -293,9 +293,9 @@ assess_performance() {
   fi
 
   # Check for caching configuration
-  if [[[[ -d "$PROJECT_ROOT/.github/workflows" ]]]]; then
+  if [[  -d "$PROJECT_ROOT/.github/workflows"  ]]; then
     local has_cache=$(grep -l "cache:" "$PROJECT_ROOT/.github/workflows/"*.yml 2>/dev/null | wc -l || echo 0)
-    if [[[[ $has_cache -eq 0 ]]]]; then
+    if [[  $has_cache -eq 0  ]]; then
       score=$((score - 10))
       ISSUES_FOUND[performance]+="No caching in CI/CD workflows. "
     fi
@@ -303,13 +303,13 @@ assess_performance() {
 
   # Check for image optimization (web projects)
   local large_images=$(find "$PROJECT_ROOT" -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -size +500k 2>/dev/null | wc -l || echo 0)
-  if [[[[ $large_images -gt 10 ]]]]; then
+  if [[  $large_images -gt 10  ]]; then
     score=$((score - 15))
     ISSUES_FOUND[performance]+="Multiple large image files (>500KB). "
   fi
 
   # Set recommendations
-  if [[[[ $score -lt 80 ]]]]; then
+  if [[  $score -lt 80  ]]; then
     RECOMMENDATIONS[performance]="Optimize build configuration. Add bundle analysis. Implement caching. Optimize assets."
   fi
 
@@ -324,9 +324,9 @@ assess_maintenance() {
   local score=100
 
   # Check for outdated dependencies indicator
-  if [[[[ -f "$PROJECT_ROOT/package.json" ]]]]; then
+  if [[  -f "$PROJECT_ROOT/package.json"  ]]; then
     local pkg_age=$(find "$PROJECT_ROOT/package-lock.json" -mtime +180 2>/dev/null | wc -l || echo 0)
-    if [[[[ $pkg_age -gt 0 ]]]]; then
+    if [[  $pkg_age -gt 0  ]]; then
       score=$((score - 20))
       ISSUES_FOUND[maintenance]="Dependencies not updated in 6+ months. "
     fi
@@ -340,28 +340,28 @@ assess_maintenance() {
   fi
 
   # Check for pre-commit hooks
-  if [[[[ ! -f "$PROJECT_ROOT/.pre-commit-config.yaml" && ! -f "$PROJECT_ROOT/.husky" ]]]]; then
+  if [[  ! -f "$PROJECT_ROOT/.pre-commit-config.yaml" && ! -f "$PROJECT_ROOT/.husky"  ]]; then
     score=$((score - 15))
     ISSUES_FOUND[maintenance]+="No pre-commit hooks configured. "
   fi
 
   # Check for issue templates
-  if [[[[ ! -d "$PROJECT_ROOT/.github/ISSUE_TEMPLATE" ]]]]; then
+  if [[  ! -d "$PROJECT_ROOT/.github/ISSUE_TEMPLATE"  ]]; then
     score=$((score - 10))
     ISSUES_FOUND[maintenance]+="No issue templates found. "
   fi
 
   # Check last commit age
-  if [[[[ -d "$PROJECT_ROOT/.git" ]]]]; then
+  if [[  -d "$PROJECT_ROOT/.git"  ]]; then
     local last_commit_days=$(cd "$PROJECT_ROOT" && git log -1 --format=%ct 2>/dev/null | xargs -I {} date -d @{} +%s 2>/dev/null | xargs -I {} echo $((($(date +%s) - {}) / 86400)) || echo 0)
-    if [[[[ $last_commit_days -gt 180 ]]]]; then
+    if [[  $last_commit_days -gt 180  ]]; then
       score=$((score - 20))
       ISSUES_FOUND[maintenance]+="No commits in 6+ months. "
     fi
   fi
 
   # Set recommendations
-  if [[[[ $score -lt 70 ]]]]; then
+  if [[  $score -lt 70  ]]; then
     RECOMMENDATIONS[maintenance]="Update dependencies regularly. Set up CI/CD. Configure pre-commit hooks. Add issue templates."
   fi
 
@@ -376,33 +376,33 @@ assess_documentation() {
   local score=100
 
   # Check for README
-  if [[[[ ! -f "$PROJECT_ROOT/README.md" && ! -f "$PROJECT_ROOT/README.rst" ]]]]; then
+  if [[  ! -f "$PROJECT_ROOT/README.md" && ! -f "$PROJECT_ROOT/README.rst"  ]]; then
     score=$((score - 30))
     ISSUES_FOUND[documentation]="No README file found. "
   else
     # Check README content quality (basic)
     local readme_size=$(wc -l "$PROJECT_ROOT/README.md" 2>/dev/null | awk '{print $1}' || echo 0)
-    if [[[[ $readme_size -lt 20 ]]]]; then
+    if [[  $readme_size -lt 20  ]]; then
       score=$((score - 15))
       ISSUES_FOUND[documentation]+="README is too brief (<20 lines). "
     fi
   fi
 
   # Check for CONTRIBUTING guide
-  if [[[[ ! -f "$PROJECT_ROOT/CONTRIBUTING.md" ]]]]; then
+  if [[  ! -f "$PROJECT_ROOT/CONTRIBUTING.md"  ]]; then
     score=$((score - 10))
     ISSUES_FOUND[documentation]+="No CONTRIBUTING.md found. "
   fi
 
   # Check for LICENSE
-  if [[[[ ! -f "$PROJECT_ROOT/LICENSE" && ! -f "$PROJECT_ROOT/LICENSE.md" ]]]]; then
+  if [[  ! -f "$PROJECT_ROOT/LICENSE" && ! -f "$PROJECT_ROOT/LICENSE.md"  ]]; then
     score=$((score - 15))
     ISSUES_FOUND[documentation]+="No LICENSE file found. "
   fi
 
   # Check for API documentation
-  if [[[[ -f "$PROJECT_ROOT/package.json" ]]]] && grep -q "express\|fastify\|koa" "$PROJECT_ROOT/package.json"; then
-    if [[[[ ! -d "$PROJECT_ROOT/docs" && ! -f "$PROJECT_ROOT/openapi.yml" && ! -f "$PROJECT_ROOT/swagger.yml" ]]]]; then
+  if [[  -f "$PROJECT_ROOT/package.json"  ]] && grep -q "express\|fastify\|koa" "$PROJECT_ROOT/package.json"; then
+    if [[  ! -d "$PROJECT_ROOT/docs" && ! -f "$PROJECT_ROOT/openapi.yml" && ! -f "$PROJECT_ROOT/swagger.yml"  ]]; then
       score=$((score - 10))
       ISSUES_FOUND[documentation]+="No API documentation found. "
     fi
@@ -410,17 +410,17 @@ assess_documentation() {
 
   # Check for code comments (simplified)
   local code_files=$(find "$PROJECT_ROOT" -name "*.js" -o -name "*.ts" -o -name "*.py" -o -name "*.go" 2>/dev/null | head -20)
-  if [[[[ -n "$code_files" ]]]]; then
+  if [[  -n "$code_files"  ]]; then
     local comment_ratio=$(echo "$code_files" | xargs grep -E "^[[:space:]]*(//|#|/\*)" 2>/dev/null | wc -l || echo 0)
     local code_lines=$(echo "$code_files" | xargs wc -l 2>/dev/null | tail -1 | awk '{print $1}' || echo 1)
-    if [[[[ $code_lines -gt 0 && $((comment_ratio * 100 / code_lines)) -lt 5 ]]]]; then
+    if [[  $code_lines -gt 0 && $((comment_ratio * 100 / code_lines)) -lt 5  ]]; then
       score=$((score - 10))
       ISSUES_FOUND[documentation]+="Low code comment ratio. "
     fi
   fi
 
   # Set recommendations
-  if [[[[ $score -lt 70 ]]]]; then
+  if [[  $score -lt 70  ]]; then
     RECOMMENDATIONS[documentation]="Add comprehensive README. Create CONTRIBUTING guide. Add LICENSE. Document APIs."
   fi
 
@@ -481,7 +481,7 @@ generate_human_output() {
     fi
   done
 
-  if [[[[ "$has_issues" == "true" ]]]]; then
+  if [[  "$has_issues" == "true"  ]]; then
     echo -e "${YELLOW}⚠️  Issues Found${NC}"
     echo "──────────────"
     for dimension in "${!ISSUES_FOUND[@]}"; do
@@ -503,7 +503,7 @@ generate_human_output() {
     fi
   done
 
-  if [[[[ "$has_recommendations" == "true" ]]]]; then
+  if [[  "$has_recommendations" == "true"  ]]; then
     echo -e "${GREEN}💡 Recommendations${NC}"
     echo "────────────────"
     for dimension in "${!RECOMMENDATIONS[@]}"; do
@@ -652,7 +652,7 @@ main() {
   log_info "Starting project health assessment for: $PROJECT_ROOT"
 
   # Change to project directory
-  if [[[[ ! -d "$PROJECT_ROOT" ]]]]; then
+  if [[  ! -d "$PROJECT_ROOT"  ]]; then
     log_error "Project directory not found: $PROJECT_ROOT"
     exit 1
   fi
@@ -677,7 +677,7 @@ main() {
 
   # Return appropriate exit code
   local overall_score=$(calculate_weighted_score)
-  if [[[[ $overall_score -lt 50 ]]]]; then
+  if [[  $overall_score -lt 50  ]]; then
     exit 1 # Poor health
   elif [[ ${#CRITICAL_ISSUES[@]} -gt 0 ]]; then
     exit 2 # Critical issues found
@@ -703,7 +703,7 @@ usage() {
 }
 
 # Handle command line arguments
-if [[[[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]]]; then
+if [[  "${1:-}" == "--help" || "${1:-}" == "-h"  ]]; then
   usage
   exit 0
 fi

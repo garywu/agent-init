@@ -45,19 +45,19 @@ PROJECT_ANALYSIS[recommendations]=""
 
 # Utility functions
 log_info() {
-  if [[[[ "$VERBOSE" == "true" || "$OUTPUT_FORMAT" == "human" ]]]]; then
+  if [[  "$VERBOSE" == "true" || "$OUTPUT_FORMAT" == "human"  ]]; then
     echo -e "${BLUE}[INFO]${NC} $1" >&2
   fi
 }
 
 log_success() {
-  if [[[[ "$OUTPUT_FORMAT" == "human" ]]]]; then
+  if [[  "$OUTPUT_FORMAT" == "human"  ]]; then
     echo -e "${GREEN}[SUCCESS]${NC} $1" >&2
   fi
 }
 
 log_warning() {
-  if [[[[ "$OUTPUT_FORMAT" == "human" ]]]]; then
+  if [[  "$OUTPUT_FORMAT" == "human"  ]]; then
     echo -e "${YELLOW}[WARNING]${NC} $1" >&2
   fi
 }
@@ -68,12 +68,12 @@ log_error() {
 
 # Check if file exists in project
 file_exists() {
-  [[[[ -f "$PROJECT_ROOT/$1" ]]]]
+  [[  -f "$PROJECT_ROOT/$1"  ]]
 }
 
 # Check if directory exists in project
 dir_exists() {
-  [[[[ -d "$PROJECT_ROOT/$1" ]]]]
+  [[  -d "$PROJECT_ROOT/$1"  ]]
 }
 
 # Count files matching pattern
@@ -123,9 +123,9 @@ detect_languages() {
 
   for lang in "${!lang_counts[@]}"; do
     local count=${lang_counts[$lang]}
-    if [[[[ $count -gt 0 ]]]]; then
+    if [[  $count -gt 0  ]]; then
       detected_languages+=("$lang:$count")
-      if [[[[ $count -gt $max_count ]]]]; then
+      if [[  $count -gt $max_count  ]]; then
         max_count=$count
         primary_lang="$lang"
       fi
@@ -378,7 +378,7 @@ analyze_repository() {
 
     # Check for uncommitted changes
     local has_changes="false"
-    if [[[[ -n $(git -C "$PROJECT_ROOT" status --porcelain 2>/dev/null) ]]]]; then
+    if [[  -n $(git -C "$PROJECT_ROOT" status --porcelain 2>/dev/null)  ]]; then
       has_changes="true"
     fi
     PROJECT_ANALYSIS[has_uncommitted_changes]="$has_changes"
@@ -458,11 +458,11 @@ generate_recommendations() {
   esac
 
   # Maturity-based recommendations
-  if [[[[ $maturity_score -lt 50 ]]]]; then
+  if [[  $maturity_score -lt 50  ]]; then
     recommendations+=("Add basic project documentation (README.md)")
     recommendations+=("Initialize Git repository and add .gitignore")
     recommendations+=("Add LICENSE file for open source projects")
-  elif [[[[ $maturity_score -lt 80 ]]]]; then
+  elif [[  $maturity_score -lt 80  ]]; then
     recommendations+=("Add CONTRIBUTING.md for collaboration guidelines")
     recommendations+=("Set up continuous integration")
     recommendations+=("Consider adding CHANGELOG.md for release tracking")
@@ -470,12 +470,12 @@ generate_recommendations() {
 
   # Framework-specific recommendations
   local frameworks="${PROJECT_ANALYSIS[frameworks]}"
-  if [[[[ "$frameworks" == *"react"* ]]]]; then
+  if [[  "$frameworks" == *"react"*  ]]; then
     recommendations+=("Set up React DevTools and debugging")
     recommendations+=("Consider adding Storybook for component development")
   fi
 
-  if [[[[ "$frameworks" == *"nextjs"* ]]]]; then
+  if [[  "$frameworks" == *"nextjs"*  ]]; then
     recommendations+=("Configure Next.js performance monitoring")
     recommendations+=("Set up SEO optimization")
   fi
@@ -493,7 +493,7 @@ output_results() {
     echo "{"
     local first=true
     for key in "${!PROJECT_ANALYSIS[@]}"; do
-      if [[[[ "$first" == "true" ]]]]; then
+      if [[  "$first" == "true"  ]]; then
         first=false
       else
         echo ","
@@ -535,7 +535,7 @@ output_results() {
 
     echo -e "${GREEN}💡 Recommendations${NC}"
     local recommendations="${PROJECT_ANALYSIS[recommendations]}"
-    if [[[[ -n "$recommendations" ]]]]; then
+    if [[  -n "$recommendations"  ]]; then
       IFS='|' read -ra RECS <<<"$recommendations"
       for rec in "${RECS[@]}"; do
         echo "   • $rec"
@@ -589,7 +589,7 @@ usage() {
 }
 
 # Handle command line arguments
-if [[[[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]]]; then
+if [[  "${1:-}" == "--help" || "${1:-}" == "-h"  ]]; then
   usage
   exit 0
 fi

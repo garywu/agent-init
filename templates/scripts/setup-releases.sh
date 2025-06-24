@@ -158,7 +158,7 @@ echo "   - ${YELLOW}$MAIN_BRANCH${NC}: Require PR reviews, status checks"
 echo ""
 
 # Commit changes if any
-if [[[[ -n $(git status -s) ]]]]; then
+if [[  -n $(git status -s)  ]]; then
   echo "Committing setup changes..."
   git add .
   git commit -m "chore: add multi-stage release management"

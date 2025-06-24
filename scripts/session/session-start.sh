@@ -49,7 +49,7 @@ generate_session_id() {
 
 # Get git status summary
 get_git_status() {
-  if [[[[ -d ".git" ]]]]; then
+  if [[  -d ".git"  ]]; then
     local branch=$(git branch --show-current 2>/dev/null || echo "unknown")
     local status=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
     local ahead_behind=$(git status -sb 2>/dev/null | grep -oE '\[.*\]' || echo "")
@@ -73,7 +73,7 @@ get_git_status() {
 
 # Run project analysis
 run_project_analysis() {
-  if [[[[ -f "$PROJECT_DETECTOR" ]]]]; then
+  if [[  -f "$PROJECT_DETECTOR"  ]]; then
     log_info "Running project analysis..."
     "$PROJECT_DETECTOR" "$PROJECT_ROOT" "json" 2>/dev/null || echo "{}"
   else
@@ -96,7 +96,7 @@ get_workspace_overview() {
 
 # Check for active GitHub issues
 get_github_issues() {
-  if command -v gh &>/dev/null && [[[[ -d ".git" ]]]]; then
+  if command -v gh &>/dev/null && [[  -d ".git"  ]]; then
     gh issue list --limit 5 --json number,title,state,labels 2>/dev/null || echo "[]"
   else
     echo "[]"
@@ -114,11 +114,11 @@ initialize_session() {
 
   # Check for existing active session
   local previous_session_id=""
-  if [[[[ -f "$SESSION_FILE" ]]]]; then
+  if [[  -f "$SESSION_FILE"  ]]; then
     previous_session_id=$(jq -r '.id // ""' "$SESSION_FILE" 2>/dev/null || echo "")
 
     # Archive previous session
-    if [[[[ -n "$previous_session_id" ]]]]; then
+    if [[  -n "$previous_session_id"  ]]; then
       log_info "Archiving previous session: $previous_session_id"
       cp "$SESSION_FILE" "${SESSION_HISTORY}/${previous_session_id}.json"
     fi
@@ -165,7 +165,7 @@ EOF
   echo "$session_data" | jq '.' >"$SESSION_FILE"
 
   # Update CLAUDE.md with session info if it exists
-  if [[[[ -f "$CLAUDE_MD" ]]]]; then
+  if [[  -f "$CLAUDE_MD"  ]]; then
     update_claude_md "$session_id" "$timestamp" "$project_type" "$primary_language" "$frameworks" "$maturity_score"
   fi
 
@@ -230,7 +230,7 @@ display_session_summary() {
 
   # Show active GitHub issues if any
   local issue_count=$(echo "$session_data" | jq '.github_issues | length')
-  if [[[[ $issue_count -gt 0 ]]]]; then
+  if [[  $issue_count -gt 0  ]]; then
     echo -e "${CYAN}🐛 Active GitHub Issues${NC}"
     echo "$session_data" | jq -r '.github_issues[] | "  #\(.number): \(.title)"' 2>/dev/null || true
     echo ""
@@ -271,9 +271,9 @@ main() {
   log_info "Initializing enhanced session tracking..."
 
   # Check if already in a session
-  if [[[[ -f "$SESSION_FILE" ]]]]; then
+  if [[  -f "$SESSION_FILE"  ]]; then
     local existing_status=$(jq -r '.status // "unknown"' "$SESSION_FILE" 2>/dev/null || echo "unknown")
-    if [[[[ "$existing_status" == "active" ]]]]; then
+    if [[  "$existing_status" == "active"  ]]; then
       log_warning "Active session detected. Starting new session will archive the current one."
       read -p "Continue? (y/N): " -n 1 -r
       echo
@@ -298,7 +298,7 @@ main() {
 }
 
 # Help message
-if [[[[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]]]; then
+if [[  "${1:-}" == "--help" || "${1:-}" == "-h"  ]]; then
   echo "Usage: $0"
   echo ""
   echo "Start an enhanced development session with intelligent tracking."

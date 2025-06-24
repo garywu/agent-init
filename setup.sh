@@ -117,7 +117,7 @@ echo "====================="
 
 # Git status
 echo "📝 Git Status:"
-if [[[[ -n $(git status -s) ]]]]; then
+if [[  -n $(git status -s)  ]]; then
     echo "⚠️  Uncommitted changes found"
 else
     echo "✅ Working directory clean"

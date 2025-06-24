@@ -137,7 +137,7 @@ create_category_index() {
   local category_name="$2"
   local description="$3"
 
-  if [[[[ ! -f "$category_path/index.md" ]]]]; then
+  if [[  ! -f "$category_path/index.md"  ]]; then
     cat <<EOF >"$category_path/index.md"
 ---
 title: ${category_name}
@@ -159,7 +159,7 @@ EOF
 
     # Add links to all docs in this category
     for doc in "$category_path"/*.md; do
-      if [[[[ -f "$doc" && "$(basename "$doc")" != "index.md" ]]]]; then
+      if [[  -f "$doc" && "$(basename "$doc")" != "index.md"  ]]; then
         local doc_title=$(grep -m1 "^title:" "$doc" | sed 's/title: //')
         local doc_name=$(basename "$doc" .md)
         echo "  <LinkCard title=\"$doc_title\" href=\"./$doc_name/\" />" >>"$category_path/index.md"
@@ -245,11 +245,11 @@ main() {
   local skipped=0
 
   for source_file in "$DOCS_SOURCE_DIR"/*.md; do
-    if [[[[ -f "$source_file" ]]]]; then
+    if [[  -f "$source_file"  ]]; then
       local basename=$(basename "$source_file")
 
       # Skip certain files
-      if [[[[ "$basename" == "README.md" || "$basename" == "CLAUDE_TEMPLATES.md" ]]]]; then
+      if [[  "$basename" == "README.md" || "$basename" == "CLAUDE_TEMPLATES.md"  ]]; then
         log_warn "Skipping: $basename"
         ((skipped++))
         continue

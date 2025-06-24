@@ -40,7 +40,7 @@ get_system_info() {
 }
 
 # Initialize or update session file
-if [[[[ -f "$SESSION_FILE" ]]]]; then
+if [[  -f "$SESSION_FILE"  ]]; then
   # Read existing session
   EXISTING_SESSION=$(cat "$SESSION_FILE")
   EXISTING_ID=$(echo "$EXISTING_SESSION" | jq -r '.id // empty' 2>/dev/null || echo "")
@@ -61,7 +61,7 @@ SESSION_DATA=$(
   "status": "active",
   "git": $(get_git_status),
   "system": $(get_system_info),
-  "previous_session": $(if [[[[ -n "$EXISTING_ID" ]]]]; then echo "\"$EXISTING_ID\""; else echo "null"; fi),
+  "previous_session": $(if [[  -n "$EXISTING_ID"  ]]; then echo "\"$EXISTING_ID\""; else echo "null"; fi),
   "tasks": [],
   "notes": []
 }
@@ -74,7 +74,7 @@ echo "$SESSION_DATA" | jq '.' >"$SESSION_FILE"
 # Create or append to daily history log
 HISTORY_FILE="${HISTORY_DIR}/${TODAY}.md"
 
-if [[[[ ! -f "$HISTORY_FILE" ]]]]; then
+if [[  ! -f "$HISTORY_FILE"  ]]; then
   cat >"$HISTORY_FILE" <<EOF
 # Session Log - ${TODAY}
 

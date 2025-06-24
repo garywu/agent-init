@@ -45,7 +45,7 @@ calculate_duration() {
   local start_seconds=$(date -d "$start_time" +%s 2>/dev/null || date -j -f "%Y-%m-%dT%H:%M:%SZ" "$start_time" +%s 2>/dev/null || echo "0")
   local end_seconds=$(date -d "$end_time" +%s 2>/dev/null || date -j -f "%Y-%m-%dT%H:%M:%SZ" "$end_time" +%s 2>/dev/null || echo "0")
 
-  if [[[[ $start_seconds -eq 0 || $end_seconds -eq 0 ]]]]; then
+  if [[  $start_seconds -eq 0 || $end_seconds -eq 0  ]]; then
     echo "unknown"
     return
   fi
@@ -55,9 +55,9 @@ calculate_duration() {
   local minutes=$(((duration % 3600) / 60))
   local seconds=$((duration % 60))
 
-  if [[[[ $hours -gt 0 ]]]]; then
+  if [[  $hours -gt 0  ]]; then
     echo "${hours}h ${minutes}m ${seconds}s"
-  elif [[[[ $minutes -gt 0 ]]]]; then
+  elif [[  $minutes -gt 0  ]]; then
     echo "${minutes}m ${seconds}s"
   else
     echo "${seconds}s"
@@ -69,7 +69,7 @@ update_health_score() {
   local session_data="$1"
   local project_detector="${SESSION_DIR}/../scripts/project-detector.sh"
 
-  if [[[[ -f "$project_detector" ]]]]; then
+  if [[  -f "$project_detector"  ]]; then
     log_info "Updating health score..."
     local analysis=$("$project_detector" "$PROJECT_ROOT" "json" 2>/dev/null || echo "{}")
     local new_score=$(echo "$analysis" | jq -r '.maturity_score // "0"' 2>/dev/null || echo "0")
@@ -111,7 +111,7 @@ generate_summary() {
 EOF
 
   local goals_count=$(echo "$session_data" | jq '.goals | length')
-  if [[[[ $goals_count -gt 0 ]]]]; then
+  if [[  $goals_count -gt 0  ]]; then
     echo "$session_data" | jq -r '.goals[] | "- \(if .completed then "✅" else "❌" end) \(.description)"' >>"$summary_file"
   else
     echo "- No specific goals were set for this session" >>"$summary_file"
@@ -139,7 +139,7 @@ EOF
 
   # Files modified section
   local files_count=$(echo "$session_data" | jq '.files_modified | length')
-  if [[[[ $files_count -gt 0 ]]]]; then
+  if [[  $files_count -gt 0  ]]; then
     cat >>"$summary_file" <<EOF
 
 ## 📁 Files Modified
@@ -149,7 +149,7 @@ EOF
 
   # GitHub issues section
   local issues_count=$(echo "$session_data" | jq '.issues_worked | length')
-  if [[[[ $issues_count -gt 0 ]]]]; then
+  if [[  $issues_count -gt 0  ]]; then
     cat >>"$summary_file" <<EOF
 
 ## 🐛 GitHub Issues Worked
@@ -158,9 +158,9 @@ EOF
   fi
 
   # Git commits in session
-  if [[[[ -d ".git" ]]]]; then
+  if [[  -d ".git"  ]]; then
     local commits=$(git log --since="$started" --until="$ended" --oneline 2>/dev/null)
-    if [[[[ -n "$commits" ]]]]; then
+    if [[  -n "$commits"  ]]; then
       cat >>"$summary_file" <<EOF
 
 ## 💾 Commits Made
@@ -235,9 +235,9 @@ display_end_summary() {
   echo "  • Activities: $activities_count"
   echo "  • Files Modified: $files_count"
 
-  if [[[[ $health_change -gt 0 ]]]]; then
+  if [[  $health_change -gt 0  ]]; then
     echo -e "  • Health Score: ${GREEN}+$health_change${NC} ✨"
-  elif [[[[ $health_change -lt 0 ]]]]; then
+  elif [[  $health_change -lt 0  ]]; then
     echo -e "  • Health Score: ${RED}$health_change${NC} ⚠️"
   else
     echo -e "  • Health Score: ${YELLOW}No change${NC}"
@@ -258,7 +258,7 @@ display_end_summary() {
 
 # Main execution
 main() {
-  if [[[[ ! -f "$SESSION_FILE" ]]]]; then
+  if [[  ! -f "$SESSION_FILE"  ]]; then
     log_error "No active session found"
     exit 1
   fi
@@ -318,7 +318,7 @@ case "${1:-}" in
   ;;
 *)
   # Confirm before ending
-  if [[[[ -f "$SESSION_FILE" ]]]]; then
+  if [[  -f "$SESSION_FILE"  ]]; then
     local session_id=$(jq -r '.id' "$SESSION_FILE")
     echo -e "${YELLOW}About to end session: $session_id${NC}"
     read -p "Are you sure? (y/N): " -n 1 -r

@@ -37,7 +37,7 @@ calculate_duration() {
   local start_seconds=$(date -d "$start_time" +%s 2>/dev/null || date -j -f "%Y-%m-%dT%H:%M:%SZ" "$start_time" +%s 2>/dev/null || echo "0")
   local current_seconds=$(date +%s)
 
-  if [[[[ $start_seconds -eq 0 ]]]]; then
+  if [[  $start_seconds -eq 0  ]]; then
     echo "unknown"
     return
   fi
@@ -47,9 +47,9 @@ calculate_duration() {
   local minutes=$(((duration % 3600) / 60))
   local seconds=$((duration % 60))
 
-  if [[[[ $hours -gt 0 ]]]]; then
+  if [[  $hours -gt 0  ]]; then
     echo "${hours}h ${minutes}m ${seconds}s"
-  elif [[[[ $minutes -gt 0 ]]]]; then
+  elif [[  $minutes -gt 0  ]]; then
     echo "${minutes}m ${seconds}s"
   else
     echo "${seconds}s"
@@ -76,9 +76,9 @@ display_health_metrics() {
   echo -e "  Starting Score: $health_start/100"
   echo -e "  Current Score: $health_current/100"
 
-  if [[[[ $health_change -gt 0 ]]]]; then
+  if [[  $health_change -gt 0  ]]; then
     echo -e "  Change: ${GREEN}+$health_change${NC} ✨"
-  elif [[[[ $health_change -lt 0 ]]]]; then
+  elif [[  $health_change -lt 0  ]]; then
     echo -e "  Change: ${RED}$health_change${NC} ⚠️"
   else
     echo -e "  Change: ${YELLOW}$health_change${NC} →"
@@ -92,7 +92,7 @@ display_file_changes() {
 
   local files_count=$(echo "$session_data" | jq '.files_modified | length' 2>/dev/null || echo "0")
 
-  if [[[[ $files_count -gt 0 ]]]]; then
+  if [[  $files_count -gt 0  ]]; then
     echo -e "${BLUE}📝 Files Modified${NC} ($files_count)"
     echo "$session_data" | jq -r '.files_modified[-5:] | .[] | "  • \(.)"' 2>/dev/null || true
     echo ""
@@ -105,7 +105,7 @@ display_issues_worked() {
 
   local issues_count=$(echo "$session_data" | jq '.issues_worked | length' 2>/dev/null || echo "0")
 
-  if [[[[ $issues_count -gt 0 ]]]]; then
+  if [[  $issues_count -gt 0  ]]; then
     echo -e "${CYAN}🐛 Issues Worked${NC}"
     echo "$session_data" | jq -r '.issues_worked[] | "  • #\(.number): \(.title) [\(.status)]"' 2>/dev/null || true
     echo ""
@@ -114,7 +114,7 @@ display_issues_worked() {
 
 # Get current git status update
 get_current_git_status() {
-  if [[[[ -d ".git" ]]]]; then
+  if [[  -d ".git"  ]]; then
     local branch=$(git branch --show-current 2>/dev/null || echo "unknown")
     local changes=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
     local staged=$(git diff --cached --name-only 2>/dev/null | wc -l | tr -d ' ')
@@ -126,9 +126,9 @@ get_current_git_status() {
 
     # Show recent commits in this session
     local session_start=$(jq -r '.started' "$SESSION_FILE" 2>/dev/null || echo "")
-    if [[[[ -n "$session_start" ]]]]; then
+    if [[  -n "$session_start"  ]]; then
       local commits=$(git log --since="$session_start" --oneline 2>/dev/null | wc -l | tr -d ' ')
-      if [[[[ $commits -gt 0 ]]]]; then
+      if [[  $commits -gt 0  ]]; then
         echo -e "  Commits This Session: $commits"
         git log --since="$session_start" --oneline --max-count=3 2>/dev/null | sed 's/^/    /'
       fi
@@ -139,7 +139,7 @@ get_current_git_status() {
 
 # Main status display
 display_status() {
-  if [[[[ ! -f "$SESSION_FILE" ]]]]; then
+  if [[  ! -f "$SESSION_FILE"  ]]; then
     log_error "No active session found"
     echo ""
     echo "Start a new session with: make session-start"
@@ -192,7 +192,7 @@ display_status() {
 
   # Session Goals
   local goals_count=$(echo "$session_data" | jq '.goals | length' 2>/dev/null || echo "0")
-  if [[[[ $goals_count -gt 0 ]]]]; then
+  if [[  $goals_count -gt 0  ]]; then
     echo -e "${YELLOW}🎯 Session Goals${NC}"
     echo "$session_data" | jq -r '.goals[] | "  \(if .completed then "✅" else "⏳" end) \(.description)"' 2>/dev/null || true
     echo ""
@@ -216,7 +216,7 @@ display_status() {
 
 # JSON output mode
 display_json() {
-  if [[[[ ! -f "$SESSION_FILE" ]]]]; then
+  if [[  ! -f "$SESSION_FILE"  ]]; then
     echo '{"error": "No active session found"}'
     exit 1
   fi
@@ -239,7 +239,7 @@ main() {
 }
 
 # Help message
-if [[[[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]]]; then
+if [[  "${1:-}" == "--help" || "${1:-}" == "-h"  ]]; then
   echo "Usage: $0 [format]"
   echo ""
   echo "Display current session status with rich information."
