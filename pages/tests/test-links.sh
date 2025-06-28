@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Test internal links in documentation site
 # Usage: ./tests/test-links.sh [base_url]
 

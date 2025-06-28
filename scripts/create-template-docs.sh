@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Script to create documentation for templates
 # This generates reference documentation for all templates in the templates/ directory
 

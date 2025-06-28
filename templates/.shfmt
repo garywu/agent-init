@@ -1,0 +1,17 @@
+# shfmt configuration for consistent shell script formatting
+# https://github.com/mvdan/sh#shfmt
+
+# Use 2-space indentation (standard for most projects)
+-i 2
+
+# Indent case statement cases for better readability
+-ci
+
+# Simplify code where possible (remove unnecessary syntax)
+-s
+
+# Keep padding for column alignment (preserves manual formatting)
+-kp
+
+# Note: This configuration provides consistent, readable formatting
+# while preserving intentional code structure and alignment.

@@ -4,15 +4,36 @@
 
 ShellCheck is an essential tool for writing reliable shell scripts. This guide captures real-world experience from the dotfiles project, where we systematically fixed ShellCheck issues across dozens of scripts in a large codebase.
 
+## Critical: Bash Shebang Compatibility
+
+Before diving into ShellCheck issues, ensure your scripts use the correct shebang:
+
+```bash
+#!/usr/bin/env bash  # ✅ CORRECT - finds bash in PATH
+#!/bin/bash          # ❌ WRONG - hardcoded to system bash
+```
+
+**Why this matters on macOS:**
+- macOS ships with bash 3.2 (from 2007) at `/bin/bash`
+- Modern bash 5.2+ features like `declare -A` will fail
+- Using `env bash` finds the modern version installed via Homebrew/Nix
+
+See [Bash Shebang Compatibility Guide](bash-shebang-compatibility.md) for enforcement strategies.
+
 ## Quick Start
 
 ### Installation
 
 ```bash
+# Complete shell script toolchain (recommended)
+brew install shellcheck shfmt
+cargo install shellharden
+
+# Individual tools
 # macOS with Homebrew
 brew install shellcheck
 
-# Ubuntu/Debian
+# Ubuntu/Debian  
 apt-get install shellcheck
 
 # Via Nix
@@ -27,6 +48,25 @@ shellcheck script.sh
 
 # Check all shell scripts in project
 find . -name "*.sh" -type f -exec shellcheck {} \;
+
+# Use configuration file (recommended)
+# Create .shellcheckrc with project standards
+shellcheck script.sh  # respects .shellcheckrc automatically
+```
+
+### Automated Fixing (Recommended Approach)
+
+Instead of manual fixes, use automated tooling:
+
+```bash
+# One-command comprehensive fixing
+./scripts/fix-shell-issues-enhanced.sh
+
+# Or use the three-tool pipeline:
+shellharden --transform script.sh    # Security fixes
+shellcheck -f diff script.sh | patch # Auto-fixes  
+shfmt -w -i 2 -ci script.sh          # Formatting
+```
 
 # Check with specific shell dialect
 shellcheck -s bash script.sh

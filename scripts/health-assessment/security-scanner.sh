@@ -27,7 +27,7 @@ SECURITY_SCORE=100
 
 # Utility functions
 log_info() {
-  [[  "$VERBOSE" == "true"  ]] && echo -e "${BLUE}[INFO]${NC} $1" >&2
+  [[ $VERBOSE == "true" ]] && echo -e "${BLUE}[INFO]${NC} $1" >&2
 }
 
 add_finding() {
@@ -36,29 +36,29 @@ add_finding() {
   local score_impact="$3"
 
   case "$severity" in
-  "CRITICAL")
-    CRITICAL_ISSUES+=("$message")
-    SECURITY_SCORE=$((SECURITY_SCORE - score_impact))
-    ;;
-  "HIGH")
-    HIGH_ISSUES+=("$message")
-    SECURITY_SCORE=$((SECURITY_SCORE - score_impact))
-    ;;
-  "MEDIUM")
-    MEDIUM_ISSUES+=("$message")
-    SECURITY_SCORE=$((SECURITY_SCORE - score_impact))
-    ;;
-  "LOW")
-    LOW_ISSUES+=("$message")
-    SECURITY_SCORE=$((SECURITY_SCORE - score_impact))
-    ;;
-  "INFO")
-    INFO_ITEMS+=("$message")
-    ;;
+    "CRITICAL")
+      CRITICAL_ISSUES+=("$message")
+      SECURITY_SCORE=$((SECURITY_SCORE - score_impact))
+      ;;
+    "HIGH")
+      HIGH_ISSUES+=("$message")
+      SECURITY_SCORE=$((SECURITY_SCORE - score_impact))
+      ;;
+    "MEDIUM")
+      MEDIUM_ISSUES+=("$message")
+      SECURITY_SCORE=$((SECURITY_SCORE - score_impact))
+      ;;
+    "LOW")
+      LOW_ISSUES+=("$message")
+      SECURITY_SCORE=$((SECURITY_SCORE - score_impact))
+      ;;
+    "INFO")
+      INFO_ITEMS+=("$message")
+      ;;
   esac
 
   # Ensure score doesn't go below 0
-  [[  $SECURITY_SCORE -lt 0  ]] && SECURITY_SCORE=0
+  [[ $SECURITY_SCORE -lt 0 ]] && SECURITY_SCORE=0
 }
 
 # Check for hardcoded secrets and credentials
@@ -92,7 +92,7 @@ check_secrets() {
       --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=venv \
       --exclude="*.md" --exclude="*.lock" --exclude="*.sum" 2>/dev/null | wc -l || echo 0)
 
-    if [[  $matches -gt 0  ]]; then
+    if [[ $matches -gt 0 ]]; then
       add_finding "CRITICAL" "Found $matches potential hardcoded secrets matching pattern: $pattern" 20
     fi
   done
@@ -103,7 +103,7 @@ check_secrets() {
       --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=venv \
       --exclude="*.md" 2>/dev/null | wc -l || echo 0)
 
-    if [[  $matches -gt 0  ]]; then
+    if [[ $matches -gt 0 ]]; then
       add_finding "CRITICAL" "Found $matches potential AWS credentials" 25
     fi
   done
@@ -112,7 +112,7 @@ check_secrets() {
   local private_keys=$(find "$PROJECT_ROOT" -name "*.pem" -o -name "*.key" -o -name "id_rsa*" \
     -not -path "*/node_modules/*" -not -path "*/.git/*" 2>/dev/null | wc -l || echo 0)
 
-  if [[  $private_keys -gt 0  ]]; then
+  if [[ $private_keys -gt 0 ]]; then
     add_finding "HIGH" "Found $private_keys private key files in repository" 15
   fi
 }
@@ -125,9 +125,9 @@ check_env_files() {
   local env_files=$(find "$PROJECT_ROOT" -name ".env*" -not -name ".env.example" -not -name ".env.template" \
     -not -path "*/node_modules/*" -not -path "*/.git/*" 2>/dev/null)
 
-  if [[  -n "$env_files"  ]]; then
+  if [[ -n $env_files ]]; then
     # Check if .gitignore exists
-    if [[  ! -f "$PROJECT_ROOT/.gitignore"  ]]; then
+    if [[ ! -f "$PROJECT_ROOT/.gitignore" ]]; then
       add_finding "CRITICAL" "Found .env files but no .gitignore" 20
     else
       # Check if .env is in .gitignore
@@ -142,7 +142,7 @@ check_env_files() {
   fi
 
   # Check for .env.example
-  if [[  -n "$env_files"  ]] && [[  ! -f "$PROJECT_ROOT/.env.example" && ! -f "$PROJECT_ROOT/.env.template"  ]]; then
+  if [[ -n $env_files ]] && [[ ! -f "$PROJECT_ROOT/.env.example" && ! -f "$PROJECT_ROOT/.env.template" ]]; then
     add_finding "MEDIUM" "No .env.example or .env.template found" 5
   fi
 }
@@ -152,20 +152,20 @@ check_dependencies() {
   log_info "Checking dependency vulnerabilities..."
 
   # Node.js/npm
-  if [[  -f "$PROJECT_ROOT/package-lock.json"  ]]; then
+  if [[ -f "$PROJECT_ROOT/package-lock.json" ]]; then
     if command -v npm &>/dev/null; then
       local npm_audit=$(cd "$PROJECT_ROOT" && npm audit --json 2>/dev/null || echo "{}")
       local total_vulns=$(echo "$npm_audit" | jq '.metadata.vulnerabilities.total // 0' 2>/dev/null || echo 0)
       local critical_vulns=$(echo "$npm_audit" | jq '.metadata.vulnerabilities.critical // 0' 2>/dev/null || echo 0)
       local high_vulns=$(echo "$npm_audit" | jq '.metadata.vulnerabilities.high // 0' 2>/dev/null || echo 0)
 
-      if [[  $critical_vulns -gt 0  ]]; then
+      if [[ $critical_vulns -gt 0 ]]; then
         add_finding "CRITICAL" "Found $critical_vulns critical npm vulnerabilities" 20
       fi
-      if [[  $high_vulns -gt 0  ]]; then
+      if [[ $high_vulns -gt 0 ]]; then
         add_finding "HIGH" "Found $high_vulns high npm vulnerabilities" 10
       fi
-      if [[  $total_vulns -gt 10  ]]; then
+      if [[ $total_vulns -gt 10 ]]; then
         add_finding "MEDIUM" "Total $total_vulns npm vulnerabilities found" 5
       fi
     else
@@ -174,10 +174,10 @@ check_dependencies() {
   fi
 
   # Python
-  if [[  -f "$PROJECT_ROOT/requirements.txt"  ]]; then
+  if [[ -f "$PROJECT_ROOT/requirements.txt" ]]; then
     # Check for outdated packages (basic check)
     local requirements_age=$(find "$PROJECT_ROOT/requirements.txt" -mtime +365 2>/dev/null | wc -l || echo 0)
-    if [[  $requirements_age -gt 0  ]]; then
+    if [[ $requirements_age -gt 0 ]]; then
       add_finding "MEDIUM" "requirements.txt not updated in over a year" 5
     fi
 
@@ -186,7 +186,7 @@ check_dependencies() {
   fi
 
   # Go
-  if [[  -f "$PROJECT_ROOT/go.mod"  ]]; then
+  if [[ -f "$PROJECT_ROOT/go.mod" ]]; then
     if command -v go &>/dev/null; then
       # Check for known vulnerabilities
       add_finding "INFO" "Run 'govulncheck ./...' for Go vulnerability scanning"
@@ -199,7 +199,7 @@ check_security_configs() {
   log_info "Checking security configurations..."
 
   # Web application checks
-  if [[  -f "$PROJECT_ROOT/package.json"  ]]; then
+  if [[ -f "$PROJECT_ROOT/package.json" ]]; then
     local pkg_content=$(cat "$PROJECT_ROOT/package.json")
 
     # Check for security middleware (Express/Node.js)
@@ -220,7 +220,7 @@ check_security_configs() {
   fi
 
   # Docker security
-  if [[  -f "$PROJECT_ROOT/Dockerfile"  ]]; then
+  if [[ -f "$PROJECT_ROOT/Dockerfile" ]]; then
     # Check for running as root
     if ! grep -q "USER" "$PROJECT_ROOT/Dockerfile"; then
       add_finding "MEDIUM" "Dockerfile doesn't specify non-root USER" 8
@@ -266,7 +266,7 @@ check_input_validation() {
     --include="*.js" --include="*.ts" --include="*.py" --include="*.php" \
     --exclude-dir=node_modules 2>/dev/null | wc -l || echo 0)
 
-  if [[  $sql_concat -gt 0  ]]; then
+  if [[ $sql_concat -gt 0 ]]; then
     add_finding "HIGH" "Found $sql_concat potential SQL injection patterns (string concatenation in queries)" 10
   fi
 
@@ -283,12 +283,12 @@ check_cicd_security() {
   log_info "Checking CI/CD security..."
 
   # GitHub Actions
-  if [[  -d "$PROJECT_ROOT/.github/workflows"  ]]; then
+  if [[ -d "$PROJECT_ROOT/.github/workflows" ]]; then
     # Check for secret usage
     local exposed_secrets=$(grep -r "\${{ secrets\." "$PROJECT_ROOT/.github/workflows" |
       grep -E "echo|print" | wc -l || echo 0)
 
-    if [[  $exposed_secrets -gt 0  ]]; then
+    if [[ $exposed_secrets -gt 0 ]]; then
       add_finding "MEDIUM" "Found $exposed_secrets potential secret exposures in GitHub Actions" 8
     fi
 
@@ -296,7 +296,7 @@ check_cicd_security() {
     local unpinned_actions=$(grep -r "uses:" "$PROJECT_ROOT/.github/workflows" |
       grep -v "@[a-f0-9]\{40\}" | grep -v "@v[0-9]" | wc -l || echo 0)
 
-    if [[  $unpinned_actions -gt 5  ]]; then
+    if [[ $unpinned_actions -gt 5 ]]; then
       add_finding "LOW" "Multiple GitHub Actions not pinned to specific versions" 3
     fi
   fi
@@ -318,7 +318,7 @@ check_file_security() {
     local found=$(find "$PROJECT_ROOT" -name "$pattern" \
       -not -path "*/node_modules/*" -not -path "*/.git/*" 2>/dev/null | wc -l || echo 0)
 
-    if [[  $found -gt 0  ]]; then
+    if [[ $found -gt 0 ]]; then
       add_finding "HIGH" "Found $found files matching sensitive pattern: $pattern" 10
     fi
   done
@@ -327,7 +327,7 @@ check_file_security() {
   local backup_files=$(find "$PROJECT_ROOT" -name "*.bak" -o -name "*.backup" -o -name "*.old" \
     -not -path "*/node_modules/*" -not -path "*/.git/*" 2>/dev/null | wc -l || echo 0)
 
-  if [[  $backup_files -gt 0  ]]; then
+  if [[ $backup_files -gt 0 ]]; then
     add_finding "MEDIUM" "Found $backup_files backup files that might contain sensitive data" 5
   fi
 }
@@ -348,7 +348,7 @@ generate_recommendations() {
     recommendations+=("Review and fix authentication implementations")
   fi
 
-  if [[  $SECURITY_SCORE -lt 80  ]]; then
+  if [[ $SECURITY_SCORE -lt 80 ]]; then
     recommendations+=("Implement automated security scanning in CI/CD")
     recommendations+=("Use tools like: npm audit, safety (Python), gosec (Go)")
     recommendations+=("Consider using pre-commit hooks for security checks")
@@ -364,8 +364,8 @@ generate_recommendations() {
 # Output results
 output_results() {
   case "$OUTPUT_FORMAT" in
-  "json")
-    cat <<EOF
+    "json")
+      cat <<EOF
 {
   "security_score": $SECURITY_SCORE,
   "findings": {
@@ -384,80 +384,80 @@ output_results() {
   "recommendations": $(generate_recommendations | jq -R . | jq -s .)
 }
 EOF
-    ;;
-  "human" | *)
-    echo -e "${BLUE}🔒 SECURITY ASSESSMENT${NC}"
-    echo "===================="
-    echo ""
+      ;;
+    "human" | *)
+      echo -e "${BLUE}🔒 SECURITY ASSESSMENT${NC}"
+      echo "===================="
+      echo ""
 
-    # Score with color
-    local score_color="$GREEN"
-    [[  $SECURITY_SCORE -lt 80  ]] && score_color="$YELLOW"
-    [[  $SECURITY_SCORE -lt 60  ]] && score_color="$RED"
+      # Score with color
+      local score_color="$GREEN"
+      [[ $SECURITY_SCORE -lt 80 ]] && score_color="$YELLOW"
+      [[ $SECURITY_SCORE -lt 60 ]] && score_color="$RED"
 
-    echo -e "Security Score: ${score_color}${SECURITY_SCORE}/100${NC}"
-    echo ""
+      echo -e "Security Score: ${score_color}${SECURITY_SCORE}/100${NC}"
+      echo ""
 
-    # Summary
-    echo -e "${CYAN}Summary:${NC}"
-    echo "• Critical Issues: ${#CRITICAL_ISSUES[@]}"
-    echo "• High Issues: ${#HIGH_ISSUES[@]}"
-    echo "• Medium Issues: ${#MEDIUM_ISSUES[@]}"
-    echo "• Low Issues: ${#LOW_ISSUES[@]}"
-    echo ""
+      # Summary
+      echo -e "${CYAN}Summary:${NC}"
+      echo "• Critical Issues: ${#CRITICAL_ISSUES[@]}"
+      echo "• High Issues: ${#HIGH_ISSUES[@]}"
+      echo "• Medium Issues: ${#MEDIUM_ISSUES[@]}"
+      echo "• Low Issues: ${#LOW_ISSUES[@]}"
+      echo ""
 
-    # Critical findings
-    if [[ ${#CRITICAL_ISSUES[@]} -gt 0 ]]; then
-      echo -e "${RED}🚨 CRITICAL FINDINGS:${NC}"
-      for issue in "${CRITICAL_ISSUES[@]}"; do
-        echo "  ⚠️  $issue"
+      # Critical findings
+      if [[ ${#CRITICAL_ISSUES[@]} -gt 0 ]]; then
+        echo -e "${RED}🚨 CRITICAL FINDINGS:${NC}"
+        for issue in "${CRITICAL_ISSUES[@]}"; do
+          echo "  ⚠️  $issue"
+        done
+        echo ""
+      fi
+
+      # High findings
+      if [[ ${#HIGH_ISSUES[@]} -gt 0 ]]; then
+        echo -e "${RED}❗ HIGH SEVERITY:${NC}"
+        for issue in "${HIGH_ISSUES[@]}"; do
+          echo "  • $issue"
+        done
+        echo ""
+      fi
+
+      # Medium findings
+      if [[ ${#MEDIUM_ISSUES[@]} -gt 0 ]]; then
+        echo -e "${YELLOW}⚠️  MEDIUM SEVERITY:${NC}"
+        for issue in "${MEDIUM_ISSUES[@]}"; do
+          echo "  • $issue"
+        done
+        echo ""
+      fi
+
+      # Low findings
+      if [[ ${#LOW_ISSUES[@]} -gt 0 ]]; then
+        echo -e "${BLUE}ℹ️  LOW SEVERITY:${NC}"
+        for issue in "${LOW_ISSUES[@]}"; do
+          echo "  • $issue"
+        done
+        echo ""
+      fi
+
+      # Info items
+      if [[ ${#INFO_ITEMS[@]} -gt 0 ]]; then
+        echo -e "${GREEN}📋 INFORMATIONAL:${NC}"
+        for item in "${INFO_ITEMS[@]}"; do
+          echo "  • $item"
+        done
+        echo ""
+      fi
+
+      # Recommendations
+      echo -e "${GREEN}💡 RECOMMENDATIONS:${NC}"
+      generate_recommendations | while IFS= read -r rec; do
+        echo "  • $rec"
       done
       echo ""
-    fi
-
-    # High findings
-    if [[ ${#HIGH_ISSUES[@]} -gt 0 ]]; then
-      echo -e "${RED}❗ HIGH SEVERITY:${NC}"
-      for issue in "${HIGH_ISSUES[@]}"; do
-        echo "  • $issue"
-      done
-      echo ""
-    fi
-
-    # Medium findings
-    if [[ ${#MEDIUM_ISSUES[@]} -gt 0 ]]; then
-      echo -e "${YELLOW}⚠️  MEDIUM SEVERITY:${NC}"
-      for issue in "${MEDIUM_ISSUES[@]}"; do
-        echo "  • $issue"
-      done
-      echo ""
-    fi
-
-    # Low findings
-    if [[ ${#LOW_ISSUES[@]} -gt 0 ]]; then
-      echo -e "${BLUE}ℹ️  LOW SEVERITY:${NC}"
-      for issue in "${LOW_ISSUES[@]}"; do
-        echo "  • $issue"
-      done
-      echo ""
-    fi
-
-    # Info items
-    if [[ ${#INFO_ITEMS[@]} -gt 0 ]]; then
-      echo -e "${GREEN}📋 INFORMATIONAL:${NC}"
-      for item in "${INFO_ITEMS[@]}"; do
-        echo "  • $item"
-      done
-      echo ""
-    fi
-
-    # Recommendations
-    echo -e "${GREEN}💡 RECOMMENDATIONS:${NC}"
-    generate_recommendations | while IFS= read -r rec; do
-      echo "  • $rec"
-    done
-    echo ""
-    ;;
+      ;;
   esac
 }
 
@@ -465,7 +465,7 @@ EOF
 main() {
   log_info "Starting security assessment for: $PROJECT_ROOT"
 
-  if [[  ! -d "$PROJECT_ROOT"  ]]; then
+  if [[ ! -d $PROJECT_ROOT ]]; then
     echo "Error: Directory not found: $PROJECT_ROOT" >&2
     exit 1
   fi
@@ -496,7 +496,7 @@ main() {
 }
 
 # Script usage
-if [[  "${1:-}" == "--help" || "${1:-}" == "-h"  ]]; then
+if [[ ${1:-} == "--help" || ${1:-} == "-h" ]]; then
   echo "Usage: $0 [PROJECT_PATH] [OUTPUT_FORMAT]"
   echo ""
   echo "Comprehensive security assessment for projects"

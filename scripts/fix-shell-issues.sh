@@ -98,7 +98,7 @@ check_remaining() {
     fi
   done
 
-  if [[ "$has_issues" == "false" ]]; then
+  if [[ $has_issues == "false" ]]; then
     print_status "All shell scripts pass shellcheck!"
   fi
 }

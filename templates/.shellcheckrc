@@ -1,0 +1,34 @@
+# ShellCheck configuration for professional shell script development
+# https://www.shellcheck.net/wiki/Ignore
+
+# Set shell dialect (bash, sh, dash, ksh)
+shell=bash
+
+# Enable all optional checks for comprehensive analysis
+enable=all
+
+# Disable specific checks for better developer experience
+# These suppressions focus on style/info issues that don't affect functionality
+# while maintaining all critical error and warning detection
+
+# SC1091: Can't follow sourced files (external dependencies)
+# SC2001: sed vs parameter expansion (sed often clearer for complex patterns)
+# SC2034: Variables that appear unused (often intentional for future use)
+# SC2053: Variable comparison quoting (safe in [[ ]] constructs)
+# SC2154: Variables from sourced files (validation helpers, etc.)
+# SC2155: Declare and assign separately (common idiom, rarely problematic)
+# SC2207: Array from command output (functional pattern in many codebases)
+# SC2248: Quoting return values (style preference)
+# SC2249: Default case in switch statements (not always needed)
+# SC2250: Brace style preference (style issue)
+# SC2312: Command substitution in echo statements (generally safe and readable)
+disable=SC1091,SC2001,SC2034,SC2053,SC2154,SC2155,SC2207,SC2248,SC2249,SC2250,SC2312
+
+# Source paths for following sourced files (uncomment and customize as needed)
+# source-path=SCRIPTDIR
+# source-path=./lib
+# source-path=./scripts/helpers
+
+# Note: This configuration eliminates "noise" warnings while maintaining
+# detection of actual bugs, security issues, and portability problems.
+# Customize the disabled checks based on your project's coding standards.

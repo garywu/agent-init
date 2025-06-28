@@ -49,9 +49,9 @@ check_gh_cli() {
 
 # Get repository info
 get_repo_info() {
-  if [[  -d ".git"  ]]; then
+  if [[ -d ".git" ]]; then
     local remote_url=$(git remote get-url origin 2>/dev/null || echo "")
-    if [[  -n "$remote_url"  ]]; then
+    if [[ -n $remote_url ]]; then
       # Extract owner/repo from URL
       local repo_info=$(echo "$remote_url" | sed -E 's/.*[:/]([^/]+)\/([^/]+)(\.git)?$/\1\/\2/')
       echo "$repo_info"
@@ -64,7 +64,7 @@ get_repo_info() {
 link_session_to_issues() {
   local session_id="${1:-}"
 
-  if [[  ! -f "$SESSION_FILE"  ]]; then
+  if [[ ! -f $SESSION_FILE ]]; then
     log_error "No active session found"
     return 1
   fi
@@ -76,7 +76,7 @@ link_session_to_issues() {
   # Get modified files from session
   local modified_files=$(jq -r '.files_modified[]' "$SESSION_FILE" 2>/dev/null)
 
-  if [[  -z "$modified_files"  ]]; then
+  if [[ -z $modified_files ]]; then
     log_info "No modified files in session"
     return 0
   fi
@@ -94,7 +94,7 @@ link_session_to_issues() {
     local matched_issues=$(echo "$open_issues" | jq -r --arg file "$filename" \
       '.[] | select(.title + .body | test($file; "i")) | .number' 2>/dev/null || true)
 
-    if [[  -n "$matched_issues"  ]]; then
+    if [[ -n $matched_issues ]]; then
       issue_numbers="$issue_numbers $matched_issues"
     fi
   done <<<"$modified_files"
@@ -103,10 +103,10 @@ link_session_to_issues() {
   issue_numbers=$(echo "$issue_numbers" | tr ' ' '\n' | sort -u | tr '\n' ' ')
 
   # Build linked issues array
-  if [[  -n "$issue_numbers"  ]]; then
+  if [[ -n $issue_numbers ]]; then
     for issue_num in $issue_numbers; do
       local issue_data=$(gh issue view "$issue_num" --json number,title,state 2>/dev/null || continue)
-      if [[  -n "$issue_data"  ]]; then
+      if [[ -n $issue_data ]]; then
         linked_issues=$(echo "$linked_issues" | jq --argjson issue "$issue_data" '. + [$issue]')
       fi
     done
@@ -126,7 +126,7 @@ create_issue_comment() {
   local issue_number="$1"
   local session_id="${2:-}"
 
-  if [[  ! -f "$SESSION_FILE"  ]]; then
+  if [[ ! -f $SESSION_FILE ]]; then
     log_error "No active session found"
     return 1
   fi
@@ -159,7 +159,7 @@ ${files_modified:-No files modified}
 sync_with_project() {
   local project_number="${1:-}"
 
-  if [[  -z "$project_number"  ]]; then
+  if [[ -z $project_number ]]; then
     log_error "No project number provided"
     return 1
   fi
@@ -175,7 +175,7 @@ sync_with_project() {
 
 # Create automated PR description from session
 generate_pr_description() {
-  if [[  ! -f "$SESSION_FILE"  ]]; then
+  if [[ ! -f $SESSION_FILE ]]; then
     log_error "No active session found"
     return 1
   fi
@@ -226,7 +226,7 @@ link_commits_to_issues() {
   # Get recent commits
   local commits=$(git log --since="$since" --pretty=format:"%h %s" 2>/dev/null || echo "")
 
-  if [[  -z "$commits"  ]]; then
+  if [[ -z $commits ]]; then
     log_info "No recent commits found"
     return 0
   fi
@@ -234,7 +234,7 @@ link_commits_to_issues() {
   # Extract issue numbers from commit messages
   local issue_numbers=$(echo "$commits" | grep -oE '#[0-9]+' | sed 's/#//' | sort -u)
 
-  if [[  -z "$issue_numbers"  ]]; then
+  if [[ -z $issue_numbers ]]; then
     log_info "No issue references found in recent commits"
     return 0
   fi
@@ -253,12 +253,12 @@ log_issue_work() {
   local issue_title="${2:-}"
   local action="${3:-worked}"
 
-  if [[  ! -f "$SESSION_FILE"  ]]; then
+  if [[ ! -f $SESSION_FILE ]]; then
     return
   fi
 
   # Get issue details if title not provided
-  if [[  -z "$issue_title"  ]] && command -v gh &>/dev/null; then
+  if [[ -z $issue_title ]] && command -v gh &>/dev/null; then
     issue_title=$(gh issue view "$issue_number" --json title --jq '.title' 2>/dev/null || echo "Issue #$issue_number")
   fi
 
@@ -277,7 +277,7 @@ EOF
   local temp_file="${SESSION_FILE}.tmp"
   local exists=$(jq --arg num "$issue_number" '.issues_worked[] | select(.number == ($num | tonumber))' "$SESSION_FILE" 2>/dev/null)
 
-  if [[  -z "$exists"  ]]; then
+  if [[ -z $exists ]]; then
     # Add new issue
     jq --argjson issue "$issue_entry" '.issues_worked += [$issue]' "$SESSION_FILE" >"$temp_file"
   else
@@ -292,53 +292,53 @@ EOF
 
 # Main command handling
 case "${1:-}" in
-"link-issues")
-  link_session_to_issues
-  ;;
-"comment")
-  shift
-  issue_number="${1:-}"
-  if [[  -z "$issue_number"  ]]; then
-    log_error "Usage: $0 comment <issue-number>"
+  "link-issues")
+    link_session_to_issues
+    ;;
+  "comment")
+    shift
+    issue_number="${1:-}"
+    if [[ -z $issue_number ]]; then
+      log_error "Usage: $0 comment <issue-number>"
+      exit 1
+    fi
+    create_issue_comment "$issue_number"
+    ;;
+  "pr-description")
+    generate_pr_description
+    ;;
+  "sync-project")
+    shift
+    project_number="${1:-}"
+    sync_with_project "$project_number"
+    ;;
+  "link-commits")
+    shift
+    since="${1:-1 hour ago}"
+    link_commits_to_issues "$since"
+    ;;
+  "--help" | "-h" | "")
+    echo "Usage: $0 <command> [options]"
+    echo ""
+    echo "GitHub integration for claude-init session tracking."
+    echo ""
+    echo "Commands:"
+    echo "  link-issues         Link session to related GitHub issues"
+    echo "  comment <number>    Add session summary as issue comment"
+    echo "  pr-description      Generate PR description from session"
+    echo "  sync-project <num>  Sync with GitHub project board"
+    echo "  link-commits [time] Link commits to issues (default: 1 hour)"
+    echo ""
+    echo "Examples:"
+    echo "  $0 link-issues"
+    echo "  $0 comment 42"
+    echo "  $0 pr-description > pr-body.md"
+    echo "  $0 link-commits \"1 day ago\""
+    exit 0
+    ;;
+  *)
+    log_error "Unknown command: $1"
+    echo "Run '$0 --help' for usage"
     exit 1
-  fi
-  create_issue_comment "$issue_number"
-  ;;
-"pr-description")
-  generate_pr_description
-  ;;
-"sync-project")
-  shift
-  project_number="${1:-}"
-  sync_with_project "$project_number"
-  ;;
-"link-commits")
-  shift
-  since="${1:-1 hour ago}"
-  link_commits_to_issues "$since"
-  ;;
-"--help" | "-h" | "")
-  echo "Usage: $0 <command> [options]"
-  echo ""
-  echo "GitHub integration for claude-init session tracking."
-  echo ""
-  echo "Commands:"
-  echo "  link-issues         Link session to related GitHub issues"
-  echo "  comment <number>    Add session summary as issue comment"
-  echo "  pr-description      Generate PR description from session"
-  echo "  sync-project <num>  Sync with GitHub project board"
-  echo "  link-commits [time] Link commits to issues (default: 1 hour)"
-  echo ""
-  echo "Examples:"
-  echo "  $0 link-issues"
-  echo "  $0 comment 42"
-  echo "  $0 pr-description > pr-body.md"
-  echo "  $0 link-commits \"1 day ago\""
-  exit 0
-  ;;
-*)
-  log_error "Unknown command: $1"
-  echo "Run '$0 --help' for usage"
-  exit 1
-  ;;
+    ;;
 esac

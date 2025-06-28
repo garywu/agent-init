@@ -44,7 +44,7 @@ log_error() {
 }
 
 log_action() {
-  if [[  "$DRY_RUN" == "true"  ]]; then
+  if [[ $DRY_RUN == "true" ]]; then
     echo -e "${CYAN}[DRY RUN]${NC} Would: $1"
   else
     echo -e "${PURPLE}[ACTION]${NC} $1"
@@ -53,12 +53,12 @@ log_action() {
 
 # Check if file exists
 file_exists() {
-  [[  -f "$PROJECT_ROOT/$1"  ]]
+  [[ -f "$PROJECT_ROOT/$1" ]]
 }
 
 # Check if directory exists
 dir_exists() {
-  [[  -d "$PROJECT_ROOT/$1"  ]]
+  [[ -d "$PROJECT_ROOT/$1" ]]
 }
 
 # Copy file from templates with substitution
@@ -68,19 +68,19 @@ copy_template() {
   local template_path="$CLAUDE_INIT_ROOT/templates/$template_file"
   local target_path="$PROJECT_ROOT/$target_file"
 
-  if [[  ! -f "$template_path"  ]]; then
+  if [[ ! -f $template_path ]]; then
     log_error "Template not found: $template_path"
     return 1
   fi
 
-  if file_exists "$target_file" && [[  "$DRY_RUN" != "true"  ]]; then
+  if file_exists "$target_file" && [[ $DRY_RUN != "true" ]]; then
     log_warning "File already exists: $target_file (skipping)"
     return 0
   fi
 
   log_action "Copy template $template_file → $target_file"
 
-  if [[  "$DRY_RUN" != "true"  ]]; then
+  if [[ $DRY_RUN != "true" ]]; then
     # Create target directory if needed
     local target_dir=$(dirname "$target_path")
     mkdir -p "$target_dir"
@@ -99,7 +99,7 @@ run_project_detection() {
   log_info "Running project detection analysis..."
 
   local detector_script="$SCRIPT_DIR/project-detector.sh"
-  if [[  ! -f "$detector_script"  ]]; then
+  if [[ ! -f $detector_script ]]; then
     log_error "Project detector script not found: $detector_script"
     return 1
   fi
@@ -108,7 +108,7 @@ run_project_detection() {
   local analysis_json
   analysis_json=$("$detector_script" "$PROJECT_ROOT" "json" 2>/dev/null)
 
-  if [[  $? -ne 0 || -z "$analysis_json"  ]]; then
+  if [[ $? -ne 0 || -z $analysis_json ]]; then
     log_error "Failed to run project detection"
     return 1
   fi
@@ -118,7 +118,7 @@ run_project_detection() {
     # Remove quotes and whitespace
     key=$(echo "$key" | tr -d '"' | xargs)
     value=$(echo "$value" | tr -d '",' | xargs)
-    if [[  -n "$key" && -n "$value"  ]]; then
+    if [[ -n $key && -n $value ]]; then
       ANALYSIS["$key"]="$value"
     fi
   done <<<"$analysis_json"
@@ -139,46 +139,46 @@ determine_templates() {
 
   # Project-type specific templates
   case "$project_type" in
-  "web-app")
-    RECOMMENDED_TEMPLATES+=("CLAUDE-web-app.md")
-    if [[  "$frameworks" == *"react"*  ]] || [[  "$frameworks" == *"nextjs"*  ]]; then
-      REQUIRED_FILES+=("package.json")
-      SETUP_ACTIONS+=("setup_frontend_development")
-    fi
-    ;;
-  "api")
-    RECOMMENDED_TEMPLATES+=("CLAUDE-api.md")
-    SETUP_ACTIONS+=("setup_api_development")
-    ;;
-  "library")
-    SETUP_ACTIONS+=("setup_library_development")
-    ;;
-  "cli")
-    SETUP_ACTIONS+=("setup_cli_development")
-    ;;
-  "documentation")
-    SETUP_ACTIONS+=("setup_documentation_site")
-    ;;
+    "web-app")
+      RECOMMENDED_TEMPLATES+=("CLAUDE-web-app.md")
+      if [[ $frameworks == *"react"* ]] || [[ $frameworks == *"nextjs"* ]]; then
+        REQUIRED_FILES+=("package.json")
+        SETUP_ACTIONS+=("setup_frontend_development")
+      fi
+      ;;
+    "api")
+      RECOMMENDED_TEMPLATES+=("CLAUDE-api.md")
+      SETUP_ACTIONS+=("setup_api_development")
+      ;;
+    "library")
+      SETUP_ACTIONS+=("setup_library_development")
+      ;;
+    "cli")
+      SETUP_ACTIONS+=("setup_cli_development")
+      ;;
+    "documentation")
+      SETUP_ACTIONS+=("setup_documentation_site")
+      ;;
   esac
 
   # Language-specific additions
   case "$primary_language" in
-  "typescript" | "javascript")
-    REQUIRED_FILES+=("package.json" ".gitignore")
-    SETUP_ACTIONS+=("setup_javascript_tooling")
-    ;;
-  "python")
-    REQUIRED_FILES+=("requirements.txt" ".gitignore")
-    SETUP_ACTIONS+=("setup_python_tooling")
-    ;;
-  "go")
-    REQUIRED_FILES+=("go.mod" ".gitignore")
-    SETUP_ACTIONS+=("setup_go_tooling")
-    ;;
-  "rust")
-    REQUIRED_FILES+=("Cargo.toml" ".gitignore")
-    SETUP_ACTIONS+=("setup_rust_tooling")
-    ;;
+    "typescript" | "javascript")
+      REQUIRED_FILES+=("package.json" ".gitignore")
+      SETUP_ACTIONS+=("setup_javascript_tooling")
+      ;;
+    "python")
+      REQUIRED_FILES+=("requirements.txt" ".gitignore")
+      SETUP_ACTIONS+=("setup_python_tooling")
+      ;;
+    "go")
+      REQUIRED_FILES+=("go.mod" ".gitignore")
+      SETUP_ACTIONS+=("setup_go_tooling")
+      ;;
+    "rust")
+      REQUIRED_FILES+=("Cargo.toml" ".gitignore")
+      SETUP_ACTIONS+=("setup_rust_tooling")
+      ;;
   esac
 
   # Universal recommendations
@@ -186,7 +186,7 @@ determine_templates() {
 
   # Check maturity and add professional development files
   local maturity_score="${ANALYSIS[maturity_score]:-0}"
-  if [[  $maturity_score -lt 80  ]]; then
+  if [[ $maturity_score -lt 80 ]]; then
     REQUIRED_FILES+=("CODE_OF_CONDUCT.md" "SECURITY.md")
     SETUP_ACTIONS+=("setup_professional_standards")
   fi
@@ -315,7 +315,7 @@ copy_required_files() {
     local template_file="$file"
     local template_path="$CLAUDE_INIT_ROOT/templates/$template_file"
 
-    if [[  -f "$template_path"  ]]; then
+    if [[ -f $template_path ]]; then
       copy_template "$template_file" "$file"
     else
       log_warning "No template found for required file: $file"
@@ -329,7 +329,7 @@ generate_analysis_report() {
 
   local report_file="$PROJECT_ROOT/.claude-init-analysis.md"
 
-  if [[  "$DRY_RUN" == "true"  ]]; then
+  if [[ $DRY_RUN == "true" ]]; then
     log_action "Would generate analysis report: $report_file"
     return 0
   fi
@@ -388,7 +388,7 @@ EOF
 
 # Interactive confirmation for actions
 confirm_actions() {
-  if [[  "$DRY_RUN" == "true"  ]]; then
+  if [[ $DRY_RUN == "true" ]]; then
     return 0
   fi
 
@@ -473,13 +473,13 @@ usage() {
 }
 
 # Handle command line arguments
-if [[  "${1:-}" == "--help" || "${1:-}" == "-h"  ]]; then
+if [[ ${1:-} == "--help" || ${1:-} == "-h" ]]; then
   usage
   exit 0
 fi
 
 # Validate claude-init root
-if [[  ! -f "$CLAUDE_INIT_ROOT/templates/CLAUDE.md"  ]]; then
+if [[ ! -f "$CLAUDE_INIT_ROOT/templates/CLAUDE.md" ]]; then
   log_error "Claude-init templates not found. Please run from claude-init directory or check installation."
   exit 1
 fi

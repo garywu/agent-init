@@ -109,6 +109,67 @@ format: ## Format code (language-specific)
 		cargo fmt; \
 	fi
 
+# ========== Shell Script Quality ==========
+
+.PHONY: fix-shell
+fix-shell: ## Comprehensive shell script fixing (shellharden + shfmt + shellcheck)
+	@echo "$(BLUE)Fixing shell script issues...$(NC)"
+	@if command -v shellharden >/dev/null 2>&1; then \
+		echo "$(YELLOW)Applying security fixes with shellharden...$(NC)"; \
+		find . -type f -name "*.sh" -not -path "./node_modules/*" -not -path "./.git/*" | xargs -I {} shellharden --transform {} 2>/dev/null || true; \
+	else \
+		echo "$(YELLOW)shellharden not found. Install with: cargo install shellharden$(NC)"; \
+	fi
+	@if command -v shfmt >/dev/null 2>&1; then \
+		echo "$(YELLOW)Formatting shell scripts with shfmt...$(NC)"; \
+		find . -type f -name "*.sh" -not -path "./node_modules/*" -not -path "./.git/*" | xargs shfmt -w -i 2 -ci -s 2>/dev/null || true; \
+	else \
+		echo "$(YELLOW)shfmt not found. Install with: brew install shfmt$(NC)"; \
+	fi
+	@echo "$(GREEN)✅ Shell script fixes applied!$(NC)"
+
+.PHONY: lint-shell
+lint-shell: ## Lint shell scripts with shellcheck
+	@echo "$(BLUE)Linting shell scripts...$(NC)"
+	@if command -v shellcheck >/dev/null 2>&1; then \
+		find . -type f -name "*.sh" -not -path "./node_modules/*" -not -path "./.git/*" | xargs shellcheck; \
+	else \
+		echo "$(YELLOW)shellcheck not found. Install with: brew install shellcheck$(NC)"; \
+	fi
+
+.PHONY: format-shell
+format-shell: ## Format shell scripts with shfmt
+	@echo "$(BLUE)Formatting shell scripts...$(NC)"
+	@if command -v shfmt >/dev/null 2>&1; then \
+		find . -type f -name "*.sh" -not -path "./node_modules/*" -not -path "./.git/*" | xargs shfmt -w -i 2 -ci -s; \
+	else \
+		echo "$(YELLOW)shfmt not found. Install with: brew install shfmt$(NC)"; \
+	fi
+
+.PHONY: shell-toolchain
+shell-toolchain: ## Install shell script toolchain (cross-platform)
+	@echo "$(BLUE)Installing shell script toolchain...$(NC)"
+	@if [ -x "./scripts/install-shell-tools.sh" ]; then \
+		./scripts/install-shell-tools.sh; \
+	else \
+		echo "$(YELLOW)Cross-platform installer not found. Installing via platform defaults...$(NC)"; \
+		if command -v brew >/dev/null 2>&1; then \
+			brew install shellcheck shfmt; \
+			cargo install shellharden 2>/dev/null || echo "$(YELLOW)Install Rust for shellharden: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh$(NC)"; \
+		elif command -v apt-get >/dev/null 2>&1; then \
+			sudo apt-get update && sudo apt-get install -y shellcheck; \
+			echo "$(YELLOW)For shfmt and shellharden, run: ./scripts/install-shell-tools.sh$(NC)"; \
+		elif command -v nix-env >/dev/null 2>&1; then \
+			nix-env -iA nixpkgs.shellcheck nixpkgs.shfmt; \
+			cargo install shellharden 2>/dev/null || echo "$(YELLOW)Install Rust for shellharden$(NC)"; \
+		else \
+			echo "$(RED)No supported package manager found. Please install tools manually:$(NC)"; \
+			echo "  - shellcheck: https://github.com/koalaman/shellcheck#installing"; \
+			echo "  - shfmt: https://github.com/mvdan/sh#shfmt"; \
+			echo "  - shellharden: cargo install shellharden"; \
+		fi; \
+	fi
+
 # ========== Intelligence Commands ==========
 
 .PHONY: analyze

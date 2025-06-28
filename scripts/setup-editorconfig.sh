@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Smart EditorConfig setup based on project type detection
 
 set -euo pipefail
@@ -19,7 +19,7 @@ detect_project_type() {
   local project_dir="$1"
 
   # Check for web indicators
-  if [[  -f "$project_dir/package.json"  ]] || [[  -f "$project_dir/yarn.lock"  ]] || [[  -f "$project_dir/pnpm-lock.yaml"  ]]; then
+  if [[ -f "$project_dir/package.json" ]] || [[ -f "$project_dir/yarn.lock" ]] || [[ -f "$project_dir/pnpm-lock.yaml" ]]; then
     # Check if it's a full-stack project
     if find "$project_dir" -name "*.py" -o -name "*.sh" -o -name "*.go" -o -name "*.rs" | head -1 | grep -q .; then
       echo "fullstack"
@@ -30,27 +30,27 @@ detect_project_type() {
   fi
 
   # Check for infrastructure indicators
-  if [[  -f "$project_dir/Dockerfile"  ]] || [[  -f "$project_dir/docker-compose.yml"  ]] ||
-    [[  -d "$project_dir/scripts"  ]] || [[  -f "$project_dir/Makefile"  ]]; then
+  if [[ -f "$project_dir/Dockerfile" ]] || [[ -f "$project_dir/docker-compose.yml" ]] ||
+    [[ -d "$project_dir/scripts" ]] || [[ -f "$project_dir/Makefile" ]]; then
     local has_shell_scripts=false
     if find "$project_dir" -name "*.sh" | head -1 | grep -q .; then
       has_shell_scripts=true
     fi
 
-    if [[  "$has_shell_scripts" == "true"  ]] || [[  -f "$project_dir/requirements.txt"  ]]; then
+    if [[ $has_shell_scripts == "true" ]] || [[ -f "$project_dir/requirements.txt" ]]; then
       echo "infrastructure"
       return
     fi
   fi
 
   # Check for Python projects
-  if [[  -f "$project_dir/pyproject.toml"  ]] || [[  -f "$project_dir/requirements.txt"  ]] || [[  -f "$project_dir/setup.py"  ]]; then
+  if [[ -f "$project_dir/pyproject.toml" ]] || [[ -f "$project_dir/requirements.txt" ]] || [[ -f "$project_dir/setup.py" ]]; then
     echo "infrastructure"
     return
   fi
 
   # Check for Go projects
-  if [[  -f "$project_dir/go.mod"  ]]; then
+  if [[ -f "$project_dir/go.mod" ]]; then
     echo "infrastructure"
     return
   fi
@@ -71,7 +71,7 @@ setup_editorconfig() {
 
   # Detect or use forced type
   local project_type
-  if [[  -n "$force_type"  ]]; then
+  if [[ -n $force_type ]]; then
     project_type="$force_type"
     echo -e "${YELLOW}Using forced project type: $project_type${NC}"
   else
@@ -83,13 +83,13 @@ setup_editorconfig() {
   local template_file="$TEMPLATES_DIR/.editorconfig-$project_type"
   local target_file="$project_dir/.editorconfig"
 
-  if [[  ! -f "$template_file"  ]]; then
+  if [[ ! -f $template_file ]]; then
     echo -e "${YELLOW}Warning: Template for '$project_type' not found, using fullstack template${NC}"
     template_file="$TEMPLATES_DIR/.editorconfig-fullstack"
   fi
 
   # Check if EditorConfig already exists
-  if [[  -f "$target_file"  ]]; then
+  if [[ -f $target_file ]]; then
     echo -e "${YELLOW}EditorConfig already exists. Backing up to .editorconfig.backup${NC}"
     cp "$target_file" "$target_file.backup"
   fi
@@ -137,37 +137,37 @@ EOF
 project_dir="."
 force_type=""
 
-while [[  $# -gt 0  ]]; do
+while [[ $# -gt 0 ]]; do
   case $1 in
-  -t | --type)
-    force_type="$2"
-    shift 2
-    ;;
-  -l | --list)
-    echo "Available project types:"
-    echo "  web            - Frontend/web projects"
-    echo "  infrastructure - Systems/DevOps projects"
-    echo "  fullstack      - Mixed language projects"
-    exit 0
-    ;;
-  -h | --help)
-    show_help
-    exit 0
-    ;;
-  -*)
-    echo "Unknown option: $1"
-    show_help
-    exit 1
-    ;;
-  *)
-    project_dir="$1"
-    shift
-    ;;
+    -t | --type)
+      force_type="$2"
+      shift 2
+      ;;
+    -l | --list)
+      echo "Available project types:"
+      echo "  web            - Frontend/web projects"
+      echo "  infrastructure - Systems/DevOps projects"
+      echo "  fullstack      - Mixed language projects"
+      exit 0
+      ;;
+    -h | --help)
+      show_help
+      exit 0
+      ;;
+    -*)
+      echo "Unknown option: $1"
+      show_help
+      exit 1
+      ;;
+    *)
+      project_dir="$1"
+      shift
+      ;;
   esac
 done
 
 # Validate force type if provided
-if [[  -n "$force_type"  ]] && [[  ! "$force_type" =~ ^(web|infrastructure|fullstack)$  ]]; then
+if [[ -n $force_type ]] && [[ ! $force_type =~ ^(web|infrastructure|fullstack)$ ]]; then
   echo "Error: Invalid project type '$force_type'"
   echo "Valid types: web, infrastructure, fullstack"
   exit 1

@@ -42,6 +42,17 @@ Added semantic versioning and changelog procedures:
 
 ## Shell Script Troubleshooting
 
+### Bash Shebang Compatibility (Critical)
+
+**Always use `#!/usr/bin/env bash`** instead of `#!/bin/bash`:
+
+```bash
+#!/usr/bin/env bash  # ✅ CORRECT - finds modern bash in PATH
+#!/bin/bash          # ❌ WRONG - uses ancient macOS bash 3.2
+```
+
+This prevents errors like `declare: -A: invalid option` on macOS.
+
 ### Common ShellCheck Issues and Fixes
 
 If you encounter shellcheck failures during commits, use the automated fix workflow:

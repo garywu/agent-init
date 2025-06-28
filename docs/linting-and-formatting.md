@@ -25,11 +25,61 @@ This guide provides reference commands for linting and formatting various file t
 # Lint shell scripts with shellcheck
 shellcheck **/*.sh
 
-# Format shell scripts with shfmt
+# Format shell scripts with shfmt (respects .shfmt config)
 shfmt -w -i 2 .
+
+# Security hardening with shellharden
+shellharden --transform script.sh
 
 # Check shell script syntax
 bash -n script.sh
+
+# Comprehensive automated fixing (recommended)
+./scripts/fix-shell-issues-enhanced.sh
+
+# Configuration files for consistent behavior:
+# .shellcheckrc - Configure shellcheck warnings
+# .shfmt - Configure formatting options
+```
+
+#### Advanced Shell Script Tooling
+
+For comprehensive shell script quality, use this three-tool pipeline:
+
+1. **shellharden** - Security-focused hardening (fixes quoting issues)
+2. **shellcheck** - Static analysis with auto-fixes
+3. **shfmt** - Consistent formatting
+
+```bash
+# Install the complete toolchain
+brew install shellcheck shfmt
+cargo install shellharden  # or: brew install shellharden
+
+# One-command fixing (if using enhanced script)
+make fix-shell
+
+# Manual pipeline
+find . -name "*.sh" | xargs -I {} shellharden --transform {}
+find . -name "*.sh" | xargs shellcheck -f diff | patch
+find . -name "*.sh" | xargs shfmt -w -i 2 -ci -s
+```
+
+#### Configuration-Based Prevention
+
+Instead of manually fixing issues, prevent them with configuration:
+
+**.shellcheckrc** (suppresses non-critical warnings):
+```bash
+shell=bash
+enable=all
+disable=SC2034,SC2312,SC2154,SC2249,SC2001,SC2248,SC2053
+```
+
+**.shfmt** (consistent formatting):
+```bash
+-i 2   # 2-space indentation
+-ci    # indent case statements
+-s     # simplify code
 ```
 
 ### Python

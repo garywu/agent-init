@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Script to copy templates that may trigger content filters
 # This helps Claude CLI work around filter restrictions for legitimate files
@@ -37,7 +37,7 @@ copy_template() {
   local dest_dir="$2"
   local dest_file="$dest_dir/$(basename "$template_file")"
 
-  if [[ ! -f "$template_file" ]]; then
+  if [[ ! -f $template_file ]]; then
     echo -e "${RED}Error: Template file not found at $template_file${NC}"
     return 1
   fi
@@ -45,7 +45,7 @@ copy_template() {
   echo -e "${YELLOW}Copying $(basename "$template_file")...${NC}"
   cp "$template_file" "$dest_file"
 
-  if [[ -f "$dest_file" ]]; then
+  if [[ -f $dest_file ]]; then
     echo -e "${GREEN}✓ Successfully copied to $dest_file${NC}"
     return 0
   else
@@ -64,27 +64,27 @@ TEMPLATE_NAME="$1"
 DESTINATION="$2"
 
 # Verify destination exists
-if [[ ! -d "$DESTINATION" ]]; then
+if [[ ! -d $DESTINATION ]]; then
   echo -e "${RED}Error: Destination directory does not exist: $DESTINATION${NC}"
   exit 1
 fi
 
 # Copy based on template name
 case "$TEMPLATE_NAME" in
-"code-of-conduct" | "coc")
-  copy_template "$TEMPLATE_DIR/CODE_OF_CONDUCT.md" "$DESTINATION"
-  ;;
-"security" | "sec")
-  copy_template "$TEMPLATE_DIR/SECURITY.md" "$DESTINATION"
-  ;;
-"all")
-  echo -e "${BLUE}Copying all templates...${NC}"
-  copy_template "$TEMPLATE_DIR/CODE_OF_CONDUCT.md" "$DESTINATION"
-  copy_template "$TEMPLATE_DIR/SECURITY.md" "$DESTINATION"
-  ;;
-*)
-  echo -e "${RED}Error: Unknown template name: $TEMPLATE_NAME${NC}"
-  usage
-  exit 1
-  ;;
+  "code-of-conduct" | "coc")
+    copy_template "$TEMPLATE_DIR/CODE_OF_CONDUCT.md" "$DESTINATION"
+    ;;
+  "security" | "sec")
+    copy_template "$TEMPLATE_DIR/SECURITY.md" "$DESTINATION"
+    ;;
+  "all")
+    echo -e "${BLUE}Copying all templates...${NC}"
+    copy_template "$TEMPLATE_DIR/CODE_OF_CONDUCT.md" "$DESTINATION"
+    copy_template "$TEMPLATE_DIR/SECURITY.md" "$DESTINATION"
+    ;;
+  *)
+    echo -e "${RED}Error: Unknown template name: $TEMPLATE_NAME${NC}"
+    usage
+    exit 1
+    ;;
 esac

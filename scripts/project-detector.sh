@@ -45,19 +45,19 @@ PROJECT_ANALYSIS[recommendations]=""
 
 # Utility functions
 log_info() {
-  if [[  "$VERBOSE" == "true" || "$OUTPUT_FORMAT" == "human"  ]]; then
+  if [[ $VERBOSE == "true" || $OUTPUT_FORMAT == "human" ]]; then
     echo -e "${BLUE}[INFO]${NC} $1" >&2
   fi
 }
 
 log_success() {
-  if [[  "$OUTPUT_FORMAT" == "human"  ]]; then
+  if [[ $OUTPUT_FORMAT == "human" ]]; then
     echo -e "${GREEN}[SUCCESS]${NC} $1" >&2
   fi
 }
 
 log_warning() {
-  if [[  "$OUTPUT_FORMAT" == "human"  ]]; then
+  if [[ $OUTPUT_FORMAT == "human" ]]; then
     echo -e "${YELLOW}[WARNING]${NC} $1" >&2
   fi
 }
@@ -68,12 +68,12 @@ log_error() {
 
 # Check if file exists in project
 file_exists() {
-  [[  -f "$PROJECT_ROOT/$1"  ]]
+  [[ -f "$PROJECT_ROOT/$1" ]]
 }
 
 # Check if directory exists in project
 dir_exists() {
-  [[  -d "$PROJECT_ROOT/$1"  ]]
+  [[ -d "$PROJECT_ROOT/$1" ]]
 }
 
 # Count files matching pattern
@@ -123,9 +123,9 @@ detect_languages() {
 
   for lang in "${!lang_counts[@]}"; do
     local count=${lang_counts[$lang]}
-    if [[  $count -gt 0  ]]; then
+    if [[ $count -gt 0 ]]; then
       detected_languages+=("$lang:$count")
-      if [[  $count -gt $max_count  ]]; then
+      if [[ $count -gt $max_count ]]; then
         max_count=$count
         primary_lang="$lang"
       fi
@@ -378,7 +378,7 @@ analyze_repository() {
 
     # Check for uncommitted changes
     local has_changes="false"
-    if [[  -n $(git -C "$PROJECT_ROOT" status --porcelain 2>/dev/null)  ]]; then
+    if [[ -n $(git -C "$PROJECT_ROOT" status --porcelain 2>/dev/null) ]]; then
       has_changes="true"
     fi
     PROJECT_ANALYSIS[has_uncommitted_changes]="$has_changes"
@@ -417,14 +417,14 @@ analyze_repository() {
 
   # Calculate project maturity score
   local maturity_score=0
-  [[ "${PROJECT_ANALYSIS[is_git_repo]}" == "true" ]] && ((maturity_score += 20))
-  [[ "${PROJECT_ANALYSIS[commit_count]}" -gt 10 ]] && ((maturity_score += 20))
-  [[ "${PROJECT_ANALYSIS[has_remote]}" == "true" ]] && ((maturity_score += 20))
-  [[ "${PROJECT_ANALYSIS[project_files]}" == *"README.md"* ]] && ((maturity_score += 10))
-  [[ "${PROJECT_ANALYSIS[project_files]}" == *"LICENSE"* ]] && ((maturity_score += 10))
-  [[ "${PROJECT_ANALYSIS[project_files]}" == *".gitignore"* ]] && ((maturity_score += 10))
-  [[ "${PROJECT_ANALYSIS[project_files]}" == *"CONTRIBUTING.md"* ]] && ((maturity_score += 5))
-  [[ "${PROJECT_ANALYSIS[project_files]}" == *"CHANGELOG.md"* ]] && ((maturity_score += 5))
+  [[ ${PROJECT_ANALYSIS[is_git_repo]} == "true" ]] && ((maturity_score += 20))
+  [[ ${PROJECT_ANALYSIS[commit_count]} -gt 10 ]] && ((maturity_score += 20))
+  [[ ${PROJECT_ANALYSIS[has_remote]} == "true" ]] && ((maturity_score += 20))
+  [[ ${PROJECT_ANALYSIS[project_files]} == *"README.md"* ]] && ((maturity_score += 10))
+  [[ ${PROJECT_ANALYSIS[project_files]} == *"LICENSE"* ]] && ((maturity_score += 10))
+  [[ ${PROJECT_ANALYSIS[project_files]} == *".gitignore"* ]] && ((maturity_score += 10))
+  [[ ${PROJECT_ANALYSIS[project_files]} == *"CONTRIBUTING.md"* ]] && ((maturity_score += 5))
+  [[ ${PROJECT_ANALYSIS[project_files]} == *"CHANGELOG.md"* ]] && ((maturity_score += 5))
 
   PROJECT_ANALYSIS[maturity_score]="$maturity_score"
 }
@@ -439,30 +439,30 @@ generate_recommendations() {
 
   # Template recommendations based on project type
   case "$project_type" in
-  "web-app")
-    recommendations+=("Use CLAUDE-web-app.md template for frontend development")
-    recommendations+=("Consider setting up Lighthouse CI for performance monitoring")
-    ;;
-  "api")
-    recommendations+=("Use CLAUDE-api.md template for backend development")
-    recommendations+=("Set up API documentation with OpenAPI/Swagger")
-    ;;
-  "library")
-    recommendations+=("Focus on comprehensive documentation and examples")
-    recommendations+=("Set up automated testing and CI/CD")
-    ;;
-  "cli")
-    recommendations+=("Include usage examples and help documentation")
-    recommendations+=("Consider adding shell completion scripts")
-    ;;
+    "web-app")
+      recommendations+=("Use CLAUDE-web-app.md template for frontend development")
+      recommendations+=("Consider setting up Lighthouse CI for performance monitoring")
+      ;;
+    "api")
+      recommendations+=("Use CLAUDE-api.md template for backend development")
+      recommendations+=("Set up API documentation with OpenAPI/Swagger")
+      ;;
+    "library")
+      recommendations+=("Focus on comprehensive documentation and examples")
+      recommendations+=("Set up automated testing and CI/CD")
+      ;;
+    "cli")
+      recommendations+=("Include usage examples and help documentation")
+      recommendations+=("Consider adding shell completion scripts")
+      ;;
   esac
 
   # Maturity-based recommendations
-  if [[  $maturity_score -lt 50  ]]; then
+  if [[ $maturity_score -lt 50 ]]; then
     recommendations+=("Add basic project documentation (README.md)")
     recommendations+=("Initialize Git repository and add .gitignore")
     recommendations+=("Add LICENSE file for open source projects")
-  elif [[  $maturity_score -lt 80  ]]; then
+  elif [[ $maturity_score -lt 80 ]]; then
     recommendations+=("Add CONTRIBUTING.md for collaboration guidelines")
     recommendations+=("Set up continuous integration")
     recommendations+=("Consider adding CHANGELOG.md for release tracking")
@@ -470,12 +470,12 @@ generate_recommendations() {
 
   # Framework-specific recommendations
   local frameworks="${PROJECT_ANALYSIS[frameworks]}"
-  if [[  "$frameworks" == *"react"*  ]]; then
+  if [[ $frameworks == *"react"* ]]; then
     recommendations+=("Set up React DevTools and debugging")
     recommendations+=("Consider adding Storybook for component development")
   fi
 
-  if [[  "$frameworks" == *"nextjs"*  ]]; then
+  if [[ $frameworks == *"nextjs"* ]]; then
     recommendations+=("Configure Next.js performance monitoring")
     recommendations+=("Set up SEO optimization")
   fi
@@ -489,62 +489,62 @@ generate_recommendations() {
 # Output results
 output_results() {
   case "$OUTPUT_FORMAT" in
-  "json")
-    echo "{"
-    local first=true
-    for key in "${!PROJECT_ANALYSIS[@]}"; do
-      if [[  "$first" == "true"  ]]; then
-        first=false
-      else
-        echo ","
-      fi
-      printf "  \"%s\": \"%s\"" "$key" "${PROJECT_ANALYSIS[$key]}"
-    done
-    echo ""
-    echo "}"
-    ;;
-  "yaml")
-    for key in "${!PROJECT_ANALYSIS[@]}"; do
-      echo "$key: ${PROJECT_ANALYSIS[$key]}"
-    done
-    ;;
-  "human" | *)
-    echo ""
-    echo -e "${CYAN}🔍 PROJECT ANALYSIS RESULTS${NC}"
-    echo "================================"
-    echo ""
-
-    echo -e "${PURPLE}📁 Project Information${NC}"
-    echo "   Type: ${PROJECT_ANALYSIS[project_type]} (${PROJECT_ANALYSIS[confidence]} confidence)"
-    echo "   Primary Language: ${PROJECT_ANALYSIS[primary_language]}"
-    echo "   Frameworks: ${PROJECT_ANALYSIS[frameworks]:-none detected}"
-    echo "   Package Managers: ${PROJECT_ANALYSIS[package_managers]:-none detected}"
-    echo ""
-
-    echo -e "${BLUE}📊 Repository Statistics${NC}"
-    echo "   Total Files: ${PROJECT_ANALYSIS[total_files]}"
-    echo "   Source Files: ${PROJECT_ANALYSIS[total_source_files]}"
-    echo "   Git Repository: ${PROJECT_ANALYSIS[is_git_repo]}"
-    if [[ "${PROJECT_ANALYSIS[is_git_repo]}" == "true" ]]; then
-      echo "   Commits: ${PROJECT_ANALYSIS[commit_count]}"
-      echo "   Current Branch: ${PROJECT_ANALYSIS[current_branch]}"
-      echo "   Has Remote: ${PROJECT_ANALYSIS[has_remote]}"
-    fi
-    echo "   Maturity Score: ${PROJECT_ANALYSIS[maturity_score]}/100"
-    echo ""
-
-    echo -e "${GREEN}💡 Recommendations${NC}"
-    local recommendations="${PROJECT_ANALYSIS[recommendations]}"
-    if [[  -n "$recommendations"  ]]; then
-      IFS='|' read -ra RECS <<<"$recommendations"
-      for rec in "${RECS[@]}"; do
-        echo "   • $rec"
+    "json")
+      echo "{"
+      local first=true
+      for key in "${!PROJECT_ANALYSIS[@]}"; do
+        if [[ $first == "true" ]]; then
+          first=false
+        else
+          echo ","
+        fi
+        printf '  "%s": "%s"' "$key" "${PROJECT_ANALYSIS[$key]}"
       done
-    else
-      echo "   • No specific recommendations at this time"
-    fi
-    echo ""
-    ;;
+      echo ""
+      echo "}"
+      ;;
+    "yaml")
+      for key in "${!PROJECT_ANALYSIS[@]}"; do
+        echo "$key: ${PROJECT_ANALYSIS[$key]}"
+      done
+      ;;
+    "human" | *)
+      echo ""
+      echo -e "${CYAN}🔍 PROJECT ANALYSIS RESULTS${NC}"
+      echo "================================"
+      echo ""
+
+      echo -e "${PURPLE}📁 Project Information${NC}"
+      echo "   Type: ${PROJECT_ANALYSIS[project_type]} (${PROJECT_ANALYSIS[confidence]} confidence)"
+      echo "   Primary Language: ${PROJECT_ANALYSIS[primary_language]}"
+      echo "   Frameworks: ${PROJECT_ANALYSIS[frameworks]:-none detected}"
+      echo "   Package Managers: ${PROJECT_ANALYSIS[package_managers]:-none detected}"
+      echo ""
+
+      echo -e "${BLUE}📊 Repository Statistics${NC}"
+      echo "   Total Files: ${PROJECT_ANALYSIS[total_files]}"
+      echo "   Source Files: ${PROJECT_ANALYSIS[total_source_files]}"
+      echo "   Git Repository: ${PROJECT_ANALYSIS[is_git_repo]}"
+      if [[ ${PROJECT_ANALYSIS[is_git_repo]} == "true" ]]; then
+        echo "   Commits: ${PROJECT_ANALYSIS[commit_count]}"
+        echo "   Current Branch: ${PROJECT_ANALYSIS[current_branch]}"
+        echo "   Has Remote: ${PROJECT_ANALYSIS[has_remote]}"
+      fi
+      echo "   Maturity Score: ${PROJECT_ANALYSIS[maturity_score]}/100"
+      echo ""
+
+      echo -e "${GREEN}💡 Recommendations${NC}"
+      local recommendations="${PROJECT_ANALYSIS[recommendations]}"
+      if [[ -n $recommendations ]]; then
+        IFS='|' read -ra RECS <<<"$recommendations"
+        for rec in "${RECS[@]}"; do
+          echo "   • $rec"
+        done
+      else
+        echo "   • No specific recommendations at this time"
+      fi
+      echo ""
+      ;;
   esac
 }
 
@@ -589,7 +589,7 @@ usage() {
 }
 
 # Handle command line arguments
-if [[  "${1:-}" == "--help" || "${1:-}" == "-h"  ]]; then
+if [[ ${1:-} == "--help" || ${1:-} == "-h" ]]; then
   usage
   exit 0
 fi

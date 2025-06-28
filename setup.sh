@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # agent-init setup script with project type detection
 
 set -e

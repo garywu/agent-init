@@ -35,7 +35,7 @@ log_activity() {
   local activity_type="${2:-general}"
   local timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-  if [[  ! -f "$SESSION_FILE"  ]]; then
+  if [[ ! -f $SESSION_FILE ]]; then
     log_error "No active session found"
     echo "Start a new session with: make session-start"
     exit 1
@@ -71,21 +71,21 @@ detect_activity_type() {
   local lower_message=$(echo "$message" | tr '[:upper:]' '[:lower:]')
 
   # Check for common patterns
-  if [[  "$lower_message" =~ (fix|bug|error|issue)  ]]; then
+  if [[ $lower_message =~ (fix|bug|error|issue) ]]; then
     echo "bug-fix"
-  elif [[  "$lower_message" =~ (feat|feature|add|implement)  ]]; then
+  elif [[ $lower_message =~ (feat|feature|add|implement) ]]; then
     echo "feature"
-  elif [[  "$lower_message" =~ (test|spec)  ]]; then
+  elif [[ $lower_message =~ (test|spec) ]]; then
     echo "testing"
-  elif [[  "$lower_message" =~ (doc|documentation|readme)  ]]; then
+  elif [[ $lower_message =~ (doc|documentation|readme) ]]; then
     echo "documentation"
-  elif [[  "$lower_message" =~ (refactor|clean|optimize)  ]]; then
+  elif [[ $lower_message =~ (refactor|clean|optimize) ]]; then
     echo "refactoring"
-  elif [[  "$lower_message" =~ (deploy|release|publish)  ]]; then
+  elif [[ $lower_message =~ (deploy|release|publish) ]]; then
     echo "deployment"
-  elif [[  "$lower_message" =~ (review|pr|pull.request)  ]]; then
+  elif [[ $lower_message =~ (review|pr|pull.request) ]]; then
     echo "code-review"
-  elif [[  "$lower_message" =~ (meeting|discuss|plan)  ]]; then
+  elif [[ $lower_message =~ (meeting|discuss|plan) ]]; then
     echo "planning"
   else
     echo "general"
@@ -96,14 +96,14 @@ detect_activity_type() {
 log_file_modification() {
   local file="$1"
 
-  if [[  ! -f "$SESSION_FILE"  ]]; then
+  if [[ ! -f $SESSION_FILE ]]; then
     return
   fi
 
   # Check if file is already in the list
   local exists=$(jq --arg file "$file" '.files_modified | index($file)' "$SESSION_FILE")
 
-  if [[  "$exists" == "null"  ]]; then
+  if [[ $exists == "null" ]]; then
     # Add file to modified list
     local temp_file="${SESSION_FILE}.tmp"
     jq --arg file "$file" '.files_modified += [$file]' "$SESSION_FILE" >"$temp_file"
@@ -116,7 +116,7 @@ log_command() {
   local command="$1"
   local timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-  if [[  ! -f "$SESSION_FILE"  ]]; then
+  if [[ ! -f $SESSION_FILE ]]; then
     return
   fi
 
@@ -142,7 +142,7 @@ log_issue_work() {
   local issue_title="${2:-}"
   local action="${3:-worked}"
 
-  if [[  ! -f "$SESSION_FILE"  ]]; then
+  if [[ ! -f $SESSION_FILE ]]; then
     return
   fi
 
@@ -160,7 +160,7 @@ EOF
   # Check if issue already in list
   local exists=$(jq --arg num "$issue_number" '.issues_worked[] | select(.number == ($num | tonumber))' "$SESSION_FILE" 2>/dev/null)
 
-  if [[  -z "$exists"  ]]; then
+  if [[ -z $exists ]]; then
     # Add new issue
     local temp_file="${SESSION_FILE}.tmp"
     jq --argjson issue "$issue_entry" '.issues_worked += [$issue]' "$SESSION_FILE" >"$temp_file"
@@ -180,7 +180,7 @@ main() {
   local message="${1:-}"
   local activity_type="${2:-}"
 
-  if [[  -z "$message"  ]]; then
+  if [[ -z $message ]]; then
     log_error "No message provided"
     echo ""
     echo "Usage: $0 \"message\" [type]"
@@ -193,7 +193,7 @@ main() {
   fi
 
   # Auto-detect type if not provided
-  if [[  -z "$activity_type"  ]]; then
+  if [[ -z $activity_type ]]; then
     activity_type=$(detect_activity_type "$message")
     log_info "Auto-detected activity type: $activity_type"
   fi
@@ -202,7 +202,7 @@ main() {
   log_activity "$message" "$activity_type"
 
   # Show current activity count
-  if [[  -f "$SESSION_FILE"  ]]; then
+  if [[ -f $SESSION_FILE ]]; then
     local activity_count=$(jq '.activities | length' "$SESSION_FILE")
     echo -e "${BLUE}Session has $activity_count activities logged${NC}"
   fi
@@ -210,58 +210,58 @@ main() {
 
 # Special command handling
 case "${1:-}" in
-"--file")
-  # Log file modification
-  shift
-  for file in "$@"; do
-    log_file_modification "$file"
-    log_info "Logged file modification: $file"
-  done
-  ;;
-"--command")
-  # Log command execution
-  shift
-  log_command "$*"
-  log_info "Logged command execution"
-  ;;
-"--issue")
-  # Log issue work
-  shift
-  issue_number="$1"
-  issue_title="${2:-}"
-  action="${3:-worked}"
-  log_issue_work "$issue_number" "$issue_title" "$action"
-  log_info "Logged work on issue #$issue_number"
-  ;;
-"--help" | "-h")
-  echo "Usage: $0 \"message\" [type]"
-  echo "       $0 --file file1 [file2 ...]"
-  echo "       $0 --command \"command string\""
-  echo "       $0 --issue number [title] [action]"
-  echo ""
-  echo "Log activities to the current development session."
-  echo ""
-  echo "Activity Types:"
-  echo "  general       - General development activity"
-  echo "  feature       - New feature implementation"
-  echo "  bug-fix       - Bug fixing"
-  echo "  testing       - Test creation or execution"
-  echo "  documentation - Documentation updates"
-  echo "  refactoring   - Code refactoring"
-  echo "  deployment    - Deployment activities"
-  echo "  code-review   - Code review activities"
-  echo "  planning      - Planning and design"
-  echo ""
-  echo "Special Commands:"
-  echo "  --file        Log file modifications"
-  echo "  --command     Log command execution"
-  echo "  --issue       Log GitHub issue work"
-  echo ""
-  echo "The activity type is auto-detected if not specified."
-  exit 0
-  ;;
-*)
-  # Regular activity logging
-  main "$@"
-  ;;
+  "--file")
+    # Log file modification
+    shift
+    for file in "$@"; do
+      log_file_modification "$file"
+      log_info "Logged file modification: $file"
+    done
+    ;;
+  "--command")
+    # Log command execution
+    shift
+    log_command "$*"
+    log_info "Logged command execution"
+    ;;
+  "--issue")
+    # Log issue work
+    shift
+    issue_number="$1"
+    issue_title="${2:-}"
+    action="${3:-worked}"
+    log_issue_work "$issue_number" "$issue_title" "$action"
+    log_info "Logged work on issue #$issue_number"
+    ;;
+  "--help" | "-h")
+    echo "Usage: $0 \"message\" [type]"
+    echo "       $0 --file file1 [file2 ...]"
+    echo "       $0 --command \"command string\""
+    echo "       $0 --issue number [title] [action]"
+    echo ""
+    echo "Log activities to the current development session."
+    echo ""
+    echo "Activity Types:"
+    echo "  general       - General development activity"
+    echo "  feature       - New feature implementation"
+    echo "  bug-fix       - Bug fixing"
+    echo "  testing       - Test creation or execution"
+    echo "  documentation - Documentation updates"
+    echo "  refactoring   - Code refactoring"
+    echo "  deployment    - Deployment activities"
+    echo "  code-review   - Code review activities"
+    echo "  planning      - Planning and design"
+    echo ""
+    echo "Special Commands:"
+    echo "  --file        Log file modifications"
+    echo "  --command     Log command execution"
+    echo "  --issue       Log GitHub issue work"
+    echo ""
+    echo "The activity type is auto-detected if not specified."
+    exit 0
+    ;;
+  *)
+    # Regular activity logging
+    main "$@"
+    ;;
 esac

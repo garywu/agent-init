@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Test production GitHub Pages deployment
 # Usage: ./tests/test-production.sh username repository-name
 
