@@ -192,6 +192,17 @@ Our documentation captures real-world debugging experiences and hard-won knowled
 - **[Building Validation Systems](docs/building-validation-systems.md)** - Environment validation frameworks
 - **[Python Environment Setup](docs/python-environment-setup.md)** - Virtual environments and pipx
 
+### 🎨 UI/UX and Frontend Guides
+- **[Zero-Out Spacing Methodology](docs/ZERO_OUT_SPACING_METHODOLOGY.md)** - Systematic approach to pixel-perfect layouts
+- **[UI Principles from Feedback](docs/UI_PRINCIPLES_FROM_FEEDBACK.md)** - 23 battle-tested UI/UX principles
+- **[XState Patterns](docs/XSTATE_PATTERNS.md)** - State machine patterns for complex UI logic
+- **[Tailwind v4 Migration Guide](docs/TAILWIND_V4_MIGRATION.md)** - Lessons from alpha adoption
+- **[Routing Architecture Patterns](docs/ROUTING_ARCHITECTURE.md)** - File-based vs programmatic routing
+
+### 🏗️ Architecture and Development
+- **[Database Evolution Patterns](docs/DATABASE_EVOLUTION_PATTERNS.md)** - From simple schemas to knowledge graphs
+- **[AI-Optimized Development Guide](docs/AI_OPTIMIZED_DEVELOPMENT.md)** - Structuring code for AI collaboration
+
 ### 🔍 Problem-Solving Guides
 - **[Debugging and Troubleshooting](docs/debugging-and-troubleshooting.md)** - Common issues and solutions
 - **[Learning from Mistakes](docs/learning-from-mistakes.md)** - How we capture debugging knowledge
