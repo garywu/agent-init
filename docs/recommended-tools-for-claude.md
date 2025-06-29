@@ -2,6 +2,92 @@
 
 This guide lists all the powerful CLI tools from the dotfiles that Claude should leverage for better functionality, based on what's already installed.
 
+## Modern Development Tools
+
+### Package Managers and Runtimes
+
+#### Bun - All-in-One JavaScript Toolkit
+Fast JavaScript runtime, package manager, bundler, and test runner:
+```bash
+# Install dependencies (30x faster than npm)
+bun install
+
+# Run TypeScript directly
+bun run script.ts
+
+# Built-in test runner
+bun test
+
+# Bundle for production
+bun build ./src/index.ts --outdir ./dist
+```
+
+#### pnpm - Efficient Package Manager
+Disk-efficient package manager with excellent monorepo support:
+```bash
+# Install with content-addressable storage
+pnpm install
+
+# Run scripts in all workspaces
+pnpm -r build
+
+# Interactive dependency updates
+pnpm update -i
+```
+
+### Database Tools
+
+#### Drizzle Kit - Modern ORM Toolkit
+Type-safe ORM with excellent developer experience:
+```bash
+# Push schema changes
+bunx drizzle-kit push:sqlite
+
+# Open database studio
+bunx drizzle-kit studio
+
+# Generate migrations
+bunx drizzle-kit generate:sqlite
+```
+
+### UI Component Libraries
+
+#### Tweakcn - Visual Theme Editor
+Visual editor for Tailwind CSS & shadcn/ui components (use as submodule)
+
+#### Tremor - Dashboard Components
+35+ customizable React components for building dashboards (use as submodule)
+
+### Code Quality Tools
+
+#### Ultracite - Modern Formatting/Linting
+Unified formatting and linting tool:
+```bash
+# Format code
+ultracite format
+
+# Lint code
+ultracite lint
+
+# Run all checks
+ultracite check
+```
+
+#### tsx - TypeScript Execute
+Modern TypeScript execution with watch mode:
+```bash
+# Execute TypeScript
+tsx script.ts
+
+# Watch mode
+tsx watch script.ts
+
+# Use in package.json
+"scripts": {
+  "dev": "tsx watch src/index.ts"
+}
+```
+
 ## Essential Tools Claude Should Use
 
 ### 1. Search and Navigation
