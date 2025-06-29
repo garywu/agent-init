@@ -139,14 +139,88 @@ make docs-lib           # Generate library documentation
 7. **Update session log** - Use `make session-log MSG="progress update"`
 8. **Create PR** with analysis context and framework-specific testing
 
-### 4. Pull Request Guidelines
-- Reference the issue number in PR description
-- Include test results
-- Ensure all checks pass
-- Request review when ready
-- Use conventional commits for automatic versioning
+### 4. Context-Aware Development Process
+1. **Select an issue** from the backlog with project type in mind
+2. **Review project analysis** for relevant context and constraints
+3. **Plan implementation** using framework-specific best practices
+4. **Document approach** in issue before coding:
+   ```markdown
+   ## Implementation Plan
+   Approaching this by:
+   1. First, I'll...
+   2. Then, I'll...
+   3. Finally, I'll...
+   
+   Estimated commits: 4-5 atomic changes
+   ```
+5. **Get approval** on approach with architectural considerations
+6. **Implement solution** with atomic commits
+7. **Update issue** after each commit
+8. **Run health checks** - Use `make health` to verify changes
+9. **Create PR** with full context
 
-### 5. Release Management
+### 5. Pull Request Excellence
+
+#### PR Description Template
+```markdown
+## Summary
+Brief description of changes
+
+## Related Issues
+Closes #X
+Part of #Y
+Related to #Z
+
+## Changes Made
+- [ ] Change 1 (commit abc123)
+- [ ] Change 2 (commit def456)
+- [ ] Change 3 (commit ghi789)
+
+## Testing
+- [ ] Unit tests pass
+- [ ] Integration tests pass
+- [ ] Manual testing completed
+
+## Screenshots/Demo
+[If applicable]
+
+## Breaking Changes
+[List any breaking changes]
+```
+
+#### PR Best Practices
+- **One PR per issue** (with rare exceptions)
+- **Keep PRs small** - Easier to review
+- **Update issue** when PR is created
+- **Link all related issues**
+- **Request specific reviewers**
+- **Respond to feedback quickly**
+
+### 6. GitHub CLI Mastery
+
+```bash
+# Issue Management
+gh issue create --title "Add validation" --body "Need to validate..." --label "enhancement,validation"
+gh issue list --label "bug" --state open
+gh issue view 45 --comments  # See all discussion
+gh issue develop 45 --checkout  # Create branch for issue
+
+# Advanced Issue Linking
+gh issue comment 45 --body "This is blocked by #30 and relates to our discussion in #12"
+gh issue edit 45 --add-label "blocked"
+gh issue pin 45  # Pin important issues
+
+# PR Management  
+gh pr create --fill --assignee @me
+gh pr checks  # Watch CI status
+gh pr review --approve
+gh pr merge --squash --delete-branch
+
+# Cross-Repository References
+gh issue comment 45 --body "See similar implementation in org/other-repo#123"
+```
+
+### 7. Release Management
 
 #### Manual Release Strategy (Recommended)
 For full control over versioning, use manual-only releases:
@@ -231,6 +305,132 @@ The following CLI tools are available and should be used:
 - **Framework Additions**: [New technologies adopted]
 - **Complexity Growth**: [Monitor codebase growth]
 - **Dependency Health**: [Track security and updates]
+
+## 📋 Project Management Best Practices
+
+### Permanent Management Issues
+
+For every project, create these 9 permanent management issues that **NEVER get closed**:
+
+1. **📋 Project Roadmap & Planning** (#1) - Central planning and milestone tracking
+2. **🔗 Issue Cross-Reference Index** (#2) - Master list of all issue relationships  
+3. **📚 Research & Discovery Log** (#3) - Document all findings and investigations
+4. **🏗️ Architecture Decisions** (#4) - Track design choices and rationale
+5. **🐛 Known Issues & Workarounds** (#5) - Catalog of ongoing challenges
+6. **📖 Documentation Tasks** (#6) - Track what needs documenting
+7. **🔧 Technical Debt Registry** (#7) - List of improvements needed
+8. **💡 Ideas & Future Features** (#8) - Backlog of enhancements
+9. **📊 Project Health & Metrics** (#9) - Performance and quality tracking
+
+### Issue Management Excellence
+
+#### Creating Targeted Issues
+- **One clear goal per issue** - Split complex tasks
+- **Use issue templates** - Consistency matters
+- **Add multiple labels** - Type, priority, component, status
+- **Set milestones** - Group related work
+- **Assign to project boards** - Visual tracking
+
+#### Interlinking Issues (Critical!)
+- **Always link related issues** - Creates knowledge graph
+- **Use GitHub keywords**:
+  - "Closes #X" - Auto-closes when PR merges
+  - "Fixes #X" - Same as closes
+  - "Resolves #X" - Same as closes
+  - "Related to #X" - Creates reference
+  - "Part of #X" - Shows hierarchy
+  - "Blocks #X" - Shows dependency
+  - "Blocked by #X" - Shows dependency
+- **Create task lists** in parent issues:
+  ```markdown
+  ## Subtasks
+  - [ ] Implement validation (#101)
+  - [ ] Add tests (#102) 
+  - [ ] Update documentation (#103)
+  ```
+
+#### Continuous Issue Documentation
+- **Comment when starting**: "Starting work on this issue"
+- **Document discoveries immediately**:
+  ```markdown
+  ## Investigation Results
+  Found that the issue is caused by:
+  1. **Root cause**: [detailed explanation]
+  2. **Impact**: [what this affects]
+  3. **Proposed solution**: [approach with tradeoffs]
+  
+  Related findings documented in #3 (Research Log)
+  ```
+- **Update progress regularly**: 
+  ```markdown
+  Progress update:
+  - ✅ Completed initial analysis
+  - ✅ Implemented core functionality 
+  - 🔄 Working on tests
+  - ⏳ Documentation pending
+  ```
+- **Link every commit**: "Implemented validation in abc123def"
+- **Document blockers**: "Blocked by #45 - waiting for API changes"
+
+### Atomic Commit Excellence
+
+#### The Atomic Commit Mindset
+- **Think in smallest complete changes**
+- **If you type "and" in description, split it**
+- **Each commit should be revertable**
+- **Each commit should pass tests**
+
+#### Atomic Commit Workflow
+```bash
+# After EACH logical change (don't accumulate!):
+
+# 1. Review what changed
+git status
+git diff
+
+# 2. Stage selectively 
+git add -p  # Interactive staging
+# OR for specific files
+git add src/validation.js
+
+# 3. Verify staged changes
+git diff --staged
+
+# 4. Commit with issue reference
+git commit -m "feat(validation): add email format check (#45)"
+
+# 5. Update issue immediately
+gh issue comment 45 --body "Added email validation in commit abc123"
+```
+
+#### Real Atomic Commit Example
+```bash
+# Working on #64: Add container tools
+
+# First change: Add act
+vim nix/home.nix  # Add act package
+git add -p nix/home.nix
+git commit -m "feat(nix): add act for GitHub Actions testing (#64)"
+gh issue comment 64 --body "✅ Added act package (commit abc123)"
+
+# Second change: Add dive  
+vim nix/home.nix  # Add dive package
+git add -p nix/home.nix
+git commit -m "feat(nix): add dive for Docker layer analysis (#64)"
+gh issue comment 64 --body "✅ Added dive package (commit def456)"
+
+# Third change: Documentation
+vim README.md  # Document both tools
+git add README.md
+git commit -m "docs: add container tools usage examples (#64)"
+gh issue comment 64 --body "✅ Documented tools (commit ghi789)"
+
+# Fourth change: Validation
+vim scripts/validate.sh  # Add validation
+git add scripts/validate.sh
+git commit -m "test: add container tools validation (#64)"
+gh issue comment 64 --body "✅ Added validation (commit jkl012)\n\nAll tasks complete! Ready for review."
+```
 
 ## 🎯 Session Management & Analytics
 

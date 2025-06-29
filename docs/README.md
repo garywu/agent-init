@@ -2,6 +2,24 @@
 
 Welcome to the claude-init documentation. This collection of guides provides comprehensive information for Claude CLI to make intelligent decisions when setting up and maintaining projects.
 
+## 🆕 Project Management Excellence
+
+**New!** Claude-init now includes comprehensive project management templates and workflows:
+
+- **[Project Management Workflow](../templates/PROJECT-MANAGEMENT.md)** - Complete guide for issue-driven development with atomic commits
+- **[9 Permanent Management Issues](../templates/.github/ISSUE_TEMPLATE/)** - Never-closing issues for continuous tracking
+- **[Setup Script](../scripts/setup-management-issues.sh)** - Automatically create all 9 management issues
+- **Enhanced CLAUDE.md Template** - Now includes project management best practices
+
+### Quick Start
+```bash
+# Create all 9 permanent management issues
+./scripts/setup-management-issues.sh
+
+# Copy project management template to your project
+cp templates/PROJECT-MANAGEMENT.md /path/to/your/project/
+```
+
 ## 📍 Quick Navigation
 
 ### By Task
