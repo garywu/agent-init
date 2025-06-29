@@ -268,8 +268,11 @@ analyze_ui_consistency() {
   fi
   
   # Check for consistent styling approach
-  if [[ -f "$PROJECT_ROOT/hub/tailwind.config.ts" ]]; then
-    log_info "✓ Tailwind CSS configured"
+  # Note: Tailwind CSS v4 doesn't use config files - configuration is in CSS
+  if [[ -f "$PROJECT_ROOT/tailwind.config.ts" ]] || [[ -f "$PROJECT_ROOT/tailwind.config.js" ]]; then
+    log_info "✓ Tailwind CSS configured (v3 or earlier)"
+  elif grep -r "@import.*tailwindcss" "$PROJECT_ROOT" 2>/dev/null | grep -q "\.css" || grep -r "@tailwind" "$PROJECT_ROOT" 2>/dev/null | grep -q "\.css"; then
+    log_info "✓ Tailwind CSS v4 configured (CSS-based)"
   else
     INFO_ITEMS+=("Consider using a consistent styling solution")
     score=$((score - 10))
