@@ -8,6 +8,9 @@ Welcome to the claude-init documentation. This collection of guides provides com
 
 - **Setting up a new project?** → Start with [Project Structure Patterns](project-structure-patterns.md)
 - **Scaffolding projects quickly?** → Use [Project Scaffolding Patterns](project-scaffolding-patterns.md)
+- **Managing external dependencies?** → Read [Git Submodule Patterns](SUBMODULE_PATTERNS.md)
+- **Creating developer workflows?** → Study [Makefile Patterns](MAKEFILE_PATTERNS.md)
+- **Choosing package managers?** → See [Package Manager Patterns](PACKAGE_MANAGER_PATTERNS.md)
 - **Creating pixel-perfect layouts?** → Apply [Zero-Out Spacing Methodology](ZERO_OUT_SPACING_METHODOLOGY.md)
 - **Designing intuitive UI/UX?** → Follow [UI Principles from Feedback](UI_PRINCIPLES_FROM_FEEDBACK.md)
 - **Managing complex state?** → Implement [XState Patterns](XSTATE_PATTERNS.md)
@@ -86,6 +89,9 @@ We provide comprehensive documentation rather than prescriptive scripts because:
 Comprehensive information about specific topics:
 - [Project Structure Patterns](project-structure-patterns.md) - Organization best practices
 - [Project Scaffolding Patterns](project-scaffolding-patterns.md) - Quick project initialization templates
+- [Git Submodule Patterns](SUBMODULE_PATTERNS.md) - Managing external dependencies effectively
+- [Makefile Patterns](MAKEFILE_PATTERNS.md) - Advanced automation and developer workflows
+- [Package Manager Patterns](PACKAGE_MANAGER_PATTERNS.md) - Modern JavaScript package managers (Bun, pnpm, etc.)
 - [Zero-Out Spacing Methodology](ZERO_OUT_SPACING_METHODOLOGY.md) - Systematic approach to pixel-perfect layouts
 - [UI Principles from Feedback](UI_PRINCIPLES_FROM_FEEDBACK.md) - 23 battle-tested UI/UX principles
 - [XState Patterns](XSTATE_PATTERNS.md) - State machine patterns for complex UI logic
