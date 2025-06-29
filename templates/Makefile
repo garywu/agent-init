@@ -46,9 +46,22 @@ pr-gen: ## Generate PR description from session
 .PHONY: init
 init: ## Initialize project dependencies
 	@echo "Initializing project..."
+	@# JavaScript/TypeScript with modern package managers
+	@if [ -f bun.lockb ]; then bun install; \
+	elif [ -f pnpm-lock.yaml ]; then pnpm install; \
+	elif [ -f yarn.lock ]; then yarn install; \
+	elif [ -f package-lock.json ]; then npm ci; \
+	elif [ -f package.json ]; then npm install; fi
+	@# Python
 	@if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-	@if [ -f package.json ]; then npm install; fi
-	@pre-commit install
+	@if [ -f Pipfile ]; then pipenv install; fi
+	@if [ -f poetry.lock ]; then poetry install; fi
+	@# Other languages
+	@if [ -f Gemfile ]; then bundle install; fi
+	@if [ -f go.mod ]; then go mod download; fi
+	@if [ -f Cargo.toml ]; then cargo fetch; fi
+	@# Git hooks
+	@if [ -f .pre-commit-config.yaml ]; then pre-commit install; fi
 	@echo "Project initialized!"
 
 .PHONY: lint
@@ -83,7 +96,11 @@ test-coverage: ## Run tests with coverage
 build: ## Build the project
 	@echo "Building project..."
 	@if [ -f setup.py ]; then python setup.py build; \
-	elif [ -f package.json ]; then npm run build; \
+	elif [ -f package.json ]; then \
+		if [ -f bun.lockb ]; then bun run build; \
+		elif [ -f pnpm-lock.yaml ]; then pnpm run build; \
+		elif [ -f yarn.lock ]; then yarn build; \
+		else npm run build; fi; \
 	elif [ -f Cargo.toml ]; then cargo build --release; \
 	elif [ -f go.mod ]; then go build ./...; \
 	else echo "No build configuration found"; fi
@@ -196,6 +213,70 @@ check: lint test security ## Run all checks (lint, test, security)
 
 .PHONY: all
 all: clean init format lint test build docs ## Run full pipeline
+
+# Database Management (if applicable)
+.PHONY: db-init
+db-init: ## Initialize database
+	@echo "Initializing database..."
+	@if [ -f drizzle.config.ts ]; then \
+		bunx drizzle-kit push:sqlite || npx drizzle-kit push:sqlite; \
+	elif [ -f prisma/schema.prisma ]; then \
+		npx prisma db push; \
+	elif [ -f alembic.ini ]; then \
+		alembic upgrade head; \
+	elif [ -f knexfile.js ]; then \
+		npx knex migrate:latest; \
+	else \
+		echo "No database configuration found"; \
+	fi
+
+.PHONY: db-migrate
+db-migrate: ## Create new migration
+	@echo "Creating migration..."
+	@if [ -f drizzle.config.ts ]; then \
+		bunx drizzle-kit generate:sqlite || npx drizzle-kit generate:sqlite; \
+	elif [ -f prisma/schema.prisma ]; then \
+		npx prisma migrate dev; \
+	elif [ -f alembic.ini ]; then \
+		read -p "Migration name: " name; \
+		alembic revision --autogenerate -m "$$name"; \
+	else \
+		echo "No migration tool found"; \
+	fi
+
+.PHONY: db-studio
+db-studio: ## Open database GUI
+	@echo "Opening database studio..."
+	@if [ -f drizzle.config.ts ]; then \
+		bunx drizzle-kit studio || npx drizzle-kit studio; \
+	elif [ -f prisma/schema.prisma ]; then \
+		npx prisma studio; \
+	else \
+		echo "No database studio available"; \
+	fi
+
+# Development Server
+.PHONY: dev
+dev: ## Start development server
+	@echo "Starting development server..."
+	@if [ -f next.config.js ] || [ -f next.config.ts ]; then \
+		if [ -f bun.lockb ]; then bun dev; \
+		elif [ -f pnpm-lock.yaml ]; then pnpm dev; \
+		elif [ -f yarn.lock ]; then yarn dev; \
+		else npm run dev; fi; \
+	elif [ -f vite.config.js ] || [ -f vite.config.ts ]; then \
+		if [ -f bun.lockb ]; then bun dev; \
+		elif [ -f pnpm-lock.yaml ]; then pnpm dev; \
+		else npm run dev; fi; \
+	elif [ -f manage.py ]; then \
+		python manage.py runserver; \
+	elif [ -f main.go ]; then \
+		go run main.go; \
+	elif [ -f Cargo.toml ]; then \
+		cargo run; \
+	else \
+		echo "No development server configuration found"; \
+	fi
 
 # Default target
 .DEFAULT_GOAL := help
