@@ -214,6 +214,26 @@ check: lint test security ## Run all checks (lint, test, security)
 .PHONY: all
 all: clean init format lint test build docs ## Run full pipeline
 
+# Health Assessment Commands
+.PHONY: health
+health: ## Run comprehensive project health assessment
+	@echo "🏥 Running project health assessment..."
+	@./scripts/health-assessment/core-health.sh . human
+
+.PHONY: health-json
+health-json: ## Run health assessment with JSON output
+	@./scripts/health-assessment/core-health.sh . json
+
+.PHONY: health-markdown
+health-markdown: ## Run health assessment with Markdown output
+	@./scripts/health-assessment/core-health.sh . markdown > HEALTH_REPORT.md
+	@echo "📄 Health report saved to HEALTH_REPORT.md"
+
+.PHONY: health-ci
+health-ci: ## Run health assessment for CI (exits with error if unhealthy)
+	@echo "🤖 Running CI health check..."
+	@./scripts/health-assessment/core-health.sh . json || (echo "❌ Health check failed" && exit 1)
+
 # Database Management (if applicable)
 .PHONY: db-init
 db-init: ## Initialize database
