@@ -8,6 +8,13 @@ Welcome to the claude-init documentation. This collection of guides provides com
 
 - **Setting up a new project?** → Start with [Project Structure Patterns](project-structure-patterns.md)
 - **Scaffolding projects quickly?** → Use [Project Scaffolding Patterns](project-scaffolding-patterns.md)
+- **Creating pixel-perfect layouts?** → Apply [Zero-Out Spacing Methodology](ZERO_OUT_SPACING_METHODOLOGY.md)
+- **Designing intuitive UI/UX?** → Follow [UI Principles from Feedback](UI_PRINCIPLES_FROM_FEEDBACK.md)
+- **Managing complex state?** → Implement [XState Patterns](XSTATE_PATTERNS.md)
+- **Migrating to Tailwind v4?** → See [Tailwind v4 Migration Guide](TAILWIND_V4_MIGRATION.md)
+- **Choosing routing architecture?** → Read [Routing Architecture Patterns](ROUTING_ARCHITECTURE.md)
+- **Evolving database schemas?** → Study [Database Evolution Patterns](DATABASE_EVOLUTION_PATTERNS.md)
+- **Working with AI assistants?** → Follow [AI-Optimized Development Guide](AI_OPTIMIZED_DEVELOPMENT.md)
 - **Supporting multiple environments?** → See [Environment Adaptation Patterns](environment-adaptation-patterns.md)
 - **Making scripts work in CI?** → Follow [CI Environment Patterns](ci-environment-patterns.md)
 - **Making CLIs interactive?** → Use [Interactive CLI Tools](interactive-cli-tools.md)
@@ -79,6 +86,13 @@ We provide comprehensive documentation rather than prescriptive scripts because:
 Comprehensive information about specific topics:
 - [Project Structure Patterns](project-structure-patterns.md) - Organization best practices
 - [Project Scaffolding Patterns](project-scaffolding-patterns.md) - Quick project initialization templates
+- [Zero-Out Spacing Methodology](ZERO_OUT_SPACING_METHODOLOGY.md) - Systematic approach to pixel-perfect layouts
+- [UI Principles from Feedback](UI_PRINCIPLES_FROM_FEEDBACK.md) - 23 battle-tested UI/UX principles
+- [XState Patterns](XSTATE_PATTERNS.md) - State machine patterns for complex UI logic
+- [Tailwind v4 Migration Guide](TAILWIND_V4_MIGRATION.md) - Lessons from alpha adoption
+- [Routing Architecture Patterns](ROUTING_ARCHITECTURE.md) - File-based vs programmatic routing
+- [Database Evolution Patterns](DATABASE_EVOLUTION_PATTERNS.md) - From simple schemas to knowledge graphs
+- [AI-Optimized Development Guide](AI_OPTIMIZED_DEVELOPMENT.md) - Structuring code for AI collaboration
 - [Environment Adaptation Patterns](environment-adaptation-patterns.md) - CI, platform, and context handling
 - [CI Environment Patterns](ci-environment-patterns.md) - Making scripts work in both interactive and CI environments
 - [Interactive CLI Tools](interactive-cli-tools.md) - fzf, gum, and other UX enhancers
