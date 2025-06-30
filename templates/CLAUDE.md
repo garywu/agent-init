@@ -2,6 +2,16 @@
 
 This file tracks AI-assisted development sessions and provides intelligent project analysis for enhanced development assistance.
 
+## 📝 CRITICAL: File Writing Rules
+
+**MUST READ BEFORE ANY FILE OPERATION:** [CLAUDE-WRITING-RULES.md](./CLAUDE-WRITING-RULES.md)
+
+This prevents pre-commit failures from:
+- Trailing whitespace
+- Missing newlines at EOF
+- Wrong shell syntax
+- Markdown formatting issues
+
 ## 🧠 Self-Reflection and Error Prevention Protocol
 
 ### Before Starting Any Task
@@ -36,6 +46,7 @@ This file tracks AI-assisted development sessions and provides intelligent proje
    - Verify assumptions about file contents with `Read` tool
    - Confirm understanding of requirements before implementing
    - Test commands in a safe way before executing destructive operations
+   - Make sure to ask me for any additional information you need to implement this functionality
 
 ### During Task Execution
 
@@ -52,11 +63,11 @@ This file tracks AI-assisted development sessions and provides intelligent proje
 
 ## 🔍 Project Intelligence
 
-**Last Analysis**: [Auto-generated timestamp]  
-**Analysis Confidence**: [Auto-detected: low/medium/high]  
-**Project Type**: [Auto-detected: web-app/api/library/cli/mobile/documentation/unknown]  
-**Primary Language**: [Auto-detected programming language]  
-**Frameworks**: [Auto-detected frameworks and libraries]  
+**Last Analysis**: [Auto-generated timestamp]
+**Analysis Confidence**: [Auto-detected: low/medium/high]
+**Project Type**: [Auto-detected: web-app/api/library/cli/mobile/documentation/unknown]
+**Primary Language**: [Auto-detected programming language]
+**Frameworks**: [Auto-detected frameworks and libraries]
 
 ### Quick Project Overview
 - **Maturity Score**: [0-100, auto-calculated]
@@ -76,7 +87,7 @@ Based on project analysis, Claude suggests:
 - **Date**: [YYYY-MM-DD]
 - **Session ID**: [Generated Session ID]
 - **Session Type**: [Development/Debugging/Planning/Review]
-- **Primary Goals**: 
+- **Primary Goals**:
   - [ ] Goal 1
   - [ ] Goal 2
 
@@ -198,7 +209,7 @@ make docs-lib           # Generate library documentation
    1. First, I'll...
    2. Then, I'll...
    3. Finally, I'll...
-   
+
    Estimated commits: 4-5 atomic changes
    ```
 5. **Get approval** on approach with architectural considerations
@@ -258,7 +269,7 @@ gh issue comment 45 --body "This is blocked by #30 and relates to our discussion
 gh issue edit 45 --add-label "blocked"
 gh issue pin 45  # Pin important issues
 
-# PR Management  
+# PR Management
 gh pr create --fill --assignee @me
 gh pr checks  # Watch CI status
 gh pr review --approve
@@ -361,7 +372,7 @@ The following CLI tools are available and should be used:
 For every project, create these 9 permanent management issues that **NEVER get closed**:
 
 1. **📋 Project Roadmap & Planning** (#1) - Central planning and milestone tracking
-2. **🔗 Issue Cross-Reference Index** (#2) - Master list of all issue relationships  
+2. **🔗 Issue Cross-Reference Index** (#2) - Master list of all issue relationships
 3. **📚 Research & Discovery Log** (#3) - Document all findings and investigations
 4. **🏗️ Architecture Decisions** (#4) - Track design choices and rationale
 5. **🐛 Known Issues & Workarounds** (#5) - Catalog of ongoing challenges
@@ -393,7 +404,7 @@ For every project, create these 9 permanent management issues that **NEVER get c
   ```markdown
   ## Subtasks
   - [ ] Implement validation (#101)
-  - [ ] Add tests (#102) 
+  - [ ] Add tests (#102)
   - [ ] Update documentation (#103)
   ```
 
@@ -406,14 +417,14 @@ For every project, create these 9 permanent management issues that **NEVER get c
   1. **Root cause**: [detailed explanation]
   2. **Impact**: [what this affects]
   3. **Proposed solution**: [approach with tradeoffs]
-  
+
   Related findings documented in #3 (Research Log)
   ```
-- **Update progress regularly**: 
+- **Update progress regularly**:
   ```markdown
   Progress update:
   - ✅ Completed initial analysis
-  - ✅ Implemented core functionality 
+  - ✅ Implemented core functionality
   - 🔄 Working on tests
   - ⏳ Documentation pending
   ```
@@ -436,7 +447,7 @@ For every project, create these 9 permanent management issues that **NEVER get c
 git status
 git diff
 
-# 2. Stage selectively 
+# 2. Stage selectively
 git add -p  # Interactive staging
 # OR for specific files
 git add src/validation.js
@@ -461,7 +472,7 @@ git add -p nix/home.nix
 git commit -m "feat(nix): add act for GitHub Actions testing (#64)"
 gh issue comment 64 --body "✅ Added act package (commit abc123)"
 
-# Second change: Add dive  
+# Second change: Add dive
 vim nix/home.nix  # Add dive package
 git add -p nix/home.nix
 git commit -m "feat(nix): add dive for Docker layer analysis (#64)"
