@@ -28,12 +28,12 @@ This issue serves as a backlog for all ideas, feature requests, and enhancements
 ### 💫 Interesting Possibilities
 
 #### Idea: [Title]
-- **Proposed by**: 
-- **Date**: 
-- **Description**: 
-- **User Value**: 
-- **Effort Estimate**: 
-- **Dependencies**: 
+- **Proposed by**:
+- **Date**:
+- **Description**:
+- **User Value**:
+- **Effort Estimate**:
+- **Dependencies**:
 
 ### 🔮 Moonshot Ideas
 

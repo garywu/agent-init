@@ -83,24 +83,24 @@ setup_environment() {
             *) export PATH="$1:$PATH" ;;
         esac
     }
-    
+
     path_append() {
         case ":$PATH:" in
             *":$1:"*) ;;
             *) export PATH="$PATH:$1" ;;
         esac
     }
-    
+
     # Add common paths
     path_prepend "$HOME/.local/bin"
     path_prepend "$HOME/bin"
     path_prepend "/usr/local/bin"
-    
+
     # Language-specific paths
     [[ -d "$HOME/.cargo/bin" ]] && path_prepend "$HOME/.cargo/bin"
     [[ -d "$HOME/.npm-global/bin" ]] && path_prepend "$HOME/.npm-global/bin"
     [[ -d "$HOME/go/bin" ]] && path_prepend "$HOME/go/bin"
-    
+
     # Tool-specific
     command -v brew &>/dev/null && eval "$(brew shellenv)"
     command -v direnv &>/dev/null && eval "$(direnv hook $SHELL)"
@@ -209,7 +209,7 @@ find_replace() {
     local find="$1"
     local replace="$2"
     local files="${3:-*}"
-    
+
     if command -v rg &>/dev/null && command -v sd &>/dev/null; then
         rg -l "$find" $files | xargs sd "$find" "$replace"
     else
@@ -372,10 +372,10 @@ end
 function fish_user_key_bindings
     # Ctrl+R for history search
     bind \cr 'commandline -f history-search-backward'
-    
+
     # Ctrl+F for file search with fzf
     bind \cf 'fzf | read -l result; and commandline -a $result'
-    
+
     # Alt+C for cd with fzf
     bind \ec '__fzf_cd'
 end
@@ -466,11 +466,11 @@ layout_python() {
 use_node() {
     local version=${1:-$(cat .nvmrc 2>/dev/null)}
     local node_path=$(find_up .node-version)
-    
+
     if [[ -z $version ]] && [[ -n $node_path ]]; then
         version=$(cat "$node_path")
     fi
-    
+
     if [[ -n $version ]]; then
         local node_dir=$HOME/.nvm/versions/node/v$version
         if [[ -d $node_dir ]]; then
@@ -503,13 +503,13 @@ use_ruby() {
 if command -v fzf &>/dev/null; then
     export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
     export FZF_DEFAULT_OPTS="
-        --height 40% 
-        --layout=reverse 
-        --border 
+        --height 40%
+        --layout=reverse
+        --border
         --preview 'bat --style=numbers --color=always --line-range :500 {}'
         --bind 'ctrl-/:toggle-preview'
     "
-    
+
     export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
     export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
 fi

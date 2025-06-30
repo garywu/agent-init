@@ -70,7 +70,7 @@ EOF
 detect_platform() {
     local platform="unknown"
     local version=""
-    
+
     case "$(uname -s)" in
         Darwin*)
             platform="macos"
@@ -88,7 +88,7 @@ detect_platform() {
             fi
             ;;
     esac
-    
+
     echo "$platform"
     [[ -n "$version" ]] && echo "Version: $version" >&2
 }
@@ -126,7 +126,7 @@ assert_equals() {
     local expected="$1"
     local actual="$2"
     local message="${3:-Values should be equal}"
-    
+
     if [[ "$expected" == "$actual" ]]; then
         pass "$message"
     else
@@ -138,7 +138,7 @@ assert_contains() {
     local haystack="$1"
     local needle="$2"
     local message="${3:-Should contain substring}"
-    
+
     if [[ "$haystack" == *"$needle"* ]]; then
         pass "$message"
     else
@@ -149,7 +149,7 @@ assert_contains() {
 assert_command() {
     local cmd="$1"
     local message="${2:-Command should exist: $cmd}"
-    
+
     if command -v "$cmd" >/dev/null 2>&1; then
         pass "$message"
     else
@@ -160,7 +160,7 @@ assert_command() {
 assert_file() {
     local file="$1"
     local message="${2:-File should exist: $file}"
-    
+
     if [[ -f "$file" ]]; then
         pass "$message"
     else
@@ -171,7 +171,7 @@ assert_file() {
 assert_directory() {
     local dir="$1"
     local message="${2:-Directory should exist: $dir}"
-    
+
     if [[ -d "$dir" ]]; then
         pass "$message"
     else
@@ -182,7 +182,7 @@ assert_directory() {
 assert_symlink() {
     local link="$1"
     local message="${2:-Symlink should exist: $link}"
-    
+
     if [[ -L "$link" ]]; then
         pass "$message"
     else
@@ -199,11 +199,11 @@ setup() {
     # Create temporary test directory
     TEST_DIR=$(mktemp -d)
     export TEST_DIR
-    
+
     # Save original state
     ORIGINAL_PATH="$PATH"
     ORIGINAL_HOME="$HOME"
-    
+
     # Set up test environment
     export HOME="$TEST_DIR/home"
     mkdir -p "$HOME"
@@ -213,7 +213,7 @@ teardown() {
     # Restore original state
     export PATH="$ORIGINAL_PATH"
     export HOME="$ORIGINAL_HOME"
-    
+
     # Clean up test directory
     if [[ -d "$TEST_DIR" ]]; then
         rm -rf "$TEST_DIR"
@@ -240,7 +240,7 @@ fail() {
     local message="$1"
     echo -e "${RED}✗${NC} $message"
     ((TESTS_FAILED++))
-    
+
     # Optionally exit on first failure
     if [[ "${FAIL_FAST:-}" == "true" ]]; then
         exit 1
@@ -283,11 +283,11 @@ teardown() {
 test_user_creation() {
     # Arrange
     local username="testuser"
-    
+
     # Act
     ./create_user.sh "$username" > "$TEST_DIR/output.log" 2>&1
     local exit_code=$?
-    
+
     # Assert
     assert_equals 0 "$exit_code" "User creation should succeed"
     assert_file "$HOME/.config/users/$username" "User file should exist"
@@ -297,11 +297,11 @@ test_user_creation() {
 test_duplicate_user() {
     # Create user first
     ./create_user.sh "testuser"
-    
+
     # Try to create again
     ./create_user.sh "testuser" 2>&1 | tee "$TEST_DIR/error.log"
     local exit_code=${PIPESTATUS[0]}
-    
+
     assert_equals 1 "$exit_code" "Duplicate user should fail"
     assert_contains "$(cat "$TEST_DIR/error.log")" "already exists"
 }
@@ -321,27 +321,27 @@ print_summary
 
 test_full_workflow() {
     describe "Full installation and configuration workflow"
-    
+
     # Install
     run_step "Installation" <<-'EOF'
         ./install.sh --prefix="$TEST_DIR/local"
         assert_directory "$TEST_DIR/local/bin"
         assert_file "$TEST_DIR/local/bin/myapp"
     EOF
-    
+
     # Configure
     run_step "Configuration" <<-'EOF'
         export PATH="$TEST_DIR/local/bin:$PATH"
         myapp init
         assert_file "$HOME/.myapp/config.yml"
     EOF
-    
+
     # Use
     run_step "Basic usage" <<-'EOF'
         output=$(myapp hello world)
         assert_contains "$output" "Hello, world!"
     EOF
-    
+
     # Cleanup
     run_step "Uninstallation" <<-'EOF'
         ./uninstall.sh --prefix="$TEST_DIR/local"
@@ -365,12 +365,12 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest]
         test-suite: [smoke, unit, integration]
-        
+
     runs-on: ${{ matrix.os }}
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup test environment
         run: |
           # Install test dependencies
@@ -380,13 +380,13 @@ jobs:
           elif [[ "$RUNNER_OS" == "macOS" ]]; then
             brew install coreutils jq
           fi
-      
+
       - name: Run tests
         run: |
           ./tests/test_runner.sh --ci ${{ matrix.test-suite }}
         env:
           CI: true
-          
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v3
@@ -405,10 +405,10 @@ if is_ci; then
     # CI-specific behavior
     export NONINTERACTIVE=1
     export DEBIAN_FRONTEND=noninteractive
-    
+
     # Skip tests that can't run in CI
     [[ "$TEST_NAME" == "test_gui" ]] && skip_test "GUI not available in CI"
-    
+
     # Adjust timeouts
     TIMEOUT=60  # Longer timeout in CI
 else
@@ -492,13 +492,13 @@ generate_test_file() {
 # Simple performance assertions
 test_performance() {
     local start=$(date +%s)
-    
+
     # Run operation
     ./slow_operation.sh
-    
+
     local end=$(date +%s)
     local duration=$((end - start))
-    
+
     assert_less_than "$duration" 5 "Operation should complete within 5 seconds"
 }
 
@@ -508,7 +508,7 @@ test_benchmark() {
         hyperfine --export-json "$TEST_DIR/benchmark.json" \
             './operation.sh' \
             './optimized_operation.sh'
-        
+
         # Analyze results
         jq '.results[1].median < .results[0].median' "$TEST_DIR/benchmark.json" \
             || fail "Optimized version is not faster"
@@ -540,7 +540,7 @@ DEBUG=true ./test_runner.sh failing_test
 run_test_with_output() {
     local test_name="$1"
     local log_file="$TEST_DIR/${test_name}.log"
-    
+
     {
         echo "=== Test: $test_name ==="
         echo "Date: $(date)"
@@ -549,12 +549,12 @@ run_test_with_output() {
         echo "Environment:"
         env | sort
         echo "=== Test Output ==="
-        
+
         # Run test
         "$test_name" 2>&1
-        
+
     } | tee "$log_file"
-    
+
     return ${PIPESTATUS[0]}
 }
 ```

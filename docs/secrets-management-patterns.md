@@ -30,7 +30,7 @@ Secrets management is critical for:
 install_secrets_tools() {
     # macOS
     brew install sops age
-    
+
     # Linux
     # Download from GitHub releases
     # Or use package manager
@@ -40,10 +40,10 @@ install_secrets_tools() {
 setup_age_keys() {
     # Generate personal key
     age-keygen -o ~/.config/sops/age/keys.txt
-    
+
     # Extract public key
     age-keygen -y ~/.config/sops/age/keys.txt > ~/.config/sops/age/public.txt
-    
+
     echo "Public key for team sharing:"
     cat ~/.config/sops/age/public.txt
 }
@@ -56,10 +56,10 @@ creation_rules:
     age: |
       age1ql3z7hjy54pw3hyww5ayyfg7zqgvc7w3j2elw8zmrj2kg5sfn9aqmcac8p,
       age1another_team_member_public_key
-      
+
   - path_regex: secrets/.*\.json$
     age: age1ql3z7hjy54pw3hyww5ayyfg7zqgvc7w3j2elw8zmrj2kg5sfn9aqmcac8p
-    
+
   - path_regex: .*\.env\.encrypted$
     age: age1ql3z7hjy54pw3hyww5ayyfg7zqgvc7w3j2elw8zmrj2kg5sfn9aqmcac8p
 EOF
@@ -72,19 +72,19 @@ EOF
 # Create environment secrets
 create_env_secrets() {
     local env="$1"  # dev, staging, prod
-    
+
     # Create secrets file
     cat > "secrets/${env}.yaml" << EOF
 # ${env} environment secrets
 api:
   key: "your-api-key-here"
   secret: "your-api-secret-here"
-  
+
 database:
   host: "${env}.db.example.com"
   username: "app_user"
   password: "strong-password-here"
-  
+
 services:
   redis:
     url: "redis://:password@${env}.redis.example.com:6379"
@@ -93,7 +93,7 @@ services:
     secret_key: "AWS_SECRET_KEY"
     bucket: "myapp-${env}"
 EOF
-    
+
     # Encrypt the file
     sops -e -i "secrets/${env}.yaml"
 }
@@ -101,10 +101,10 @@ EOF
 # Decrypt for use
 use_secrets() {
     local env="$1"
-    
+
     # Decrypt to stdout
     sops -d "secrets/${env}.yaml"
-    
+
     # Export as environment variables
     eval $(sops -d "secrets/${env}.yaml" | yq eval -o=shell)
 }
@@ -119,7 +119,7 @@ use_secrets() {
 load_secrets() {
     local env="${APP_ENV:-development}"
     local secrets_file="secrets/${env}.yaml"
-    
+
     if [[ -f "$secrets_file" ]]; then
         # Export each secret as env var
         eval $(sops -d "$secrets_file" | yq eval -o=shell)
@@ -162,7 +162,7 @@ encrypt_env() {
         echo "No .env file found"
         return 1
     fi
-    
+
     # Encrypt .env to .env.encrypted
     sops -e .env > .env.encrypted
     echo "✅ Encrypted .env to .env.encrypted"
@@ -173,7 +173,7 @@ decrypt_env() {
         echo "No .env.encrypted file found"
         return 1
     fi
-    
+
     # Decrypt .env.encrypted to .env
     sops -d .env.encrypted > .env
     echo "✅ Decrypted .env.encrypted to .env"
@@ -201,12 +201,12 @@ validate_no_secrets() {
 rotate_api_keys() {
     local service="$1"
     local env="$2"
-    
+
     echo "Rotating API keys for $service in $env..."
-    
+
     # Decrypt current secrets
     local current=$(sops -d "secrets/${env}.yaml")
-    
+
     # Generate new keys (service-specific)
     case "$service" in
         "stripe")
@@ -222,14 +222,14 @@ rotate_api_keys() {
             new_key=$(openssl rand -hex 32)
             ;;
     esac
-    
+
     # Update secrets file
     echo "$current" | yq eval ".services.${service}.key = \"$new_key\"" - > "secrets/${env}.yaml.tmp"
-    
+
     # Re-encrypt
     sops -e "secrets/${env}.yaml.tmp" > "secrets/${env}.yaml"
     rm "secrets/${env}.yaml.tmp"
-    
+
     echo "✅ Rotated $service keys for $env"
 }
 
@@ -252,7 +252,7 @@ jobs:
           curl -LO https://github.com/getsops/sops/releases/latest/download/sops-linux
           chmod +x sops-linux
           sudo mv sops-linux /usr/local/bin/sops
-      
+
       - name: Rotate Dev Secrets
         run: ./scripts/rotate-secrets.sh all dev
         env:
@@ -275,12 +275,12 @@ age-keygen -y ~/.config/sops/age/keys.txt > ".keys/team/$(git config user.email)
 # Update .sops.yaml with all team keys
 update_team_keys() {
     local keys=()
-    
+
     # Collect all public keys
     for keyfile in .keys/team/*.pub; do
         keys+=($(cat "$keyfile"))
     done
-    
+
     # Update .sops.yaml
     yq eval ".creation_rules[0].age = \"${keys[*]}\"" -i .sops.yaml
 }
@@ -296,7 +296,7 @@ update_team_keys() {
     curl -LO https://github.com/getsops/sops/releases/latest/download/sops-linux
     chmod +x sops-linux
     sudo mv sops-linux /usr/local/bin/sops
-    
+
     # Setup age key from secrets
     mkdir -p ~/.config/sops/age
     echo "${{ secrets.SOPS_AGE_KEY }}" > ~/.config/sops/age/keys.txt
@@ -378,7 +378,7 @@ repos:
 log_secret_access() {
     local secret_name="$1"
     local timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-    
+
     echo "${timestamp} - ${USER} accessed ${secret_name}" >> .secret-access.log
 }
 ```

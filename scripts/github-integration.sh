@@ -292,53 +292,53 @@ EOF
 
 # Main command handling
 case "${1:-}" in
-  "link-issues")
-    link_session_to_issues
-    ;;
-  "comment")
-    shift
-    issue_number="${1:-}"
-    if [[ -z $issue_number ]]; then
-      log_error "Usage: $0 comment <issue-number>"
-      exit 1
-    fi
-    create_issue_comment "$issue_number"
-    ;;
-  "pr-description")
-    generate_pr_description
-    ;;
-  "sync-project")
-    shift
-    project_number="${1:-}"
-    sync_with_project "$project_number"
-    ;;
-  "link-commits")
-    shift
-    since="${1:-1 hour ago}"
-    link_commits_to_issues "$since"
-    ;;
-  "--help" | "-h" | "")
-    echo "Usage: $0 <command> [options]"
-    echo ""
-    echo "GitHub integration for claude-init session tracking."
-    echo ""
-    echo "Commands:"
-    echo "  link-issues         Link session to related GitHub issues"
-    echo "  comment <number>    Add session summary as issue comment"
-    echo "  pr-description      Generate PR description from session"
-    echo "  sync-project <num>  Sync with GitHub project board"
-    echo "  link-commits [time] Link commits to issues (default: 1 hour)"
-    echo ""
-    echo "Examples:"
-    echo "  $0 link-issues"
-    echo "  $0 comment 42"
-    echo "  $0 pr-description > pr-body.md"
-    echo "  $0 link-commits \"1 day ago\""
-    exit 0
-    ;;
-  *)
-    log_error "Unknown command: $1"
-    echo "Run '$0 --help' for usage"
+"link-issues")
+  link_session_to_issues
+  ;;
+"comment")
+  shift
+  issue_number="${1:-}"
+  if [[ -z $issue_number ]]; then
+    log_error "Usage: $0 comment <issue-number>"
     exit 1
-    ;;
+  fi
+  create_issue_comment "$issue_number"
+  ;;
+"pr-description")
+  generate_pr_description
+  ;;
+"sync-project")
+  shift
+  project_number="${1:-}"
+  sync_with_project "$project_number"
+  ;;
+"link-commits")
+  shift
+  since="${1:-1 hour ago}"
+  link_commits_to_issues "$since"
+  ;;
+"--help" | "-h" | "")
+  echo "Usage: $0 <command> [options]"
+  echo ""
+  echo "GitHub integration for claude-init session tracking."
+  echo ""
+  echo "Commands:"
+  echo "  link-issues         Link session to related GitHub issues"
+  echo "  comment <number>    Add session summary as issue comment"
+  echo "  pr-description      Generate PR description from session"
+  echo "  sync-project <num>  Sync with GitHub project board"
+  echo "  link-commits [time] Link commits to issues (default: 1 hour)"
+  echo ""
+  echo "Examples:"
+  echo "  $0 link-issues"
+  echo "  $0 comment 42"
+  echo "  $0 pr-description > pr-body.md"
+  echo "  $0 link-commits \"1 day ago\""
+  exit 0
+  ;;
+*)
+  log_error "Unknown command: $1"
+  echo "Run '$0 --help' for usage"
+  exit 1
+  ;;
 esac

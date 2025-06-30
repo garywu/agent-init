@@ -21,7 +21,7 @@ This issue serves as the central planning hub for the project. All major milesto
 ## Milestones
 
 ### 🎯 Current Milestone: [Name]
-- **Target Date**: 
+- **Target Date**:
 - **Goals**:
   - [ ] Goal 1
   - [ ] Goal 2
@@ -54,7 +54,7 @@ This issue serves as the central planning hub for the project. All major milesto
 ## Resource Planning
 <!-- Track resource needs and allocation -->
 
-- **Team Size**: 
+- **Team Size**:
 - **Key Skills Needed**:
 - **Infrastructure Requirements**:
 - **Budget Considerations**:

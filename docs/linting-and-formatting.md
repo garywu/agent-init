@@ -250,15 +250,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@master
-      
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-      
+
       - name: Lint Python
         run: |
           pip install flake8 black isort

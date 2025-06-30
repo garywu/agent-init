@@ -16,10 +16,10 @@ Manage different identities and configurations based on directory:
 
 [includeIf "gitdir:~/work/"]
     path = ~/.gitconfig-work
-    
+
 [includeIf "gitdir:~/personal/"]
     path = ~/.gitconfig-personal
-    
+
 [includeIf "gitdir:~/opensource/"]
     path = ~/.gitconfig-oss
 
@@ -44,28 +44,28 @@ Manage different identities and configurations based on directory:
     st = status -sb
     ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numstat
     last = log -1 HEAD --stat
-    
+
     # Branch management
     br = branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative))'
     brd = branch -d
     brc = checkout -b
-    
+
     # Staging helpers
     unstage = reset HEAD --
     staged = diff --cached
-    
+
     # Commit helpers
     amend = commit --amend --no-edit
     fixup = commit --fixup
-    
+
     # History rewriting
     rewrite = rebase -i
     squash-all = "!f(){ git reset $(git commit-tree HEAD^{tree} -m \"${1:-Initial commit}\");};f"
-    
+
     # Workflow helpers
     wip = !git add -A && git commit -m "WIP: $(date +%Y-%m-%d_%H:%M:%S)"
     unwip = reset HEAD~1
-    
+
     # Maintenance
     cleanup = !git branch --merged | grep -v '\*\|main\|master\|develop' | xargs -n 1 git branch -d
     prune-branches = !git remote prune origin && git cleanup
@@ -146,7 +146,7 @@ LFS_THRESHOLD=1048576   # 1MB
 while IFS= read -r file; do
     if [[ -f "$file" ]]; then
         size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null)
-        
+
         if [[ $size -gt $MAX_FILE_SIZE ]]; then
             echo "❌ File $file is too large ($(numfmt --to=iec-i --suffix=B $size))"
             exit 1
@@ -230,14 +230,14 @@ fi
 create_pr() {
     local title="$1"
     local draft="${2:-false}"
-    
+
     # Get current branch
     local branch=$(git rev-parse --abbrev-ref HEAD)
-    
+
     # Extract type and description from branch name
     local type=$(echo "$branch" | cut -d'/' -f1)
     local description=$(echo "$branch" | cut -d'/' -f2- | tr '-' ' ')
-    
+
     # Generate PR body from commits
     local body=$(cat << EOF
 ## Summary
@@ -261,7 +261,7 @@ $(git log origin/main..HEAD --pretty=format:"- %s" --reverse)
 - [ ] Documentation updated
 EOF
 )
-    
+
     # Create PR
     if [[ "$draft" == "true" ]]; then
         gh pr create --draft --title "$title" --body "$body"
@@ -273,7 +273,7 @@ EOF
 # Interactive PR creation
 interactive_pr() {
     echo "Creating PR for branch: $(git rev-parse --abbrev-ref HEAD)"
-    
+
     # Use gum for nice UI if available
     if command -v gum &> /dev/null; then
         title=$(gum input --placeholder "PR Title")
@@ -283,7 +283,7 @@ interactive_pr() {
         read -p "Create as draft? (y/N): " draft_response
         draft=$([[ "$draft_response" =~ ^[Yy]$ ]] && echo "true" || echo "false")
     fi
-    
+
     create_pr "$title" "$draft"
 }
 ```
@@ -298,13 +298,13 @@ interactive_pr() {
 worktree_create() {
     local branch="$1"
     local worktree_dir="../worktrees/${branch//\//-}"
-    
+
     # Create worktree
     git worktree add "$worktree_dir" -b "$branch"
-    
+
     # Copy necessary files
     cp .env.example "$worktree_dir/.env" 2>/dev/null || true
-    
+
     # Setup in worktree
     (
         cd "$worktree_dir"
@@ -318,7 +318,7 @@ worktree_status() {
     git worktree list | while read -r line; do
         local path=$(echo "$line" | awk '{print $1}')
         local branch=$(echo "$line" | awk '{print $3}')
-        
+
         if [[ -d "$path" ]]; then
             local status=$(cd "$path" && git status --porcelain | wc -l)
             echo "$branch: $status uncommitted changes"
@@ -331,7 +331,7 @@ worktree_cleanup() {
     git worktree list | while read -r line; do
         local path=$(echo "$line" | awk '{print $1}')
         local branch=$(echo "$line" | awk '{print $3}')
-        
+
         # Check if branch is merged
         if git branch --merged | grep -q "$branch"; then
             echo "Removing merged worktree: $branch"
@@ -382,16 +382,16 @@ bisect_test_failure() {
     local test_command="$1"
     local good_commit="$2"
     local bad_commit="${3:-HEAD}"
-    
+
     # Start bisect
     git bisect start "$bad_commit" "$good_commit"
-    
+
     # Run automated bisect
     git bisect run bash -c "
         # Build project
         npm install --silent || exit 125
         npm run build --silent || exit 125
-        
+
         # Run test
         if $test_command; then
             exit 0  # Good
@@ -399,11 +399,11 @@ bisect_test_failure() {
             exit 1  # Bad
         fi
     "
-    
+
     # Show result
     echo "First bad commit:"
     git bisect view --oneline
-    
+
     # Cleanup
     git bisect reset
 }
@@ -420,7 +420,7 @@ subtree_pull() {
     local prefix="$1"
     local repo="$2"
     local branch="${3:-main}"
-    
+
     git subtree pull --prefix="$prefix" "$repo" "$branch" --squash
 }
 
@@ -428,7 +428,7 @@ subtree_push() {
     local prefix="$1"
     local repo="$2"
     local branch="${3:-main}"
-    
+
     git subtree push --prefix="$prefix" "$repo" "$branch"
 }
 
@@ -451,10 +451,10 @@ update_all_subtrees() {
 setup_gpg_signing() {
     # Generate GPG key
     gpg --full-generate-key
-    
+
     # List keys
     gpg --list-secret-keys --keyid-format=long
-    
+
     # Configure git
     git config --global user.signingkey YOUR_KEY_ID
     git config --global commit.gpgsign true
@@ -466,7 +466,7 @@ setup_ssh_signing() {
     # Configure git to use SSH for signing
     git config --global gpg.format ssh
     git config --global user.signingkey ~/.ssh/id_ed25519.pub
-    
+
     # Create allowed signers file
     echo "$(git config user.email) $(cat ~/.ssh/id_ed25519.pub)" >> ~/.config/git/allowed_signers
     git config --global gpg.ssh.allowedSignersFile ~/.config/git/allowed_signers

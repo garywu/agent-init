@@ -43,7 +43,7 @@ on:
   # DISABLE automated releases for manual control
   # schedule:
   #   - cron: '0 9 * * 1'  # Weekly releases
-  
+
   # push:
   #   branches:
   #     - main

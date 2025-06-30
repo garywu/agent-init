@@ -174,7 +174,7 @@ Use conventional commits:
 
 ```
 chore: initialize repository with professional standards
-feat: add GitHub issue templates for better collaboration  
+feat: add GitHub issue templates for better collaboration
 fix: correct pre-commit configuration for Python projects
 docs: add comprehensive contributing guidelines
 ```

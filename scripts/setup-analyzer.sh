@@ -139,46 +139,46 @@ determine_templates() {
 
   # Project-type specific templates
   case "$project_type" in
-    "web-app")
-      RECOMMENDED_TEMPLATES+=("CLAUDE-web-app.md")
-      if [[ $frameworks == *"react"* ]] || [[ $frameworks == *"nextjs"* ]]; then
-        REQUIRED_FILES+=("package.json")
-        SETUP_ACTIONS+=("setup_frontend_development")
-      fi
-      ;;
-    "api")
-      RECOMMENDED_TEMPLATES+=("CLAUDE-api.md")
-      SETUP_ACTIONS+=("setup_api_development")
-      ;;
-    "library")
-      SETUP_ACTIONS+=("setup_library_development")
-      ;;
-    "cli")
-      SETUP_ACTIONS+=("setup_cli_development")
-      ;;
-    "documentation")
-      SETUP_ACTIONS+=("setup_documentation_site")
-      ;;
+  "web-app")
+    RECOMMENDED_TEMPLATES+=("CLAUDE-web-app.md")
+    if [[ $frameworks == *"react"* ]] || [[ $frameworks == *"nextjs"* ]]; then
+      REQUIRED_FILES+=("package.json")
+      SETUP_ACTIONS+=("setup_frontend_development")
+    fi
+    ;;
+  "api")
+    RECOMMENDED_TEMPLATES+=("CLAUDE-api.md")
+    SETUP_ACTIONS+=("setup_api_development")
+    ;;
+  "library")
+    SETUP_ACTIONS+=("setup_library_development")
+    ;;
+  "cli")
+    SETUP_ACTIONS+=("setup_cli_development")
+    ;;
+  "documentation")
+    SETUP_ACTIONS+=("setup_documentation_site")
+    ;;
   esac
 
   # Language-specific additions
   case "$primary_language" in
-    "typescript" | "javascript")
-      REQUIRED_FILES+=("package.json" ".gitignore")
-      SETUP_ACTIONS+=("setup_javascript_tooling")
-      ;;
-    "python")
-      REQUIRED_FILES+=("requirements.txt" ".gitignore")
-      SETUP_ACTIONS+=("setup_python_tooling")
-      ;;
-    "go")
-      REQUIRED_FILES+=("go.mod" ".gitignore")
-      SETUP_ACTIONS+=("setup_go_tooling")
-      ;;
-    "rust")
-      REQUIRED_FILES+=("Cargo.toml" ".gitignore")
-      SETUP_ACTIONS+=("setup_rust_tooling")
-      ;;
+  "typescript" | "javascript")
+    REQUIRED_FILES+=("package.json" ".gitignore")
+    SETUP_ACTIONS+=("setup_javascript_tooling")
+    ;;
+  "python")
+    REQUIRED_FILES+=("requirements.txt" ".gitignore")
+    SETUP_ACTIONS+=("setup_python_tooling")
+    ;;
+  "go")
+    REQUIRED_FILES+=("go.mod" ".gitignore")
+    SETUP_ACTIONS+=("setup_go_tooling")
+    ;;
+  "rust")
+    REQUIRED_FILES+=("Cargo.toml" ".gitignore")
+    SETUP_ACTIONS+=("setup_rust_tooling")
+    ;;
   esac
 
   # Universal recommendations

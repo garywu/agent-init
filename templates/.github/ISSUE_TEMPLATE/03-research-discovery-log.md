@@ -26,7 +26,7 @@ This issue serves as a knowledge base for all research findings, technical inves
   2. Finding 2
 - **Conclusions**: What we learned
 - **Recommendations**: What we should do
-- **Resources**: 
+- **Resources**:
   - [Link to documentation]
   - [Link to article]
 
@@ -76,7 +76,7 @@ This issue serves as a knowledge base for all research findings, technical inves
 #### Vulnerability: [CVE/Type]
 - **Date Discovered**: YYYY-MM-DD
 - **Severity**: Critical/High/Medium/Low
-- **Affected Components**: 
+- **Affected Components**:
 - **Research Findings**:
 - **Mitigation Strategy**:
 - **Fixed in**: #XX

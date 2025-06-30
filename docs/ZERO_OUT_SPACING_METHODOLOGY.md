@@ -58,15 +58,15 @@ const uiElements = {
 
 ```typescript
 // Account for ALL spacing: gaps, paddings, and borders
-const totalVerticalSpacing = GAPS.headerBottomGap + 
-                           GAPS.statusBarTopGap + 
-                           (GAPS.headerPadding * 2) + 
-                           (GAPS.statusBarPadding * 2) + 
+const totalVerticalSpacing = GAPS.headerBottomGap +
+                           GAPS.statusBarTopGap +
+                           (GAPS.headerPadding * 2) +
+                           (GAPS.statusBarPadding * 2) +
                            6; // Borders
 
-const gridContainerHeight = containerDimensions.height - 
-                          uiElements.headerHeight - 
-                          uiElements.statusBarHeight - 
+const gridContainerHeight = containerDimensions.height -
+                          uiElements.headerHeight -
+                          uiElements.statusBarHeight -
                           totalVerticalSpacing;
 ```
 
@@ -91,13 +91,13 @@ const gridLayout = calculateAdaptiveGrid({
 
 ```typescript
 // If there's remaining space, expand items to fill it
-const actualAvailableHeight = gridContainerHeight - 
-                            uiElements.columnSelectorsHeight - 
+const actualAvailableHeight = gridContainerHeight -
+                            uiElements.columnSelectorsHeight -
                             (GAPS.gridContainerPadding * 2);
-                            
-const totalRowHeight = gridLayout.rows * gridLayout.itemHeight + 
+
+const totalRowHeight = gridLayout.rows * gridLayout.itemHeight +
                       (gridLayout.rows - 1) * gridLayout.gap;
-                      
+
 const remainingGap = actualAvailableHeight - totalRowHeight;
 
 if (remainingGap > 2) {
@@ -114,24 +114,24 @@ if (remainingGap > 2) {
 const GAPS = {
   // Page margins
   pageMargin: 12,
-  
+
   // Grid gaps
   gridGap: 18,
-  
+
   // Card styling
   cardPadding: 10,
   cardBorderWidth: 1,
   cardBorderRadius: 4,
-  
+
   // Layout gaps
   headerBottomGap: 12,
   statusBarTopGap: 12,
-  
+
   // Selector gaps
   columnSelectorGap: 3,
   rowSelectorGap: 3,
   selectorToGridGap: 6,
-  
+
   // Component-specific gaps
   headerPadding: 10,
   statusBarPadding: 20,

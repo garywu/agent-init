@@ -85,7 +85,7 @@ If you encounter filter issues with other standard files:
 ## Common Affected Files
 
 - `CODE_OF_CONDUCT.md` - Community guidelines
-- `SECURITY.md` - Security disclosure policies  
+- `SECURITY.md` - Security disclosure policies
 - `LICENSE` - Certain license texts
 - Files containing legal terminology
 - Files with security-related keywords

@@ -69,7 +69,7 @@ This contribution package provides a comprehensive automated shell script fixing
 ```bash
 # Test tool availability
 command -v shellcheck >/dev/null 2>&1 && echo "✓ shellcheck available"
-command -v shfmt >/dev/null 2>&1 && echo "✓ shfmt available"  
+command -v shfmt >/dev/null 2>&1 && echo "✓ shfmt available"
 command -v shellharden >/dev/null 2>&1 && echo "✓ shellharden available"
 ```
 
@@ -80,7 +80,7 @@ shellcheck --version  # Verify supports RC files
 echo 'echo $unquoted' > test.sh
 shellcheck test.sh     # Should show reduced warnings with RC file
 
-# Test .shfmt configuration  
+# Test .shfmt configuration
 echo 'if [ condition ];then echo "test";fi' > test.sh
 shfmt test.sh          # Should format according to .shfmt rules
 ```
@@ -110,7 +110,7 @@ shellcheck test-problematic.sh  # Should pass with minimal warnings
 From the dotfiles project implementation:
 - **Reduced shellcheck issues from 20+ to 0** in one automated pass
 - **Eliminated manual fixing** through intelligent configuration
-- **Improved security** with shellharden automated quoting fixes  
+- **Improved security** with shellharden automated quoting fixes
 - **Consistent formatting** across 80+ shell scripts
 - **Zero maintenance overhead** - works automatically
 
@@ -166,7 +166,7 @@ From the dotfiles project implementation:
 
 ### For Teams
 - **Standardized workflows** - copy-paste ready configuration
-- **Reduced PR feedback** - automated style compliance  
+- **Reduced PR feedback** - automated style compliance
 - **Faster onboarding** - no need to learn shellcheck rules
 - **Knowledge sharing** - documented best practices from real experience
 

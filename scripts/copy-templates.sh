@@ -71,20 +71,20 @@ fi
 
 # Copy based on template name
 case "$TEMPLATE_NAME" in
-  "code-of-conduct" | "coc")
-    copy_template "$TEMPLATE_DIR/CODE_OF_CONDUCT.md" "$DESTINATION"
-    ;;
-  "security" | "sec")
-    copy_template "$TEMPLATE_DIR/SECURITY.md" "$DESTINATION"
-    ;;
-  "all")
-    echo -e "${BLUE}Copying all templates...${NC}"
-    copy_template "$TEMPLATE_DIR/CODE_OF_CONDUCT.md" "$DESTINATION"
-    copy_template "$TEMPLATE_DIR/SECURITY.md" "$DESTINATION"
-    ;;
-  *)
-    echo -e "${RED}Error: Unknown template name: $TEMPLATE_NAME${NC}"
-    usage
-    exit 1
-    ;;
+"code-of-conduct" | "coc")
+  copy_template "$TEMPLATE_DIR/CODE_OF_CONDUCT.md" "$DESTINATION"
+  ;;
+"security" | "sec")
+  copy_template "$TEMPLATE_DIR/SECURITY.md" "$DESTINATION"
+  ;;
+"all")
+  echo -e "${BLUE}Copying all templates...${NC}"
+  copy_template "$TEMPLATE_DIR/CODE_OF_CONDUCT.md" "$DESTINATION"
+  copy_template "$TEMPLATE_DIR/SECURITY.md" "$DESTINATION"
+  ;;
+*)
+  echo -e "${RED}Error: Unknown template name: $TEMPLATE_NAME${NC}"
+  usage
+  exit 1
+  ;;
 esac

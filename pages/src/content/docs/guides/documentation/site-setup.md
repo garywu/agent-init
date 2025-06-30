@@ -76,16 +76,16 @@ export default defineConfig({
   // CRITICAL for GitHub Pages - UPDATE THESE VALUES!
   site: 'https://username.github.io',  // ⚠️ Replace 'username' with actual GitHub username
   base: '/repository-name',             // ⚠️ Replace with exact repository name (case-sensitive)
-  
+
   integrations: [
     starlight({
       title: 'My Documentation',
-      
+
       // Use autogenerate for reliability
       sidebar: {
         autogenerate: { directory: 'content/docs' },
       },
-      
+
       // Avoid theme customization complexity initially
       // Default light theme works well
     }),
@@ -152,25 +152,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          
+
       - name: Install dependencies
         working-directory: ./docs
         run: |
           # Remove package-lock to avoid cross-platform issues
           rm -f package-lock.json
           npm install
-          
+
       - name: Build documentation
         working-directory: ./docs
         run: |
           # CRITICAL: This must include astro sync!
           npm run build
-          
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
@@ -322,17 +322,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Test documentation build
         working-directory: ./docs
         run: |
           npm install
           npm run build
-          
+
           # Verify pages were built
           PAGE_COUNT=$(find dist -name "*.html" | wc -l)
           echo "Built $PAGE_COUNT pages"
-          
+
           if [ "$PAGE_COUNT" -lt 5 ]; then
             echo "Error: Expected at least 5 pages, got $PAGE_COUNT"
             find dist -name "*.html"
@@ -350,7 +350,7 @@ jobs:
   "scripts": {
     // Parallel checking and building
     "build": "astro sync && concurrently \"astro check\" \"astro build\"",
-    
+
     // Skip type checking for faster builds
     "build:fast": "astro sync && astro build"
   }
@@ -468,13 +468,13 @@ import fs from 'fs-extra';
 const files = glob.sync('docs/**/*.md');
 files.forEach(file => {
   let content = fs.readFileSync(file, 'utf-8');
-  
+
   // Update frontmatter
   content = content.replace(/^---\n([\s\S]*?)\n---/, (match, fm) => {
     // Transform frontmatter
     return `---\n${transformFrontmatter(fm)}\n---`;
   });
-  
+
   // Update paths
   const newPath = file.replace('docs/', 'src/content/docs/');
   fs.outputFileSync(newPath, content);
@@ -515,11 +515,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           cache-dependency-path: docs/package-lock.json
-          
+
       - name: Install dependencies
         working-directory: ${{ env.BUILD_PATH }}
         run: npm install
-        
+
       - name: Build
         working-directory: ${{ env.BUILD_PATH }}
         run: npm run build

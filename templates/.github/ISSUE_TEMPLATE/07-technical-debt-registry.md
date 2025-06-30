@@ -27,21 +27,21 @@ This issue tracks all technical debt to ensure it's visible and eventually addre
 ### 🟡 High Priority Debt
 
 #### Debt: [Title]
-- **Type**: 
-- **Component**: 
-- **Impact**: 
-- **Effort**: 
-- **Fix Approach**: 
+- **Type**:
+- **Component**:
+- **Impact**:
+- **Effort**:
+- **Fix Approach**:
 - **Tracking Issue**: #XX
 
 ### 🟢 Normal Priority Debt
 
 #### Debt: [Title]
-- **Type**: 
-- **Component**: 
-- **Impact**: 
-- **Effort**: 
-- **Fix Approach**: 
+- **Type**:
+- **Component**:
+- **Impact**:
+- **Effort**:
+- **Fix Approach**:
 - **Tracking Issue**: #XX
 
 ## Debt by Type

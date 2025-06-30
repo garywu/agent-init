@@ -38,7 +38,7 @@ After running both scripts, the documentation site contains:
 
 ### Workflow Guides
 - Git Workflow Patterns
-- Release Management Patterns  
+- Release Management Patterns
 - Context Preservation Patterns
 
 ### Development Guides

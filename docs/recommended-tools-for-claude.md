@@ -419,7 +419,7 @@ Claude should verify tool availability:
 ensure_tool() {
     local tool=$1
     local install_cmd=$2
-    
+
     if ! command -v "$tool" &> /dev/null; then
         echo "Tool '$tool' not found. Install with: $install_cmd"
         return 1

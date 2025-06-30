@@ -77,11 +77,11 @@ supports_color() {
     if [[ -n "${NO_COLOR:-}" ]]; then
         return 1
     fi
-    
+
     if [[ -n "${FORCE_COLOR:-}" ]] || [[ -n "${CLICOLOR_FORCE:-}" ]]; then
         return 0
     fi
-    
+
     # Check terminal capability
     if is_interactive && command -v tput &>/dev/null; then
         [[ $(tput colors 2>/dev/null || echo 0) -ge 8 ]]
@@ -100,13 +100,13 @@ supports_color() {
 confirm() {
     local prompt="${1:-Continue?}"
     local default="${2:-n}"
-    
+
     if is_ci; then
         echo "$prompt [Auto-confirmed in CI: $default]"
         [[ "$default" =~ ^[Yy]$ ]]
         return $?
     fi
-    
+
     # Interactive mode
     local response
     read -r -p "$prompt [y/N]: " response
@@ -127,7 +127,7 @@ get_input() {
     local prompt="$1"
     local default="$2"
     local var_name="$3"
-    
+
     if is_ci; then
         # In CI, use default or environment variable
         local value="${!var_name:-$default}"
@@ -150,7 +150,7 @@ PROJECT_NAME=$(get_input "Enter project name" "my-project" "PROJECT_NAME")
 # CI-friendly progress indicator
 show_progress() {
     local task="$1"
-    
+
     if is_ci; then
         # Simple output for CI logs
         echo "[$(date +'%Y-%m-%d %H:%M:%S')] $task..."
@@ -158,7 +158,7 @@ show_progress() {
         # Spinner for interactive mode
         local spin='-\|/'
         local i=0
-        
+
         while kill -0 $! 2>/dev/null; do
             i=$(( (i+1) %4 ))
             printf "\r$task ${spin:$i:1}"
@@ -218,7 +218,7 @@ log() {
     shift
     local message="$@"
     local timestamp=$(date +'%Y-%m-%d %H:%M:%S')
-    
+
     case "$level" in
         ERROR)
             echo -e "${timestamp} [${RED}ERROR${RESET}] $message" >&2
@@ -233,7 +233,7 @@ log() {
             [[ -n "${DEBUG:-}" ]] && echo -e "${timestamp} [${BLUE}DEBUG${RESET}] $message"
             ;;
     esac
-    
+
     # Also log to file if specified
     if [[ -n "${LOG_FILE:-}" ]]; then
         echo "${timestamp} [$level] $message" >> "$LOG_FILE"
@@ -243,7 +243,7 @@ log() {
 # CI-specific logging with groups
 log_group() {
     local group_name="$1"
-    
+
     case "$(detect_ci_platform)" in
         github)
             echo "::group::$group_name"
@@ -262,7 +262,7 @@ log_group() {
 
 log_group_end() {
     local group_name="$1"
-    
+
     case "$(detect_ci_platform)" in
         github)
             echo "::endgroup::"
@@ -291,7 +291,7 @@ github_annotation() {
     local message="$2"
     local file="${3:-}"
     local line="${4:-}"
-    
+
     if [[ "${GITHUB_ACTIONS:-}" == "true" ]]; then
         if [[ -n "$file" && -n "$line" ]]; then
             echo "::$type file=$file,line=$line::$message"
@@ -312,7 +312,7 @@ github_annotation() {
 set_ci_output() {
     local name="$1"
     local value="$2"
-    
+
     case "$(detect_ci_platform)" in
         github)
             echo "$name=$value" >> "$GITHUB_OUTPUT"
@@ -334,7 +334,7 @@ set_ci_output() {
 ensure_tool() {
     local tool="$1"
     local install_cmd="$2"
-    
+
     if ! command -v "$tool" &>/dev/null; then
         if is_ci; then
             log INFO "Installing $tool in CI..."
@@ -379,7 +379,7 @@ ci_echo() {
 
 ci_run() {
     local cmd="$*"
-    
+
     if is_ci; then
         log INFO "Running: $cmd"
         eval "$cmd"
@@ -394,12 +394,12 @@ ci_run() {
 on_error() {
     local exit_code=$?
     local line_number=${1:-}
-    
+
     if [[ $exit_code -ne 0 ]]; then
         github_annotation error "Script failed with exit code $exit_code" "${BASH_SOURCE[0]}" "$line_number"
         log ERROR "Script failed at line $line_number with exit code $exit_code"
     fi
-    
+
     exit $exit_code
 }
 
@@ -432,19 +432,19 @@ if confirm "Deploy to $TARGET?" "y"; then
     ci_run "npm install"
     ci_run "npm run build"
     log_group_end "Building Application"
-    
+
     log_group "Running Tests"
     ci_run "npm test"
     log_group_end "Running Tests"
-    
+
     log_group "Deploying"
     if [[ "$TARGET" == "production" ]]; then
         github_annotation warning "Deploying to production!"
     fi
-    
+
     ci_run "./scripts/deploy-to-$TARGET.sh"
     log_group_end "Deploying"
-    
+
     log INFO "Deployment completed successfully!"
     set_ci_output "deployment_url" "https://$TARGET.example.com"
 else

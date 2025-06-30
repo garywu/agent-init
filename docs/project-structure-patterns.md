@@ -11,7 +11,7 @@ Based on real experience managing dotfiles and development projects:
 ```
 project/
 ├── src/                    # Source code
-├── tests/                  # Test files, mirroring src/ structure  
+├── tests/                  # Test files, mirroring src/ structure
 ├── docs/                   # Documentation
 ├── scripts/                # Development and utility scripts
 │   ├── setup/             # Installation/setup scripts
@@ -491,7 +491,7 @@ build/
 ├── test/
 └── debug/
 
-# Production builds  
+# Production builds
 dist/
 ├── latest/
 ├── v1.2.3/

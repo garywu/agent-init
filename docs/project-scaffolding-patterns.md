@@ -18,10 +18,10 @@ Project scaffolding helps:
 # Basic Python project structure
 create_python_project() {
     local project_name="$1"
-    
+
     mkdir -p "$project_name"/{src,tests,docs}
     cd "$project_name"
-    
+
     # Python-specific files
     cat > pyproject.toml << 'EOF'
 [build-system]
@@ -62,7 +62,7 @@ warn_unused_configs = true
 testpaths = ["tests"]
 addopts = "-v --cov=src --cov-report=html --cov-report=term"
 EOF
-    
+
     # Source structure
     touch "src/__init__.py"
     cat > "src/main.py" << 'EOF'
@@ -75,7 +75,7 @@ def main():
 if __name__ == "__main__":
     main()
 EOF
-    
+
     # Test structure
     touch "tests/__init__.py"
     cat > "tests/test_main.py" << 'EOF'
@@ -89,7 +89,7 @@ def test_main(capsys):
     captured = capsys.readouterr()
     assert "Hello, World!" in captured.out
 EOF
-    
+
     # Development files
     cat > .gitignore << 'EOF'
 # Python
@@ -140,12 +140,12 @@ htmlcov/
 .DS_Store
 Thumbs.db
 EOF
-    
+
     # Virtual environment setup
     python -m venv venv
     source venv/bin/activate 2>/dev/null || . venv/Scripts/activate
     pip install -e ".[dev]"
-    
+
     echo "✅ Python project '$project_name' created"
     echo "📝 Activate virtual environment: source venv/bin/activate"
 }
@@ -157,10 +157,10 @@ EOF
 create_node_project() {
     local project_name="$1"
     local use_typescript="${2:-true}"
-    
+
     mkdir -p "$project_name"
     cd "$project_name"
-    
+
     # Initialize package.json
     cat > package.json << EOF
 {
@@ -196,7 +196,7 @@ create_node_project() {
   "dependencies": {}
 }
 EOF
-    
+
     # TypeScript config
     if [[ "$use_typescript" == "true" ]]; then
         cat > tsconfig.json << 'EOF'
@@ -225,7 +225,7 @@ EOF
 }
 EOF
     fi
-    
+
     # Jest config
     cat > jest.config.js << 'EOF'
 module.exports = {
@@ -240,7 +240,7 @@ module.exports = {
   ]
 };
 EOF
-    
+
     # ESLint config
     cat > .eslintrc.json << 'EOF'
 {
@@ -262,7 +262,7 @@ EOF
   }
 }
 EOF
-    
+
     # Prettier config
     cat > .prettierrc << 'EOF'
 {
@@ -273,7 +273,7 @@ EOF
   "tabWidth": 2
 }
 EOF
-    
+
     # Source structure
     mkdir -p src/__tests__
     cat > src/index.ts << 'EOF'
@@ -285,7 +285,7 @@ if (require.main === module) {
   console.log(hello('World'));
 }
 EOF
-    
+
     cat > src/__tests__/index.test.ts << 'EOF'
 import { hello } from '../index';
 
@@ -296,10 +296,10 @@ describe('hello', () => {
   });
 });
 EOF
-    
+
     # Install dependencies
     npm install
-    
+
     echo "✅ Node.js/TypeScript project '$project_name' created"
 }
 ```
@@ -310,16 +310,16 @@ EOF
 create_go_project() {
     local project_name="$1"
     local module_path="${2:-github.com/username/$project_name}"
-    
+
     mkdir -p "$project_name"
     cd "$project_name"
-    
+
     # Initialize Go module
     go mod init "$module_path"
-    
+
     # Project structure
     mkdir -p {cmd,internal,pkg,test,docs}
-    
+
     # Main application
     mkdir -p cmd/"$project_name"
     cat > cmd/"$project_name"/main.go << 'EOF'
@@ -342,7 +342,7 @@ func run() error {
 	return nil
 }
 EOF
-    
+
     # Internal package
     mkdir -p internal/config
     cat > internal/config/config.go << 'EOF'
@@ -358,7 +358,7 @@ func Load() (*Config, error) {
 	return &Config{}, nil
 }
 EOF
-    
+
     # Makefile
     cat > Makefile << 'EOF'
 .PHONY: build test clean run lint
@@ -387,7 +387,7 @@ tidy:
 fmt:
 	go fmt ./...
 EOF
-    
+
     # golangci-lint config
     cat > .golangci.yml << 'EOF'
 linters:
@@ -413,7 +413,7 @@ linters-settings:
 run:
   deadline: 5m
 EOF
-    
+
     echo "✅ Go project '$project_name' created"
     echo "📝 Module path: $module_path"
 }
@@ -425,11 +425,11 @@ EOF
 create_rust_project() {
     local project_name="$1"
     local project_type="${2:-bin}"  # bin or lib
-    
+
     # Use cargo for initial setup
     cargo new "$project_name" --$project_type
     cd "$project_name"
-    
+
     # Enhanced Cargo.toml
     cat >> Cargo.toml << 'EOF'
 
@@ -450,7 +450,7 @@ criterion = "0.5"
 name = "benchmarks"
 harness = false
 EOF
-    
+
     # Create benchmark
     mkdir -p benches
     cat > benches/benchmarks.rs << 'EOF'
@@ -471,7 +471,7 @@ fn criterion_benchmark(c: &mut Criterion) {
 criterion_group!(benches, criterion_benchmark);
 criterion_main!(benches);
 EOF
-    
+
     # GitHub Actions
     mkdir -p .github/workflows
     cat > .github/workflows/rust.yml << 'EOF'
@@ -502,7 +502,7 @@ jobs:
     - name: Check formatting
       run: cargo fmt -- --check
 EOF
-    
+
     echo "✅ Rust project '$project_name' created"
 }
 ```
@@ -512,10 +512,10 @@ EOF
 ```bash
 create_monorepo() {
     local project_name="$1"
-    
+
     mkdir -p "$project_name"/{packages,services,libs,tools}
     cd "$project_name"
-    
+
     # Root package.json for workspaces
     cat > package.json << 'EOF'
 {
@@ -538,7 +538,7 @@ create_monorepo() {
   }
 }
 EOF
-    
+
     # Turbo config
     cat > turbo.json << 'EOF'
 {
@@ -559,7 +559,7 @@ EOF
   }
 }
 EOF
-    
+
     # Lerna config (optional)
     cat > lerna.json << 'EOF'
 {
@@ -579,7 +579,7 @@ EOF
   }
 }
 EOF
-    
+
     echo "✅ Monorepo '$project_name' created"
 }
 ```
@@ -589,10 +589,10 @@ EOF
 ```bash
 create_ml_project() {
     local project_name="$1"
-    
+
     mkdir -p "$project_name"/{data,notebooks,src,models,configs}
     cd "$project_name"
-    
+
     # Python ML/AI specific setup
     cat > pyproject.toml << 'EOF'
 [build-system]
@@ -627,14 +627,14 @@ dev = [
     "pre-commit"
 ]
 EOF
-    
+
     # DVC config for data versioning
     cat > .dvc/.gitignore << 'EOF'
 /config.local
 /tmp
 /cache
 EOF
-    
+
     cat > dvc.yaml << 'EOF'
 stages:
   prepare:
@@ -644,7 +644,7 @@ stages:
       - data/raw
     outs:
       - data/processed
-      
+
   train:
     cmd: python src/train.py
     deps:
@@ -656,7 +656,7 @@ stages:
       - metrics/scores.json:
           cache: false
 EOF
-    
+
     # MLflow tracking
     cat > MLproject << 'EOF'
 name: ml-project
@@ -671,7 +671,7 @@ entry_points:
       epochs: {type: int, default: 10}
     command: "python src/train.py --lr {learning_rate} --batch-size {batch_size} --epochs {epochs}"
 EOF
-    
+
     echo "✅ ML/AI project '$project_name' created"
 }
 ```
@@ -685,7 +685,7 @@ interactive_scaffold() {
         echo "Install gum for interactive mode: brew install gum"
         return 1
     fi
-    
+
     # Project type selection
     PROJECT_TYPE=$(gum choose \
         "Python" \
@@ -694,13 +694,13 @@ interactive_scaffold() {
         "Rust" \
         "Monorepo" \
         "AI/ML Project")
-    
+
     # Project name
     PROJECT_NAME=$(gum input --placeholder "Enter project name")
-    
+
     # Confirmation
     gum confirm "Create $PROJECT_TYPE project '$PROJECT_NAME'?" || return
-    
+
     # Create based on type
     case "$PROJECT_TYPE" in
         "Python")
@@ -725,17 +725,17 @@ interactive_scaffold() {
             create_ml_project "$PROJECT_NAME"
             ;;
     esac
-    
+
     # Post-creation actions
     gum style --foreground 212 --border double \
         "✅ Project created successfully!"
-    
+
     if gum confirm "Initialize git repository?"; then
         git init
         git add .
         git commit -m "feat: initial project setup"
     fi
-    
+
     if gum confirm "Open in editor?"; then
         ${EDITOR:-code} .
     fi

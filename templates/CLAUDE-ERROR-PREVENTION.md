@@ -12,7 +12,7 @@ This document contains specific rules derived from error analysis to prevent com
 cd /some/path
 cat file.txt
 
-# ✅ CORRECT  
+# ✅ CORRECT
 test -d /some/path && cd /some/path
 test -f file.txt && cat file.txt
 ```
@@ -91,7 +91,7 @@ make pre-commit-fix && git add -u && git commit -m "feat: description (#123)"
 ```bash
 # RULE: Use the right tool
 # Finding files: fd > find
-# Searching content: rg > grep  
+# Searching content: rg > grep
 # Viewing files: bat > cat
 # Listing files: eza > ls
 ```
@@ -139,7 +139,7 @@ pwd && cd dir1 && ls && cd - && pwd
 
 ### Pattern 2: Blind File Operations
 ```bash
-# ❌ AVOID  
+# ❌ AVOID
 echo "content" > file.txt  # Might overwrite!
 
 # ✅ USE
@@ -161,7 +161,7 @@ git add -u && git commit -m "fix: description (#123)"
 
 ### Quick Checks
 - `pwd` - Where am I?
-- `ls -la` - What's here?  
+- `ls -la` - What's here?
 - `git status` - What changed?
 - `git diff --staged` - What will commit?
 

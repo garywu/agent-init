@@ -99,7 +99,7 @@ is_fix_mode() {
 safe_run() {
     local cmd="$1"
     local error_msg="${2:-Command failed: $cmd}"
-    
+
     log_debug "Running: $cmd"
     if ! eval "$cmd"; then
         log_error "$error_msg"
@@ -139,14 +139,14 @@ validate_package() {
     local package="$1"
     local preferred_location="$2"
     local locations=()
-    
+
     # Check all package managers
     check_package_location "$package"
-    
+
     # Detect conflicts
     if [[ ${#locations[@]} -gt 1 ]]; then
         log_error "$package: DUPLICATE - Found in multiple locations"
-        
+
         if is_fix_mode; then
             fix_duplicate_package "$package" "$preferred_location"
         fi
@@ -174,9 +174,9 @@ check_path_order() {
     local nix_position=-1
     local homebrew_position=-1
     local position=0
-    
+
     IFS=':' read -ra PATH_ARRAY <<< "$PATH"
-    
+
     for path in "${PATH_ARRAY[@]}"; do
         if [[ "$path" =~ \.nix-profile ]]; then
             nix_position=$position
@@ -185,12 +185,12 @@ check_path_order() {
         fi
         ((position++))
     done
-    
+
     if [[ $homebrew_position -lt $nix_position ]]; then
         log_warn "Homebrew comes before Nix in PATH"
         return 1
     fi
-    
+
     log_success "PATH order is correct"
 }
 
@@ -244,7 +244,7 @@ json_output() {
     local type="$1"
     local status="$2"
     local message="$3"
-    
+
     if [[ "${JSON_OUTPUT:-false}" == "true" ]]; then
         jq -n \
             --arg type "$type" \
@@ -275,10 +275,10 @@ check_ssh_permissions() {
     if [[ -d "$HOME/.ssh" ]]; then
         local perms
         perms=$(stat -f "%OLp" "$HOME/.ssh" 2>/dev/null || stat -c "%a" "$HOME/.ssh")
-        
+
         if [[ "$perms" != "700" ]]; then
             log_error "SSH directory has incorrect permissions: $perms"
-            
+
             if is_fix_mode; then
                 chmod 700 "$HOME/.ssh"
                 log_fix "Fixed SSH directory permissions"
@@ -304,24 +304,24 @@ Implement comprehensive reporting:
 ```bash
 generate_report() {
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-    
+
     print_section "VALIDATION SUMMARY REPORT"
-    
+
     echo "Timestamp: $timestamp"
     echo "Host: $(hostname)"
     echo "User: $USER"
     echo
-    
+
     echo "Scripts Run: ${#VALIDATION_SCRIPTS[@]}"
     echo "Passed: ${#PASSED_SCRIPTS[@]}"
     echo "Failed: ${#FAILED_SCRIPTS[@]}"
     echo
-    
+
     echo "Total Issues Found:"
     echo "   Errors:   $TOTAL_ERRORS"
     echo "   Warnings: $TOTAL_WARNINGS"
     echo "   Fixed:    $TOTAL_FIXED"
-    
+
     # Save to file
     local report_file="logs/validation/validation-$(date +%Y%m%d-%H%M%S).log"
     mkdir -p "$(dirname "$report_file")"
@@ -355,14 +355,14 @@ Implement sophisticated conflict detection:
 check_package_conflicts() {
     local package="$1"
     local managers=()
-    
+
     # Check multiple package managers
     for manager in nix homebrew apt yum; do
         if package_installed_via "$package" "$manager"; then
             managers+=("$manager")
         fi
     done
-    
+
     # Report conflicts
     if [[ ${#managers[@]} -gt 1 ]]; then
         log_error "$package installed via: ${managers[*]}"
@@ -379,10 +379,10 @@ Implement safe automated fixes:
 fix_with_rollback() {
     local fix_function="$1"
     local rollback_function="$2"
-    
+
     # Create backup
     create_backup
-    
+
     # Attempt fix
     if ! $fix_function; then
         log_error "Fix failed, rolling back..."
@@ -390,7 +390,7 @@ fix_with_rollback() {
         restore_backup
         return 1
     fi
-    
+
     log_fix "Successfully applied fix"
     cleanup_backup
 }
@@ -403,12 +403,12 @@ Run validators in parallel for large systems:
 ```bash
 run_parallel_validation() {
     local pids=()
-    
+
     for script in "${VALIDATION_SCRIPTS[@]}"; do
         "$script" "$@" &
         pids+=($!)
     done
-    
+
     # Wait for all validators
     for pid in "${pids[@]}"; do
         wait "$pid"
@@ -433,7 +433,7 @@ log_validation_result() {
     local component="$1"
     local status="$2"
     local details="$3"
-    
+
     printf "%-30s %-10s %s\n" "$component" "[$status]" "$details"
 }
 ```
@@ -446,16 +446,16 @@ Ensure fixes can be run multiple times safely:
 fix_permission() {
     local file="$1"
     local expected="$2"
-    
+
     # Check if already correct
     local current
     current=$(stat -f "%OLp" "$file" 2>/dev/null)
-    
+
     if [[ "$current" == "$expected" ]]; then
         log_debug "Permissions already correct for $file"
         return 0
     fi
-    
+
     # Apply fix
     chmod "$expected" "$file"
     log_fix "Fixed permissions for $file"
@@ -506,12 +506,12 @@ source "helpers/validation-helpers.sh"
 validate_python_version() {
     local required_version="3.11"
     local current_version
-    
+
     if ! command_exists python3; then
         log_error "Python 3 not installed"
         return 1
     fi
-    
+
     current_version=$(python3 --version | cut -d' ' -f2)
     if [[ ! "$current_version" =~ ^$required_version ]]; then
         log_warn "Python version $current_version (expected $required_version.x)"
@@ -523,7 +523,7 @@ validate_python_version() {
 validate_virtual_env() {
     if [[ -z "${VIRTUAL_ENV:-}" ]]; then
         log_warn "No virtual environment activated"
-        
+
         if is_fix_mode && [[ -f "requirements.txt" ]]; then
             log_info "Creating virtual environment..."
             python3 -m venv venv
@@ -541,7 +541,7 @@ validate_dependencies() {
         log_error "No requirements.txt found"
         return 1
     fi
-    
+
     # Check for security vulnerabilities
     if command_exists safety; then
         if ! safety check --json; then

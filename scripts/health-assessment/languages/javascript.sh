@@ -289,8 +289,8 @@ generate_recommendations() {
 # Output results
 output_results() {
   case "$OUTPUT_FORMAT" in
-    "json")
-      cat <<EOF
+  "json")
+    cat <<EOF
 {
   "language": "javascript",
   "score": $SCORE,
@@ -298,30 +298,30 @@ output_results() {
   "recommendations": $(printf '%s\n' "${RECOMMENDATIONS[@]}" | jq -R . | jq -s .)
 }
 EOF
-      ;;
-    "human" | *)
-      echo -e "${BLUE}JavaScript/TypeScript Health Check${NC}"
-      echo "=================================="
-      echo ""
-      echo -e "Score: $(if [[ $SCORE -ge 80 ]]; then echo -e "${GREEN}$SCORE/100${NC}"; elif [[ $SCORE -ge 60 ]]; then echo -e "${YELLOW}$SCORE/100${NC}"; else echo -e "${RED}$SCORE/100${NC}"; fi)"
-      echo ""
+    ;;
+  "human" | *)
+    echo -e "${BLUE}JavaScript/TypeScript Health Check${NC}"
+    echo "=================================="
+    echo ""
+    echo -e "Score: $(if [[ $SCORE -ge 80 ]]; then echo -e "${GREEN}$SCORE/100${NC}"; elif [[ $SCORE -ge 60 ]]; then echo -e "${YELLOW}$SCORE/100${NC}"; else echo -e "${RED}$SCORE/100${NC}"; fi)"
+    echo ""
 
-      if [[ ${#ISSUES[@]} -gt 0 ]]; then
-        echo -e "${YELLOW}Issues Found:${NC}"
-        for issue in "${ISSUES[@]}"; do
-          echo "  • $issue"
-        done
-        echo ""
-      fi
+    if [[ ${#ISSUES[@]} -gt 0 ]]; then
+      echo -e "${YELLOW}Issues Found:${NC}"
+      for issue in "${ISSUES[@]}"; do
+        echo "  • $issue"
+      done
+      echo ""
+    fi
 
-      if [[ ${#RECOMMENDATIONS[@]} -gt 0 ]]; then
-        echo -e "${GREEN}Recommendations:${NC}"
-        for rec in "${RECOMMENDATIONS[@]}"; do
-          echo "  • $rec"
-        done
-        echo ""
-      fi
-      ;;
+    if [[ ${#RECOMMENDATIONS[@]} -gt 0 ]]; then
+      echo -e "${GREEN}Recommendations:${NC}"
+      for rec in "${RECOMMENDATIONS[@]}"; do
+        echo "  • $rec"
+      done
+      echo ""
+    fi
+    ;;
   esac
 }
 

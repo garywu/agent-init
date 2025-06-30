@@ -38,9 +38,9 @@ assert_equals() {
     local expected="$1"
     local actual="$2"
     local message="${3:-}"
-    
+
     TESTS_RUN=$((TESTS_RUN + 1))
-    
+
     if [[ "$expected" == "$actual" ]]; then
         TESTS_PASSED=$((TESTS_PASSED + 1))
         echo -e "${GREEN}✓${RESET} $message"
@@ -58,9 +58,9 @@ assert_not_equals() {
     local unexpected="$1"
     local actual="$2"
     local message="${3:-}"
-    
+
     TESTS_RUN=$((TESTS_RUN + 1))
-    
+
     if [[ "$unexpected" != "$actual" ]]; then
         TESTS_PASSED=$((TESTS_PASSED + 1))
         echo -e "${GREEN}✓${RESET} $message"
@@ -76,9 +76,9 @@ assert_not_equals() {
 assert_true() {
     local condition="$1"
     local message="${2:-}"
-    
+
     TESTS_RUN=$((TESTS_RUN + 1))
-    
+
     if eval "$condition"; then
         TESTS_PASSED=$((TESTS_PASSED + 1))
         echo -e "${GREEN}✓${RESET} $message"
@@ -94,9 +94,9 @@ assert_true() {
 assert_false() {
     local condition="$1"
     local message="${2:-}"
-    
+
     TESTS_RUN=$((TESTS_RUN + 1))
-    
+
     if ! eval "$condition"; then
         TESTS_PASSED=$((TESTS_PASSED + 1))
         echo -e "${GREEN}✓${RESET} $message"
@@ -113,9 +113,9 @@ assert_contains() {
     local haystack="$1"
     local needle="$2"
     local message="${3:-}"
-    
+
     TESTS_RUN=$((TESTS_RUN + 1))
-    
+
     if [[ "$haystack" == *"$needle"* ]]; then
         TESTS_PASSED=$((TESTS_PASSED + 1))
         echo -e "${GREEN}✓${RESET} $message"
@@ -132,9 +132,9 @@ assert_contains() {
 assert_file_exists() {
     local file="$1"
     local message="${2:-File should exist: $file}"
-    
+
     TESTS_RUN=$((TESTS_RUN + 1))
-    
+
     if [[ -f "$file" ]]; then
         TESTS_PASSED=$((TESTS_PASSED + 1))
         echo -e "${GREEN}✓${RESET} $message"
@@ -150,9 +150,9 @@ assert_file_exists() {
 assert_command_success() {
     local command="$1"
     local message="${2:-Command should succeed: $command}"
-    
+
     TESTS_RUN=$((TESTS_RUN + 1))
-    
+
     if eval "$command" &>/dev/null; then
         TESTS_PASSED=$((TESTS_PASSED + 1))
         echo -e "${GREEN}✓${RESET} $message"
@@ -169,9 +169,9 @@ assert_command_success() {
 assert_command_failure() {
     local command="$1"
     local message="${2:-Command should fail: $command}"
-    
+
     TESTS_RUN=$((TESTS_RUN + 1))
-    
+
     if ! eval "$command" &>/dev/null; then
         TESTS_PASSED=$((TESTS_PASSED + 1))
         echo -e "${GREEN}✓${RESET} $message"
@@ -188,9 +188,9 @@ assert_command_failure() {
 run_test() {
     local test_name="$1"
     local test_function="$2"
-    
+
     echo -e "\n${BLUE}Running: $test_name${RESET}"
-    
+
     # Run in subshell to isolate
     (
         set +e  # Don't exit on test failure
@@ -201,7 +201,7 @@ run_test() {
 skip_test() {
     local test_name="$1"
     local reason="${2:-}"
-    
+
     TESTS_SKIPPED=$((TESTS_SKIPPED + 1))
     echo -e "\n${YELLOW}Skipped: $test_name${RESET}"
     [[ -n "$reason" ]] && echo -e "  Reason: $reason"
@@ -214,7 +214,7 @@ print_test_summary() {
     echo -e "  ${GREEN}Passed:  $TESTS_PASSED${RESET}"
     echo -e "  ${RED}Failed:  $TESTS_FAILED${RESET}"
     echo -e "  ${YELLOW}Skipped: $TESTS_SKIPPED${RESET}"
-    
+
     if [[ $TESTS_FAILED -gt 0 ]]; then
         return 1
     fi
@@ -296,13 +296,13 @@ setup_test_environment() {
     # Create temporary directory
     TEST_TEMP_DIR=$(mktemp -d)
     export TEST_TEMP_DIR
-    
+
     # Save current directory
     export TEST_ORIGINAL_DIR=$(pwd)
-    
+
     # Change to temp directory
     cd "$TEST_TEMP_DIR"
-    
+
     # Set up any test fixtures
     setup_fixtures
 }
@@ -310,7 +310,7 @@ setup_test_environment() {
 teardown_test_environment() {
     # Return to original directory
     cd "$TEST_ORIGINAL_DIR"
-    
+
     # Clean up temp directory
     if [[ -n "$TEST_TEMP_DIR" ]] && [[ -d "$TEST_TEMP_DIR" ]]; then
         rm -rf "$TEST_TEMP_DIR"
@@ -324,7 +324,7 @@ trap teardown_test_environment EXIT
 setup_fixtures() {
     # Create common test files
     mkdir -p "$TEST_TEMP_DIR"/{src,test,config}
-    
+
     # Create sample files
     echo "test content" > "$TEST_TEMP_DIR/test.txt"
     echo '{"key": "value"}' > "$TEST_TEMP_DIR/test.json"
@@ -339,7 +339,7 @@ create_test_file() {
 create_test_script() {
     local filename="$1"
     local content="$2"
-    
+
     cat > "$TEST_TEMP_DIR/$filename" << EOF
 #!/usr/bin/env bash
 $content
@@ -360,11 +360,11 @@ mock_command() {
     local command="$1"
     local output="${2:-}"
     local exit_code="${3:-0}"
-    
+
     MOCK_OUTPUTS["$command"]="$output"
     MOCK_EXIT_CODES["$command"]="$exit_code"
     MOCK_CALL_COUNTS["$command"]=0
-    
+
     # Create mock function
     eval "
 $command() {
@@ -387,7 +387,7 @@ assert_mock_called() {
     local command="$1"
     local expected_count="${2:-1}"
     local actual_count="${MOCK_CALL_COUNTS[$command]:-0}"
-    
+
     assert_equals "$expected_count" "$actual_count" "Mock '$command' should be called $expected_count time(s)"
 }
 
@@ -395,14 +395,14 @@ assert_mock_called() {
 test_with_mocks() {
     # Mock git command
     mock_command "git" "main" 0
-    
+
     # Test function that uses git
     result=$(git branch --show-current)
-    
+
     # Assertions
     assert_equals "main" "$result" "Should return mocked git output"
     assert_mock_called "git" 1
-    
+
     # Clean up
     unmock_command "git"
 }
@@ -431,13 +431,13 @@ expect.extend({
       };
     }
   },
-  
+
   toHaveBeenCalledWithMatch(received, expected) {
     const calls = received.mock.calls;
-    const pass = calls.some(call => 
+    const pass = calls.some(call =>
       call.some(arg => JSON.stringify(arg).includes(expected))
     );
-    
+
     return {
       pass,
       message: () => pass
@@ -450,7 +450,7 @@ expect.extend({
 // Test data factories
 class TestDataFactory {
   static counter = 0;
-  
+
   static createUser(overrides = {}) {
     return {
       id: ++this.counter,
@@ -460,7 +460,7 @@ class TestDataFactory {
       ...overrides,
     };
   }
-  
+
   static createPost(overrides = {}) {
     return {
       id: ++this.counter,
@@ -471,7 +471,7 @@ class TestDataFactory {
       ...overrides,
     };
   }
-  
+
   static reset() {
     this.counter = 0;
   }
@@ -480,14 +480,14 @@ class TestDataFactory {
 // Async test helpers
 const waitFor = async (condition, timeout = 5000, interval = 100) => {
   const startTime = Date.now();
-  
+
   while (Date.now() - startTime < timeout) {
     if (await condition()) {
       return true;
     }
     await new Promise(resolve => setTimeout(resolve, interval));
   }
-  
+
   throw new Error('Timeout waiting for condition');
 };
 
@@ -503,17 +503,17 @@ class TimerHelper {
   constructor() {
     this.useRealTimers();
   }
-  
+
   useFakeTimers() {
     jest.useFakeTimers();
     this.usingFakeTimers = true;
   }
-  
+
   useRealTimers() {
     jest.useRealTimers();
     this.usingFakeTimers = false;
   }
-  
+
   async advance(ms) {
     if (this.usingFakeTimers) {
       jest.advanceTimersByTime(ms);
@@ -521,7 +521,7 @@ class TimerHelper {
       await new Promise(resolve => setTimeout(resolve, ms));
     }
   }
-  
+
   async runAllTimers() {
     if (this.usingFakeTimers) {
       jest.runAllTimers();
@@ -534,26 +534,26 @@ class MockAPI {
   constructor() {
     this.handlers = new Map();
   }
-  
+
   mockEndpoint(method, path, response, status = 200) {
     const key = `${method.toUpperCase()} ${path}`;
     this.handlers.set(key, { response, status });
   }
-  
+
   async handleRequest(method, path) {
     const key = `${method.toUpperCase()} ${path}`;
     const handler = this.handlers.get(key);
-    
+
     if (!handler) {
       throw new Error(`No mock handler for ${key}`);
     }
-    
+
     return {
       status: handler.status,
       json: async () => handler.response,
     };
   }
-  
+
   reset() {
     this.handlers.clear();
   }
@@ -578,69 +578,69 @@ class DatabaseTestHelper {
     this.db = db;
     this.snapshots = [];
   }
-  
+
   async snapshot() {
     const tables = await this.getTables();
     const snapshot = {};
-    
+
     for (const table of tables) {
       snapshot[table] = await this.db.select('*').from(table);
     }
-    
+
     this.snapshots.push(snapshot);
     return snapshot;
   }
-  
+
   async restore() {
     if (this.snapshots.length === 0) {
       throw new Error('No snapshots to restore');
     }
-    
+
     const snapshot = this.snapshots.pop();
     const tables = Object.keys(snapshot);
-    
+
     // Disable foreign keys temporarily
     await this.db.raw('SET FOREIGN_KEY_CHECKS = 0');
-    
+
     for (const table of tables) {
       await this.db(table).truncate();
       if (snapshot[table].length > 0) {
         await this.db(table).insert(snapshot[table]);
       }
     }
-    
+
     await this.db.raw('SET FOREIGN_KEY_CHECKS = 1');
   }
-  
+
   async clean() {
     const tables = await this.getTables();
-    
+
     await this.db.raw('SET FOREIGN_KEY_CHECKS = 0');
     for (const table of tables) {
       await this.db(table).truncate();
     }
     await this.db.raw('SET FOREIGN_KEY_CHECKS = 1');
   }
-  
+
   async getTables() {
     const result = await this.db.raw(
       "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()"
     );
     return result[0].map(row => row.table_name);
   }
-  
+
   async seed(table, data) {
     if (Array.isArray(data)) {
       await this.db(table).insert(data);
     } else {
       const count = data.count || 10;
       const factory = data.factory;
-      
+
       const records = [];
       for (let i = 0; i < count; i++) {
         records.push(factory(i));
       }
-      
+
       await this.db(table).insert(records);
     }
   }
@@ -677,12 +677,12 @@ def mock_time():
     with patch('time.time') as mock:
         current_time = 1234567890.0
         mock.return_value = current_time
-        
+
         def advance(seconds):
             nonlocal current_time
             current_time += seconds
             mock.return_value = current_time
-        
+
         mock.advance = advance
         yield mock
 
@@ -704,7 +704,7 @@ class AsyncTestHelper:
                 return True
             await asyncio.sleep(interval)
         raise TimeoutError(f"Condition not met within {timeout} seconds")
-    
+
     @staticmethod
     async def assert_async_raises(exception_class, coro):
         """Assert that an async function raises an exception."""
@@ -714,7 +714,7 @@ class AsyncTestHelper:
 # Data factories
 class TestDataFactory:
     _counter = 0
-    
+
     @classmethod
     def create_user(cls, **kwargs):
         cls._counter += 1
@@ -725,7 +725,7 @@ class TestDataFactory:
             'is_active': True,
         }
         return {**defaults, **kwargs}
-    
+
     @classmethod
     def create_product(cls, **kwargs):
         cls._counter += 1
@@ -736,7 +736,7 @@ class TestDataFactory:
             'stock': 100,
         }
         return {**defaults, **kwargs}
-    
+
     @classmethod
     def reset(cls):
         cls._counter = 0
@@ -750,7 +750,7 @@ class CustomAssertions:
             assert key in dictionary, f"Key '{key}' not found in dictionary"
             assert dictionary[key] == value, \
                 f"Value mismatch for key '{key}': {dictionary[key]} != {value}"
-    
+
     @staticmethod
     def assert_lists_equal_unordered(list1, list2):
         """Assert two lists contain the same elements, order-independent."""
@@ -764,19 +764,19 @@ class CustomAssertions:
 def assert_logs(logger, level='INFO'):
     """Capture and assert on log messages."""
     import logging
-    
+
     class LogCapture(logging.Handler):
         def __init__(self):
             super().__init__()
             self.records = []
-        
+
         def emit(self, record):
             self.records.append(record)
-    
+
     handler = LogCapture()
     handler.setLevel(getattr(logging, level))
     logger.addHandler(handler)
-    
+
     try:
         yield handler.records
     finally:
@@ -787,14 +787,14 @@ def override_env(**kwargs):
     """Temporarily override environment variables."""
     import os
     original = {}
-    
+
     for key, value in kwargs.items():
         original[key] = os.environ.get(key)
         if value is None:
             os.environ.pop(key, None)
         else:
             os.environ[key] = str(value)
-    
+
     try:
         yield
     finally:
@@ -815,7 +815,7 @@ class PerformanceTestHelper:
         duration = time.time() - start
         assert duration <= max_duration, \
             f"Performance assertion failed: {duration:.3f}s > {max_duration}s"
-    
+
     @staticmethod
     def benchmark(func, iterations=1000):
         """Benchmark a function over multiple iterations."""
@@ -824,7 +824,7 @@ class PerformanceTestHelper:
             start = time.perf_counter()
             func()
             times.append(time.perf_counter() - start)
-        
+
         return {
             'min': min(times),
             'max': max(times),
@@ -854,7 +854,7 @@ func TempDir(t *testing.T) (string, func()) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	
+
 	return tempDir, func() {
 		if err := os.RemoveAll(tempDir); err != nil {
 			t.Errorf("Failed to remove temp dir: %v", err)
@@ -877,33 +877,33 @@ func AssertEventually(t *testing.T, condition func() bool, timeout time.Duration
 	t.Helper()
 	deadline := time.Now().Add(timeout)
 	interval := timeout / 100
-	
+
 	for time.Now().Before(deadline) {
 		if condition() {
 			return
 		}
 		time.Sleep(interval)
 	}
-	
+
 	t.Errorf("Condition not met within %v: %s", timeout, msg)
 }
 
 // Golden compares actual output with golden file
 func Golden(t *testing.T, actual []byte, goldenPath string, update bool) {
 	t.Helper()
-	
+
 	if update {
 		if err := ioutil.WriteFile(goldenPath, actual, 0644); err != nil {
 			t.Fatal(err)
 		}
 		return
 	}
-	
+
 	expected, err := ioutil.ReadFile(goldenPath)
 	if err != nil {
 		t.Fatal(err)
 	}
-	
+
 	if string(expected) != string(actual) {
 		t.Errorf("Output does not match golden file %s", goldenPath)
 	}

@@ -1,4 +1,4 @@
-# EditorConfig for Library/Package Projects  
+# EditorConfig for Library/Package Projects
 # Optimized for reusable code and contributor experience
 
 root = true
@@ -31,7 +31,7 @@ indent_size = 4
 indent_style = tab
 indent_size = 4
 
-# Rust libraries  
+# Rust libraries
 [*.rs]
 indent_size = 4
 

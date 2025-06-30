@@ -139,30 +139,30 @@ force_type=""
 
 while [[ $# -gt 0 ]]; do
   case $1 in
-    -t | --type)
-      force_type="$2"
-      shift 2
-      ;;
-    -l | --list)
-      echo "Available project types:"
-      echo "  web            - Frontend/web projects"
-      echo "  infrastructure - Systems/DevOps projects"
-      echo "  fullstack      - Mixed language projects"
-      exit 0
-      ;;
-    -h | --help)
-      show_help
-      exit 0
-      ;;
-    -*)
-      echo "Unknown option: $1"
-      show_help
-      exit 1
-      ;;
-    *)
-      project_dir="$1"
-      shift
-      ;;
+  -t | --type)
+    force_type="$2"
+    shift 2
+    ;;
+  -l | --list)
+    echo "Available project types:"
+    echo "  web            - Frontend/web projects"
+    echo "  infrastructure - Systems/DevOps projects"
+    echo "  fullstack      - Mixed language projects"
+    exit 0
+    ;;
+  -h | --help)
+    show_help
+    exit 0
+    ;;
+  -*)
+    echo "Unknown option: $1"
+    show_help
+    exit 1
+    ;;
+  *)
+    project_dir="$1"
+    shift
+    ;;
   esac
 done
 

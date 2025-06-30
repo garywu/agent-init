@@ -337,12 +337,12 @@ Always validate user input:
 function processUserInput(input: string): string {
   // Remove script tags
   const sanitized = DOMPurify.sanitize(input);
-  
+
   // Validate length
   if (sanitized.length > MAX_LENGTH) {
     throw new ValidationError('Input too long');
   }
-  
+
   return sanitized;
 }
 ```

@@ -16,7 +16,7 @@ This issue maintains a comprehensive index of issue relationships, dependencies,
 
 ### 🐛 Bug Fixes
 <!-- List significant bug fix issues with their relationships -->
-- #XX - [Title] 
+- #XX - [Title]
   - Blocks: #YY
   - Related: #ZZ
   - Fixed by: #AA

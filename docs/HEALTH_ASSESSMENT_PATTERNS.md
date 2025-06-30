@@ -138,7 +138,7 @@ overall_score=$(( total_score / total_weight ))
 
 ```
 ════════════════════════════════════════
-        PROJECT HEALTH REPORT           
+        PROJECT HEALTH REPORT
 ════════════════════════════════════════
 Project: my-app
 Overall Score: 85%
@@ -173,7 +173,7 @@ security             90%  (weight: 20%)
 - name: Health Check
   run: |
     make health-ci
-    
+
 - name: Upload Health Report
   if: always()
   uses: actions/upload-artifact@v3
@@ -203,17 +203,17 @@ fi
 # Add custom dimension for API projects
 analyze_api_design() {
     local score=100
-    
+
     # Check for OpenAPI spec
     if [[ ! -f "openapi.yaml" ]]; then
         score=$((score - 30))
     fi
-    
+
     # Check for versioning
     if ! grep -q "version:" openapi.yaml; then
         score=$((score - 20))
     fi
-    
+
     SCORE_API_DESIGN=$score
 }
 ```

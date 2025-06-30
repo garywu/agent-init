@@ -24,7 +24,7 @@ Project Analysis → Language Detection → Framework Detection → Configuratio
 **Rationale**: Web ecosystem standard is 2-space indentation
 **Shell scripts**: Minimal - use 2-space for consistency
 
-### Pattern 2: Infrastructure/DevOps Projects  
+### Pattern 2: Infrastructure/DevOps Projects
 **Indicators** (any present = infrastructure project):
 - `Dockerfile`, `docker-compose.yml`, `Vagrantfile`
 - `scripts/` directory with multiple `.sh` files
@@ -33,7 +33,7 @@ Project Analysis → Language Detection → Framework Detection → Configuratio
 - `terraform/`, `ansible/`, `k8s/`, `.github/workflows/`
 - Repository name contains: `admin`, `infra`, `ops`, `deploy`, `config`, `tools`
 
-**Claude Decision**: Apply `.editorconfig-infrastructure`  
+**Claude Decision**: Apply `.editorconfig-infrastructure`
 **Rationale**: Systems work needs clear visual hierarchy (4-space)
 **Configuration files**: 2-space for readability
 
@@ -81,7 +81,7 @@ decision: 2-space indentation
 rationale: "Ecosystem standard, Prettier default, npm ecosystem"
 ```
 
-### Python Family  
+### Python Family
 ```yaml
 patterns:
   - "*.{py,pyi}"
@@ -99,7 +99,7 @@ rules:
   - if: web_project
     decision: 2-space
     rationale: "Minimal shell usage, consistency with project"
-  - if: infrastructure_project  
+  - if: infrastructure_project
     decision: 4-space
     rationale: "Complex shell logic needs visual hierarchy"
   - if: fullstack_project
@@ -153,17 +153,17 @@ decision_tree:
     check: "package.json with frontend frameworks"
     if_true: "web_project"
     if_false: "step_2"
-  
+
   step_2:
     check: "shell_scripts > 3 OR Dockerfile OR infrastructure_keywords"
     if_true: "infrastructure_project"
     if_false: "step_3"
-    
+
   step_3:
     check: "backend_indicators AND frontend_indicators"
     if_true: "fullstack_project"
     if_false: "step_4"
-    
+
   step_4:
     check: "library_indicators"
     if_true: "library_project"
@@ -219,11 +219,11 @@ before_commit:
 "Wrong amount of left-padding spaces":
   cause: "File indentation doesn't match .editorconfig"
   claude_fix: "Auto-fix indentation using detected project type"
-  
+
 "Line too long":
   cause: "Line exceeds max_line_length setting"
   claude_fix: "Break long lines appropriately for language"
-  
+
 "Wrong indent style found (tabs instead of spaces)":
   cause: "Mixed tabs/spaces"
   claude_fix: "Convert to project-appropriate space indentation"
@@ -236,11 +236,11 @@ before_commit:
 web_to_fullstack:
   trigger: "Backend code added to web project"
   action: "Upgrade to .editorconfig-fullstack"
-  
+
 simple_to_infrastructure:
   trigger: "Multiple shell scripts added"
   action: "Upgrade to .editorconfig-infrastructure"
-  
+
 any_to_monorepo:
   trigger: "Multiple package.json or workspace structure"
   action: "Apply .editorconfig-fullstack with workspace-aware rules"

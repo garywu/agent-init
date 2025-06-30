@@ -182,7 +182,7 @@ The CLAUDE.md file uses the following structure:
 
 ## Current Session
 - **Date**: YYYY-MM-DD
-- **Goals**: 
+- **Goals**:
   - [ ] Goal 1
   - [ ] Goal 2
 - **Branch**: feature/description

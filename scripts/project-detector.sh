@@ -439,22 +439,22 @@ generate_recommendations() {
 
   # Template recommendations based on project type
   case "$project_type" in
-    "web-app")
-      recommendations+=("Use CLAUDE-web-app.md template for frontend development")
-      recommendations+=("Consider setting up Lighthouse CI for performance monitoring")
-      ;;
-    "api")
-      recommendations+=("Use CLAUDE-api.md template for backend development")
-      recommendations+=("Set up API documentation with OpenAPI/Swagger")
-      ;;
-    "library")
-      recommendations+=("Focus on comprehensive documentation and examples")
-      recommendations+=("Set up automated testing and CI/CD")
-      ;;
-    "cli")
-      recommendations+=("Include usage examples and help documentation")
-      recommendations+=("Consider adding shell completion scripts")
-      ;;
+  "web-app")
+    recommendations+=("Use CLAUDE-web-app.md template for frontend development")
+    recommendations+=("Consider setting up Lighthouse CI for performance monitoring")
+    ;;
+  "api")
+    recommendations+=("Use CLAUDE-api.md template for backend development")
+    recommendations+=("Set up API documentation with OpenAPI/Swagger")
+    ;;
+  "library")
+    recommendations+=("Focus on comprehensive documentation and examples")
+    recommendations+=("Set up automated testing and CI/CD")
+    ;;
+  "cli")
+    recommendations+=("Include usage examples and help documentation")
+    recommendations+=("Consider adding shell completion scripts")
+    ;;
   esac
 
   # Maturity-based recommendations
@@ -489,62 +489,62 @@ generate_recommendations() {
 # Output results
 output_results() {
   case "$OUTPUT_FORMAT" in
-    "json")
-      echo "{"
-      local first=true
-      for key in "${!PROJECT_ANALYSIS[@]}"; do
-        if [[ $first == "true" ]]; then
-          first=false
-        else
-          echo ","
-        fi
-        printf '  "%s": "%s"' "$key" "${PROJECT_ANALYSIS[$key]}"
-      done
-      echo ""
-      echo "}"
-      ;;
-    "yaml")
-      for key in "${!PROJECT_ANALYSIS[@]}"; do
-        echo "$key: ${PROJECT_ANALYSIS[$key]}"
-      done
-      ;;
-    "human" | *)
-      echo ""
-      echo -e "${CYAN}🔍 PROJECT ANALYSIS RESULTS${NC}"
-      echo "================================"
-      echo ""
-
-      echo -e "${PURPLE}📁 Project Information${NC}"
-      echo "   Type: ${PROJECT_ANALYSIS[project_type]} (${PROJECT_ANALYSIS[confidence]} confidence)"
-      echo "   Primary Language: ${PROJECT_ANALYSIS[primary_language]}"
-      echo "   Frameworks: ${PROJECT_ANALYSIS[frameworks]:-none detected}"
-      echo "   Package Managers: ${PROJECT_ANALYSIS[package_managers]:-none detected}"
-      echo ""
-
-      echo -e "${BLUE}📊 Repository Statistics${NC}"
-      echo "   Total Files: ${PROJECT_ANALYSIS[total_files]}"
-      echo "   Source Files: ${PROJECT_ANALYSIS[total_source_files]}"
-      echo "   Git Repository: ${PROJECT_ANALYSIS[is_git_repo]}"
-      if [[ ${PROJECT_ANALYSIS[is_git_repo]} == "true" ]]; then
-        echo "   Commits: ${PROJECT_ANALYSIS[commit_count]}"
-        echo "   Current Branch: ${PROJECT_ANALYSIS[current_branch]}"
-        echo "   Has Remote: ${PROJECT_ANALYSIS[has_remote]}"
-      fi
-      echo "   Maturity Score: ${PROJECT_ANALYSIS[maturity_score]}/100"
-      echo ""
-
-      echo -e "${GREEN}💡 Recommendations${NC}"
-      local recommendations="${PROJECT_ANALYSIS[recommendations]}"
-      if [[ -n $recommendations ]]; then
-        IFS='|' read -ra RECS <<<"$recommendations"
-        for rec in "${RECS[@]}"; do
-          echo "   • $rec"
-        done
+  "json")
+    echo "{"
+    local first=true
+    for key in "${!PROJECT_ANALYSIS[@]}"; do
+      if [[ $first == "true" ]]; then
+        first=false
       else
-        echo "   • No specific recommendations at this time"
+        echo ","
       fi
-      echo ""
-      ;;
+      printf '  "%s": "%s"' "$key" "${PROJECT_ANALYSIS[$key]}"
+    done
+    echo ""
+    echo "}"
+    ;;
+  "yaml")
+    for key in "${!PROJECT_ANALYSIS[@]}"; do
+      echo "$key: ${PROJECT_ANALYSIS[$key]}"
+    done
+    ;;
+  "human" | *)
+    echo ""
+    echo -e "${CYAN}🔍 PROJECT ANALYSIS RESULTS${NC}"
+    echo "================================"
+    echo ""
+
+    echo -e "${PURPLE}📁 Project Information${NC}"
+    echo "   Type: ${PROJECT_ANALYSIS[project_type]} (${PROJECT_ANALYSIS[confidence]} confidence)"
+    echo "   Primary Language: ${PROJECT_ANALYSIS[primary_language]}"
+    echo "   Frameworks: ${PROJECT_ANALYSIS[frameworks]:-none detected}"
+    echo "   Package Managers: ${PROJECT_ANALYSIS[package_managers]:-none detected}"
+    echo ""
+
+    echo -e "${BLUE}📊 Repository Statistics${NC}"
+    echo "   Total Files: ${PROJECT_ANALYSIS[total_files]}"
+    echo "   Source Files: ${PROJECT_ANALYSIS[total_source_files]}"
+    echo "   Git Repository: ${PROJECT_ANALYSIS[is_git_repo]}"
+    if [[ ${PROJECT_ANALYSIS[is_git_repo]} == "true" ]]; then
+      echo "   Commits: ${PROJECT_ANALYSIS[commit_count]}"
+      echo "   Current Branch: ${PROJECT_ANALYSIS[current_branch]}"
+      echo "   Has Remote: ${PROJECT_ANALYSIS[has_remote]}"
+    fi
+    echo "   Maturity Score: ${PROJECT_ANALYSIS[maturity_score]}/100"
+    echo ""
+
+    echo -e "${GREEN}💡 Recommendations${NC}"
+    local recommendations="${PROJECT_ANALYSIS[recommendations]}"
+    if [[ -n $recommendations ]]; then
+      IFS='|' read -ra RECS <<<"$recommendations"
+      for rec in "${RECS[@]}"; do
+        echo "   • $rec"
+      done
+    else
+      echo "   • No specific recommendations at this time"
+    fi
+    echo ""
+    ;;
   esac
 }
 

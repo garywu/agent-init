@@ -41,14 +41,14 @@ BLOCKED_PATTERNS=(
 # Check current commit email
 check_commit_email() {
     local email=$(git config user.email)
-    
+
     # Check if email is in allowed list
     for allowed in "${ALLOWED_EMAILS[@]}"; do
         if [[ "$email" == $allowed ]]; then
             return 0
         fi
     done
-    
+
     # Check against blocked patterns
     for blocked in "${BLOCKED_PATTERNS[@]}"; do
         if [[ "$email" == $blocked ]]; then
@@ -63,10 +63,10 @@ check_commit_email() {
 # Check staged files for email patterns
 check_staged_files() {
     local email_pattern='[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
-    
+
     # Get staged files
     local files=$(git diff --cached --name-only --diff-filter=ACM)
-    
+
     for file in $files; do
         if git show ":$file" | grep -E "$email_pattern" | grep -vE "noreply|example\.com"; then
             echo "⚠️  Possible email exposure in $file"
@@ -84,17 +84,17 @@ check_staged_files() {
 get_github_noreply() {
     local username="$1"
     local userid="$2"  # Found in GitHub settings
-    
+
     echo "${userid}+${username}@users.noreply.github.com"
 }
 
 # Configure git to use noreply email
 setup_noreply_email() {
     local noreply="12345678+yourusername@users.noreply.github.com"
-    
+
     # Global config (for all repos)
     git config --global user.email "$noreply"
-    
+
     # Or per-repository
     git config user.email "$noreply"
 }
@@ -124,7 +124,7 @@ export GIT_COMMITTER_EMAIL="work@company.com"
 generate_project_email() {
     local project_name="$1"
     local hash=$(echo -n "$project_name" | sha256sum | cut -c1-8)
-    
+
     echo "project-${hash}@users.noreply.github.com"
 }
 ```

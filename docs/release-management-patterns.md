@@ -11,17 +11,17 @@ This guide documents sophisticated patterns for version management, changelog ge
 calculate_next_version() {
     local current_version=$1
     local commit_range=${2:-"HEAD"}
-    
+
     # Parse current version
     local major=$(echo "$current_version" | cut -d. -f1)
     local minor=$(echo "$current_version" | cut -d. -f2)
     local patch=$(echo "$current_version" | cut -d. -f3)
-    
+
     # Check commit types
     local has_breaking=false
     local has_feat=false
     local has_fix=false
-    
+
     # Analyze commits
     while IFS= read -r commit; do
         if [[ "$commit" =~ BREAKING[[:space:]]CHANGE ]] || [[ "$commit" =~ ^[a-z]+! ]]; then
@@ -32,7 +32,7 @@ calculate_next_version() {
             has_fix=true
         fi
     done < <(git log --format=%s "$commit_range")
-    
+
     # Calculate new version
     if [[ "$has_breaking" == true ]]; then
         echo "$((major + 1)).0.0"
@@ -53,7 +53,7 @@ calculate_next_version() {
 validate_commit_message() {
     local commit_regex='^(feat|fix|docs|style|refactor|test|chore|perf|ci|revert)(\(.+\))?: .{1,50}'
     local merge_regex='^Merge (branch|pull request)'
-    
+
     if ! grep -qE "($commit_regex|$merge_regex)" "$1"; then
         echo "❌ Invalid commit message format!"
         echo ""
@@ -81,12 +81,12 @@ generate_changelog_section() {
     local from_tag=$2
     local to_tag=${3:-HEAD}
     local release_date=$(date +%Y-%m-%d)
-    
+
     cat << EOF
 ## [$version] - $release_date
 
 EOF
-    
+
     # Group commits by type
     local sections=(
         "feat:### ✨ Features"
@@ -95,18 +95,18 @@ EOF
         "docs:### 📚 Documentation"
         "BREAKING:### 💥 Breaking Changes"
     )
-    
+
     for section in "${sections[@]}"; do
         local type="${section%%:*}"
         local heading="${section#*:}"
         local commits=""
-        
+
         if [[ "$type" == "BREAKING" ]]; then
             commits=$(git log --format="- %s" "$from_tag..$to_tag" | grep -E "(BREAKING CHANGE|^[a-z]+!:)")
         else
             commits=$(git log --format="- %s" "$from_tag..$to_tag" | grep "^$type:" | sed "s/^$type\(([^)]*)\)\?: //")
         fi
-        
+
         if [[ -n "$commits" ]]; then
             echo "$heading"
             echo ""
@@ -114,7 +114,7 @@ EOF
             echo ""
         fi
     done
-    
+
     # Contributors section
     echo "### 👥 Contributors"
     echo ""
@@ -131,23 +131,23 @@ update_changelog() {
     local version=$1
     local changelog_entry=$2
     local changelog_file="CHANGELOG.md"
-    
+
     # Create backup
     cp "$changelog_file" "$changelog_file.bak"
-    
+
     # Create temporary file with new entry
     {
         # Keep header
         sed -n '1,/^## \[Unreleased\]/p' "$changelog_file"
-        
+
         # Add new version
         echo ""
         echo "$changelog_entry"
-        
+
         # Keep rest of file
         sed -n '/^## \[Unreleased\]/,$ { /^## \[Unreleased\]/!p }' "$changelog_file"
     } > "$changelog_file.tmp"
-    
+
     mv "$changelog_file.tmp" "$changelog_file"
     echo "✅ Updated $changelog_file"
 }
@@ -162,59 +162,59 @@ update_changelog() {
 release() {
     echo "🚀 Release Process"
     echo "=================="
-    
+
     # Pre-flight checks
     if ! git diff --quiet; then
         echo "❌ Error: Working directory has uncommitted changes"
         return 1
     fi
-    
+
     if ! git diff --cached --quiet; then
         echo "❌ Error: Index has uncommitted changes"
         return 1
     fi
-    
+
     # Get current version
     local current_version=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
     current_version=${current_version#v}  # Remove 'v' prefix if present
-    
+
     echo "📌 Current version: $current_version"
-    
+
     # Calculate next version
     local next_version=$(calculate_next_version "$current_version")
-    
+
     # Allow manual override
     echo ""
     read -p "Next version [$next_version]: " manual_version
     next_version=${manual_version:-$next_version}
-    
+
     # Confirm release
     echo ""
     echo "📋 Release Summary:"
     echo "  From: v$current_version"
     echo "  To:   v$next_version"
     echo ""
-    
+
     if ! confirm "Proceed with release?"; then
         echo "❌ Release cancelled"
         return 1
     fi
-    
+
     # Generate changelog
     echo "📝 Generating changelog..."
     local changelog_entry=$(generate_changelog_section "$next_version" "v$current_version")
-    
+
     # Update files
     update_version_files "$next_version"
     update_changelog "$next_version" "$changelog_entry"
-    
+
     # Commit changes
     git add .
     git commit -m "chore(release): prepare v$next_version"
-    
+
     # Create tag
     git tag -a "v$next_version" -m "Release v$next_version"
-    
+
     echo "✅ Release v$next_version prepared!"
     echo ""
     echo "Next steps:"
@@ -230,7 +230,7 @@ release() {
 # Update version in multiple files
 update_version_files() {
     local new_version=$1
-    
+
     # Common version file patterns
     local version_files=(
         "package.json:\"version\": \"$new_version\""
@@ -240,14 +240,14 @@ update_version_files() {
         "version.txt:$new_version"
         ".version:$new_version"
     )
-    
+
     for file_pattern in "${version_files[@]}"; do
         local file="${file_pattern%%:*}"
         local pattern="${file_pattern#*:}"
-        
+
         if [[ -f "$file" ]]; then
             echo "📝 Updating $file..."
-            
+
             case "$file" in
                 *.json)
                     # Use jq for JSON files
@@ -276,7 +276,7 @@ update_version_files() {
 # Determine release channel from version
 get_release_channel() {
     local version=$1
-    
+
     if [[ "$version" =~ -alpha\. ]]; then
         echo "alpha"
     elif [[ "$version" =~ -beta\. ]]; then
@@ -292,9 +292,9 @@ get_release_channel() {
 release_to_channel() {
     local version=$1
     local channel=$(get_release_channel "$version")
-    
+
     echo "📢 Releasing to $channel channel..."
-    
+
     case "$channel" in
         alpha)
             # Alpha releases - automated daily
@@ -329,7 +329,7 @@ generate_prerelease_version() {
     local base_version=$1
     local prerelease_type=$2  # alpha, beta, rc
     local build_number=${3:-$(git rev-list --count HEAD)}
-    
+
     case "$prerelease_type" in
         alpha)
             echo "${base_version}-alpha.${build_number}"
@@ -379,26 +379,26 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Need full history for changelog
-          
+
       - name: Configure Git
         run: |
           git config user.name "Release Bot"
           git config user.email "bot@example.com"
-          
+
       - name: Calculate Version
         id: version
         run: |
           current=$(git describe --tags --abbrev=0 || echo "v0.0.0")
           ./scripts/calculate-version.sh "$current" "${{ inputs.release_type }}"
-          
+
       - name: Generate Changelog
         run: |
           ./scripts/generate-changelog.sh "${{ steps.version.outputs.next }}"
-          
+
       - name: Create Release
         run: |
           ./scripts/create-release.sh "${{ steps.version.outputs.next }}"
-          
+
       - name: Push Changes
         run: |
           git push origin main --tags
@@ -411,34 +411,34 @@ jobs:
 validate_release() {
     local version=$1
     local errors=()
-    
+
     echo "🔍 Validating release v$version..."
-    
+
     # Check tests pass
     if ! npm test &>/dev/null; then
         errors+=("Tests are failing")
     fi
-    
+
     # Check build succeeds
     if ! npm run build &>/dev/null; then
         errors+=("Build is failing")
     fi
-    
+
     # Check no WIP commits
     if git log --format=%s "v$(git describe --tags --abbrev=0)..HEAD" | grep -i "wip"; then
         errors+=("Found WIP commits")
     fi
-    
+
     # Check changelog updated
     if ! grep -q "\[$version\]" CHANGELOG.md; then
         errors+=("CHANGELOG.md not updated for v$version")
     fi
-    
+
     # Check version files updated
     if [[ -f package.json ]] && ! grep -q "\"version\": \"$version\"" package.json; then
         errors+=("package.json version not updated")
     fi
-    
+
     # Report results
     if [[ ${#errors[@]} -gt 0 ]]; then
         echo "❌ Release validation failed:"
@@ -461,7 +461,7 @@ generate_release_notes() {
     local version=$1
     local previous_version=$2
     local output_file="RELEASE_NOTES.md"
-    
+
     cat > "$output_file" << EOF
 # Release Notes for v$version
 
@@ -509,18 +509,18 @@ EOF
 # Execute post-release tasks
 post_release_tasks() {
     local version=$1
-    
+
     echo "🔄 Running post-release tasks for v$version..."
-    
+
     # Update documentation
     if [[ -d docs ]]; then
         echo "📚 Updating documentation..."
         npm run docs:version "$version"
     fi
-    
+
     # Notify channels
     notify_release "$version"
-    
+
     # Update stable branch
     if [[ ! "$version" =~ -(alpha|beta|rc) ]]; then
         echo "🌿 Updating stable branch..."
@@ -529,7 +529,7 @@ post_release_tasks() {
         git push origin stable
         git checkout main
     fi
-    
+
     # Prepare next development cycle
     echo "🔮 Preparing next development cycle..."
     local next_dev_version=$(calculate_next_version "$version")

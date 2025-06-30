@@ -86,7 +86,7 @@ tests/
 detect_platform() {
     case "$(uname -s)" in
         Darwin*) echo "macos" ;;
-        Linux*)  
+        Linux*)
             if grep -q Microsoft /proc/version 2>/dev/null; then
                 echo "wsl"
             else
@@ -305,7 +305,7 @@ cleanup_nix() {
    ```bash
    # On working system
    find . -type f -name "*.json" | sort > working.txt
-   # On broken system  
+   # On broken system
    find . -type f -name "*.json" | sort > broken.txt
    diff working.txt broken.txt
    ```

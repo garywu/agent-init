@@ -138,12 +138,12 @@ scrape_configs:
     static_configs:
       - targets: ['host.docker.internal:8080']
     metrics_path: '/metrics'
-  
+
   # Node exporter for system metrics
   - job_name: 'node'
     static_configs:
       - targets: ['node-exporter:9100']
-  
+
   # Container metrics
   - job_name: 'cadvisor'
     static_configs:
@@ -251,7 +251,7 @@ const logger = createLogger({
 // Express middleware
 const metricsMiddleware = (req, res, next) => {
   const start = Date.now();
-  
+
   res.on('finish', () => {
     const duration = (Date.now() - start) / 1000;
     const labels = {
@@ -259,10 +259,10 @@ const metricsMiddleware = (req, res, next) => {
       route: req.route?.path || req.path,
       status_code: res.statusCode
     };
-    
+
     httpRequestDuration.observe(labels, duration);
     httpRequestTotal.inc(labels);
-    
+
     logger.info('HTTP Request', {
       ...labels,
       duration,
@@ -270,7 +270,7 @@ const metricsMiddleware = (req, res, next) => {
       userAgent: req.get('user-agent')
     });
   });
-  
+
   next();
 };
 
@@ -339,24 +339,24 @@ app = Flask(__name__)
 @app.before_request
 def before_request():
     request.start_time = time.time()
-    
+
 @app.after_request
 def after_request(response):
     if hasattr(request, 'start_time'):
         duration = time.time() - request.start_time
-        
+
         # Metrics
         request_count.labels(
             method=request.method,
             endpoint=request.endpoint or 'unknown',
             status=response.status_code
         ).inc()
-        
+
         request_duration.labels(
             method=request.method,
             endpoint=request.endpoint or 'unknown'
         ).observe(duration)
-        
+
         # Logging
         logger.info('http_request', extra={
             'method': request.method,
@@ -365,7 +365,7 @@ def after_request(response):
             'duration': duration,
             'ip': request.remote_addr
         })
-    
+
     return response
 
 @app.route('/metrics')
@@ -381,18 +381,18 @@ class HealthChecker {
   constructor() {
     this.checks = new Map();
   }
-  
+
   addCheck(name, checkFn) {
     this.checks.set(name, checkFn);
   }
-  
+
   async runChecks() {
     const results = {
       status: 'healthy',
       timestamp: new Date().toISOString(),
       checks: {}
     };
-    
+
     for (const [name, checkFn] of this.checks) {
       try {
         const start = Date.now();
@@ -410,7 +410,7 @@ class HealthChecker {
         };
       }
     }
-    
+
     return results;
   }
 }
@@ -433,9 +433,9 @@ health.addCheck('redis', async () => {
 // External API check
 health.addCheck('external_api', async () => {
   const response = await fetch('https://api.example.com/health');
-  return { 
+  return {
     status: response.status,
-    reachable: response.ok 
+    reachable: response.ok
   };
 });
 
@@ -519,7 +519,7 @@ groups:
         annotations:
           summary: "High error rate detected"
           description: "Error rate is {{ $value }} errors per second"
-      
+
       - alert: HighRequestLatency
         expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
         for: 10m
@@ -528,7 +528,7 @@ groups:
         annotations:
           summary: "High request latency"
           description: "95th percentile latency is {{ $value }} seconds"
-      
+
       - alert: ServiceDown
         expr: up{job="app"} == 0
         for: 1m
@@ -563,7 +563,7 @@ $InputRunFileMonitor
 # Forward to remote syslog
 *.* @@remote-syslog.example.com:514
 EOF
-    
+
     systemctl restart rsyslog
 }
 
@@ -576,7 +576,7 @@ ForwardToSyslog=yes
 MaxRetentionSec=7day
 SystemMaxUse=1G
 EOF
-    
+
     systemctl restart systemd-journald
 }
 ```
@@ -593,16 +593,16 @@ const apmAgent = apm.start({
   secretToken: process.env.ELASTIC_APM_SECRET_TOKEN,
   serverUrl: process.env.ELASTIC_APM_SERVER_URL || 'http://localhost:8200',
   environment: process.env.NODE_ENV || 'development',
-  
+
   // Capture request body
   captureBody: 'all',
-  
+
   // Error filtering
   errorOnAbortedRequests: true,
-  
+
   // Transaction sampling
   transactionSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
-  
+
   // Custom context
   globalLabels: {
     region: process.env.AWS_REGION,
@@ -622,11 +622,11 @@ class StructuredLogger {
     this.service = service;
     this.context = {};
   }
-  
+
   setContext(context) {
     this.context = { ...this.context, ...context };
   }
-  
+
   log(level, message, data = {}) {
     const logEntry = {
       timestamp: new Date().toISOString(),
@@ -635,11 +635,11 @@ class StructuredLogger {
       message,
       ...this.context,
       ...data,
-      
+
       // Add trace context if available
       trace_id: this.getTraceId(),
       span_id: this.getSpanId(),
-      
+
       // Add error details
       ...(data.error && {
         error: {
@@ -649,24 +649,24 @@ class StructuredLogger {
         }
       })
     };
-    
+
     console.log(JSON.stringify(logEntry));
   }
-  
+
   info(message, data) {
     this.log('info', message, data);
   }
-  
+
   error(message, error, data = {}) {
     this.log('error', message, { ...data, error });
   }
-  
+
   // Correlation with traces
   getTraceId() {
     // Implementation depends on tracing library
     return null;
   }
-  
+
   getSpanId() {
     // Implementation depends on tracing library
     return null;
@@ -707,7 +707,7 @@ class Profiler {
       });
     };
   }
-  
+
   takeHeapSnapshot(name) {
     const snapshot = v8Profiler.takeSnapshot(name);
     snapshot.export((error, result) => {
@@ -720,7 +720,7 @@ class Profiler {
 // Usage in Express
 if (process.env.PROFILE_ENABLED === 'true') {
   const profiler = new Profiler();
-  
+
   app.get('/debug/cpu-profile', (req, res) => {
     const stop = profiler.startCPUProfile('cpu-profile');
     setTimeout(() => {
@@ -728,7 +728,7 @@ if (process.env.PROFILE_ENABLED === 'true') {
       res.send('CPU profile saved');
     }, 30000); // Profile for 30 seconds
   });
-  
+
   app.get('/debug/heap-snapshot', (req, res) => {
     profiler.takeHeapSnapshot('heap-snapshot');
     res.send('Heap snapshot saved');

@@ -60,14 +60,14 @@ jobs:
   run: |
     # Note: Full cleanup requires disabling SIP and reboot
     # In CI, we can only do partial cleanup
-    
+
     # Stop services
     sudo launchctl bootout system/org.nixos.nix-daemon || true
     sudo launchctl bootout system/org.nixos.darwin-store || true
-    
+
     # Remove what we can
     sudo rm -rf /etc/nix /var/root/.nix-*
-    
+
     # /nix removal usually fails due to APFS
     echo "Note: /nix removal requires reboot on macOS"
 ```
@@ -81,13 +81,13 @@ jobs:
     # Homebrew is pre-installed but may need updates
     export HOMEBREW_NO_AUTO_UPDATE=1
     export HOMEBREW_NO_INSTALL_CLEANUP=1
-    
+
     # Fix permissions issues
     sudo chown -R "$(whoami)" $(brew --prefix)/*
-    
+
     # Install dependencies
     brew install coreutils gnu-sed
-    
+
     # Add GNU tools to PATH
     echo "$(brew --prefix)/opt/coreutils/libexec/gnubin" >> $GITHUB_PATH
     echo "$(brew --prefix)/opt/gnu-sed/libexec/gnubin" >> $GITHUB_PATH
@@ -108,7 +108,7 @@ jobs:
       curl \
       git \
       jq
-      
+
     # For newer packages, might need to add repositories
     # sudo add-apt-repository ppa:example/ppa
     # sudo apt-get update
@@ -140,7 +140,7 @@ jobs:
     # Convert Windows paths to Unix style
     UNIX_PATH=$(cygpath -u "$GITHUB_WORKSPACE")
     echo "UNIX_WORKSPACE=$UNIX_PATH" >> $GITHUB_ENV
-    
+
     # Handle line endings
     git config --global core.autocrlf false
 ```
@@ -156,15 +156,15 @@ jobs:
   uses: actions/setup-node@v4
   with:
     node-version-file: '.nvmrc'  # or specify version
-    
+
 - name: Install Dependencies
   run: |
     # Remove package-lock to avoid platform issues
     rm -f package-lock.json
-    
+
     # Install fresh
     npm install
-    
+
     # Or use npm ci if package-lock is committed
     # But be aware of platform-specific packages
 ```
@@ -195,7 +195,7 @@ jobs:
   run: |
     # Always use bash for consistency
     # Available on all GitHub runners
-    
+
     # Platform detection
     case "$RUNNER_OS" in
       Linux)
@@ -221,10 +221,10 @@ jobs:
   run: |
     # Works across all platforms
     echo "MY_VAR=value" >> $GITHUB_ENV
-    
+
     # Path additions (cross-platform)
     echo "$HOME/.local/bin" >> $GITHUB_PATH
-    
+
     # Multi-line values
     {
       echo 'MULTI_LINE<<EOF'
@@ -244,19 +244,19 @@ jobs:
   run: |
     echo "=== Environment Variables ==="
     env | sort
-    
+
     echo "=== System Information ==="
     uname -a
-    
+
     echo "=== Directory Structure ==="
     ls -la
-    
+
     echo "=== Process List ==="
     ps aux || ps -ef
-    
+
     echo "=== Disk Usage ==="
     df -h
-    
+
     echo "=== Memory Usage ==="
     free -h 2>/dev/null || vm_stat
 ```
@@ -287,10 +287,10 @@ jobs:
   run: |
     mkdir -p artifacts/logs
     mkdir -p artifacts/coverage
-    
+
     # Collect logs
     find . -name "*.log" -exec cp {} artifacts/logs/ \; 2>/dev/null || true
-    
+
     # Platform-specific artifacts
     case "$RUNNER_OS" in
       macOS)
@@ -390,10 +390,10 @@ jobs:
       echo "::error::API_KEY secret not set"
       exit 1
     fi
-    
+
     # Mask any accidental output
     echo "::add-mask::$API_KEY"
-    
+
     # Use in a way that doesn't expose in logs
     curl -H "Authorization: Bearer $API_KEY" https://api.example.com
 ```

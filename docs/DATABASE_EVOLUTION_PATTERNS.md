@@ -213,7 +213,7 @@ CREATE TABLE content_v2 (
     core_content TEXT NOT NULL,      -- What never changes
     content_type VARCHAR(50) NOT NULL,
     metadata JSONB NOT NULL DEFAULT '{}', -- Everything else
-    
+
     -- Indexes on JSONB fields used in queries
     INDEX idx_metadata_difficulty ((metadata->>'difficulty')),
     INDEX idx_metadata_language ((metadata->>'language'))
@@ -252,7 +252,7 @@ Use views to maintain backwards compatibility:
 ```sql
 -- After restructuring, create views with old names
 CREATE VIEW vocabulary AS
-SELECT 
+SELECT
     kn.id,
     kn.content as word,
     trans.content as translation,
@@ -260,7 +260,7 @@ SELECT
 FROM knowledge_nodes kn
 JOIN knowledge_edges ke ON ke.from_node_id = kn.id
 JOIN knowledge_nodes trans ON trans.id = ke.to_node_id
-WHERE kn.node_type = 'word' 
+WHERE kn.node_type = 'word'
   AND ke.edge_type = 'translates_to';
 ```
 
@@ -291,9 +291,9 @@ WITH RECURSIVE knowledge_path AS (
     SELECT uk.node_id, uk.user_id, 0 as depth
     FROM user_knowledge_state uk
     WHERE uk.state = 'mastered'
-    
+
     UNION ALL
-    
+
     -- Recursive: what they can learn next
     SELECT ke.to_node_id, kp.user_id, kp.depth + 1
     FROM knowledge_path kp
@@ -310,17 +310,17 @@ CREATE INDEX idx_learning_paths_user ON user_learning_paths(user_id);
 
 ```sql
 -- Partial indexes for common queries
-CREATE INDEX idx_vocabulary_english 
-ON knowledge_nodes(content) 
-WHERE node_type = 'word' 
+CREATE INDEX idx_vocabulary_english
+ON knowledge_nodes(content)
+WHERE node_type = 'word'
   AND metadata->>'language' = 'en';
 
 -- GIN indexes for JSONB containment
-CREATE INDEX idx_metadata_gin 
+CREATE INDEX idx_metadata_gin
 ON knowledge_nodes USING gin(metadata);
 
 -- Expression indexes for nested fields
-CREATE INDEX idx_difficulty 
+CREATE INDEX idx_difficulty
 ON knowledge_nodes((metadata->'properties'->>'difficulty'));
 ```
 
@@ -364,10 +364,10 @@ Always document your schemas with:
 CREATE TABLE knowledge_nodes (
     -- Unique identifier for the knowledge item
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    
+
     -- The actual content (word, concept, formula, etc.)
     content TEXT NOT NULL,
-    
+
     -- ... rest of schema
 );
 ```

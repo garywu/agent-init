@@ -21,23 +21,23 @@ print_status "Adding platform-specific labels..."
 
 # Platform labels
 declare -a PLATFORM_LABELS=(
-    "platform-macos|macOS specific issues|000000"
-    "platform-linux|Linux specific issues|FCC624"
-    "platform-windows|Windows specific issues|0078D4"
-    "platform-wsl|WSL specific issues|9B59B6"
-    "platform-android|Android specific issues|3DDC84"
-    "platform-ios|iOS specific issues|000000"
-    "platform-web|Web platform specific|FF6900"
-    "platform-docker|Docker specific issues|2496ED"
+  "platform-macos|macOS specific issues|000000"
+  "platform-linux|Linux specific issues|FCC624"
+  "platform-windows|Windows specific issues|0078D4"
+  "platform-wsl|WSL specific issues|9B59B6"
+  "platform-android|Android specific issues|3DDC84"
+  "platform-ios|iOS specific issues|000000"
+  "platform-web|Web platform specific|FF6900"
+  "platform-docker|Docker specific issues|2496ED"
 )
 
 # Create platform labels
 for label_data in "${PLATFORM_LABELS[@]}"; do
-    IFS='|' read -r name description color <<< "$label_data"
-    
-    if gh label create "$name" --description "$description" --color "$color" --force 2>/dev/null; then
-        print_status "Added platform label: $name"
-    fi
+  IFS='|' read -r name description color <<<"$label_data"
+
+  if gh label create "$name" --description "$description" --color "$color" --force 2>/dev/null; then
+    print_status "Added platform label: $name"
+  fi
 done
 
 print_status "Platform labels added successfully!"

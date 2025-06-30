@@ -36,7 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 1. **During Development**: Add entries to `[Unreleased]` section as you work
 2. **Before Release**: Move unreleased changes to a new version section
-3. **Use Semantic Versioning**: 
+3. **Use Semantic Versioning**:
    - MAJOR: Breaking changes
    - MINOR: New features (backward compatible)
    - PATCH: Bug fixes (backward compatible)

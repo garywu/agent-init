@@ -217,10 +217,10 @@ node --loader tsx script.ts
     // Using tsx
     "seed": "tsx scripts/seed-database.ts",
     "migrate": "tsx scripts/run-migrations.ts",
-    
+
     // Using Bun
     "seed:bun": "bun scripts/seed-database.ts",
-    
+
     // Using ts-node
     "seed:tsnode": "ts-node scripts/seed-database.ts"
   }
@@ -286,10 +286,10 @@ install: ## Install all dependencies
   "scripts": {
     // Using Bun's built-in bundler
     "build:bun": "bun build src/index.ts --outdir dist --minify",
-    
+
     // Using esbuild via package manager
     "build:esbuild": "bunx esbuild src/index.ts --bundle --outfile=dist/index.js",
-    
+
     // Using Vite
     "build:vite": "vite build"
   }
@@ -335,7 +335,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       # Detect and setup package manager
       - name: Detect package manager
         id: detect-package-manager
@@ -349,17 +349,17 @@ jobs:
           else
             echo "manager=npm" >> $GITHUB_OUTPUT
           fi
-      
+
       # Setup Bun
       - uses: oven-sh/setup-bun@v1
         if: steps.detect-package-manager.outputs.manager == 'bun'
-      
+
       # Setup pnpm
       - uses: pnpm/action-setup@v2
         if: steps.detect-package-manager.outputs.manager == 'pnpm'
         with:
           version: 8
-      
+
       # Install and test
       - run: ${{ steps.detect-package-manager.outputs.manager }} install
       - run: ${{ steps.detect-package-manager.outputs.manager }} test

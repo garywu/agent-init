@@ -41,7 +41,7 @@ base: '/YOUR-EXACT-REPO-NAME',  // Case-sensitive!
 
 The issue involves understanding the interaction between:
 - Astro's base path configuration
-- GitHub Pages deployment behavior  
+- GitHub Pages deployment behavior
 - Starlight's link resolution
 - Different behavior between local dev and production
 
@@ -161,24 +161,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: docs/package-lock.json
-      
+
       - name: Install dependencies
         run: |
           cd docs
           npm ci
-      
+
       - name: Build site
         run: |
           cd docs
           npm run build  # Includes astro sync
-      
+
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
         with:
@@ -209,7 +209,7 @@ test_link() {
     local path="$1"
     local url="${BASE_URL}${SITE_BASE}${path}"
     echo "Testing: $url"
-    
+
     if curl -sI "$url" | head -1 | grep -q "200"; then
         echo "✅ $path"
         return 0
@@ -402,7 +402,7 @@ If you encounter broken links in production:
    ```bash
    # Check if homepage loads
    curl -I "https://username.github.io/repository-name/"
-   
+
    # Test a specific broken link
    curl -I "https://username.github.io/repository-name/guides/getting-started/"
    ```
@@ -424,10 +424,10 @@ If you encounter broken links in production:
    ```bash
    # Test locally
    cd docs && npm run dev
-   
+
    # Build and test
    npm run build && npm run preview
-   
+
    # Deploy fix
    git add . && git commit -m "fix: resolve documentation link issues"
    git push origin main

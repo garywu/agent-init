@@ -229,12 +229,12 @@ main() {
   local output_format="${1:-human}"
 
   case "$output_format" in
-    "json")
-      display_json
-      ;;
-    "human" | *)
-      display_status
-      ;;
+  "json")
+    display_json
+    ;;
+  "human" | *)
+    display_status
+    ;;
   esac
 }
 

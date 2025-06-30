@@ -62,30 +62,30 @@ get_target_path() {
   local basename=$(basename "$source_file")
 
   case "$basename" in
-    *project-structure* | *scaffolding*)
-      echo "guides/project-setup/$(basename "$source_file")"
-      ;;
-    *git-* | *release-* | *context-preservation*)
-      echo "guides/workflow/$(basename "$source_file")"
-      ;;
-    *test* | *lint* | *format* | *debug*)
-      echo "guides/development/$(basename "$source_file")"
-      ;;
-    *cli-tools* | *interactive* | *recommended-tools*)
-      echo "guides/tools/$(basename "$source_file")"
-      ;;
-    *security* | *secrets* | *email-privacy*)
-      echo "guides/security/$(basename "$source_file")"
-      ;;
-    *ci-* | *github-* | *environment* | *monitoring*)
-      echo "guides/deployment/$(basename "$source_file")"
-      ;;
-    *error-* | *troubleshoot* | *mistakes*)
-      echo "guides/troubleshooting/$(basename "$source_file")"
-      ;;
-    *)
-      echo "reference/$(basename "$source_file")"
-      ;;
+  *project-structure* | *scaffolding*)
+    echo "guides/project-setup/$(basename "$source_file")"
+    ;;
+  *git-* | *release-* | *context-preservation*)
+    echo "guides/workflow/$(basename "$source_file")"
+    ;;
+  *test* | *lint* | *format* | *debug*)
+    echo "guides/development/$(basename "$source_file")"
+    ;;
+  *cli-tools* | *interactive* | *recommended-tools*)
+    echo "guides/tools/$(basename "$source_file")"
+    ;;
+  *security* | *secrets* | *email-privacy*)
+    echo "guides/security/$(basename "$source_file")"
+    ;;
+  *ci-* | *github-* | *environment* | *monitoring*)
+    echo "guides/deployment/$(basename "$source_file")"
+    ;;
+  *error-* | *troubleshoot* | *mistakes*)
+    echo "guides/troubleshooting/$(basename "$source_file")"
+    ;;
+  *)
+    echo "reference/$(basename "$source_file")"
+    ;;
   esac
 }
 
@@ -291,55 +291,55 @@ import { LinkCard, CardGrid } from '@astrojs/starlight/components';
 ## Getting Started
 
 <CardGrid>
-  <LinkCard 
-    title="Project Setup" 
+  <LinkCard
+    title="Project Setup"
     description="Setting up new projects with agent-init"
-    href="./project-setup/" 
+    href="./project-setup/"
   />
-  <LinkCard 
-    title="Development Workflow" 
+  <LinkCard
+    title="Development Workflow"
     description="Git, releases, and session management"
-    href="./workflow/" 
+    href="./workflow/"
   />
 </CardGrid>
 
 ## Core Practices
 
 <CardGrid>
-  <LinkCard 
-    title="Development Practices" 
+  <LinkCard
+    title="Development Practices"
     description="Testing, linting, and code quality"
-    href="./development/" 
+    href="./development/"
   />
-  <LinkCard 
-    title="Development Tools" 
+  <LinkCard
+    title="Development Tools"
     description="Modern CLI tools and utilities"
-    href="./tools/" 
+    href="./tools/"
   />
 </CardGrid>
 
 ## Advanced Topics
 
 <CardGrid>
-  <LinkCard 
-    title="Security" 
+  <LinkCard
+    title="Security"
     description="Protecting credentials and privacy"
-    href="./security/" 
+    href="./security/"
   />
-  <LinkCard 
-    title="Deployment & CI/CD" 
+  <LinkCard
+    title="Deployment & CI/CD"
     description="Continuous integration and deployment"
-    href="./deployment/" 
+    href="./deployment/"
   />
-  <LinkCard 
-    title="Documentation" 
+  <LinkCard
+    title="Documentation"
     description="Creating and maintaining documentation"
-    href="./documentation/" 
+    href="./documentation/"
   />
-  <LinkCard 
-    title="Troubleshooting" 
+  <LinkCard
+    title="Troubleshooting"
     description="Solving common problems"
-    href="./troubleshooting/" 
+    href="./troubleshooting/"
   />
 </CardGrid>
 EOF

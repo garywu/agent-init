@@ -24,11 +24,11 @@ print_status() {
   local status=$1
   local message=$2
   case $status in
-    "INFO") echo -e "${BLUE}[INFO]${NC} $message" ;;
-    "PASS") echo -e "${GREEN}[✓]${NC} $message" ;;
-    "INSTALL") echo -e "${YELLOW}[INSTALL]${NC} $message" ;;
-    "ERROR") echo -e "${RED}[✗]${NC} $message" ;;
-    "WARN") echo -e "${YELLOW}[WARN]${NC} $message" ;;
+  "INFO") echo -e "${BLUE}[INFO]${NC} $message" ;;
+  "PASS") echo -e "${GREEN}[✓]${NC} $message" ;;
+  "INSTALL") echo -e "${YELLOW}[INSTALL]${NC} $message" ;;
+  "ERROR") echo -e "${RED}[✗]${NC} $message" ;;
+  "WARN") echo -e "${YELLOW}[WARN]${NC} $message" ;;
   esac
 }
 
@@ -43,10 +43,10 @@ print_header() {
 # Detect operating system
 detect_os() {
   case "$(uname -s)" in
-    Linux*) echo "linux" ;;
-    Darwin*) echo "macos" ;;
-    MINGW* | MSYS* | CYGWIN*) echo "windows" ;;
-    *) echo "unknown" ;;
+  Linux*) echo "linux" ;;
+  Darwin*) echo "macos" ;;
+  MINGW* | MSYS* | CYGWIN*) echo "windows" ;;
+  *) echo "unknown" ;;
   esac
 }
 
@@ -74,10 +74,10 @@ check_tool_installed() {
   if command_exists "$tool"; then
     local version
     case $tool in
-      shellcheck) version=$(shellcheck --version | grep "version:" | awk '{print $2}') ;;
-      shfmt) version=$(shfmt --version 2>/dev/null || echo "unknown") ;;
-      shellharden) version=$(shellharden --version 2>/dev/null | head -1 || echo "unknown") ;;
-      *) version="unknown" ;;
+    shellcheck) version=$(shellcheck --version | grep "version:" | awk '{print $2}') ;;
+    shfmt) version=$(shfmt --version 2>/dev/null || echo "unknown") ;;
+    shellharden) version=$(shellharden --version 2>/dev/null | head -1 || echo "unknown") ;;
+    *) version="unknown" ;;
     esac
     print_status "PASS" "$tool is already installed (version: $version)"
     return 0
@@ -129,114 +129,114 @@ install_linux() {
   print_header "Installing Shell Tools on Linux ($distro)"
 
   case $distro in
-    ubuntu | debian)
-      # Update package list
-      print_status "INFO" "Updating package list..."
-      sudo apt-get update -qq
+  ubuntu | debian)
+    # Update package list
+    print_status "INFO" "Updating package list..."
+    sudo apt-get update -qq
 
-      # Install shellcheck
-      if ! check_tool_installed shellcheck; then
-        print_status "INSTALL" "Installing shellcheck via apt..."
-        sudo apt-get install -y shellcheck
+    # Install shellcheck
+    if ! check_tool_installed shellcheck; then
+      print_status "INSTALL" "Installing shellcheck via apt..."
+      sudo apt-get install -y shellcheck
+    fi
+
+    # Install shfmt (may need to use go install or download binary)
+    if ! check_tool_installed shfmt; then
+      if command_exists go; then
+        print_status "INSTALL" "Installing shfmt via Go..."
+        go install mvdan.cc/sh/v3/cmd/shfmt@latest
+      else
+        print_status "INSTALL" "Downloading shfmt binary..."
+        local shfmt_version="v3.7.0"
+        local arch
+        arch=$(uname -m)
+        case $arch in
+        x86_64) arch="amd64" ;;
+        aarch64) arch="arm64" ;;
+        *) arch="amd64" ;; # Default fallback
+        esac
+
+        wget -O /tmp/shfmt "https://github.com/mvdan/sh/releases/download/${shfmt_version}/shfmt_${shfmt_version}_linux_${arch}"
+        chmod +x /tmp/shfmt
+        sudo mv /tmp/shfmt /usr/local/bin/shfmt
       fi
+    fi
+    ;;
 
-      # Install shfmt (may need to use go install or download binary)
-      if ! check_tool_installed shfmt; then
-        if command_exists go; then
-          print_status "INSTALL" "Installing shfmt via Go..."
-          go install mvdan.cc/sh/v3/cmd/shfmt@latest
-        else
-          print_status "INSTALL" "Downloading shfmt binary..."
-          local shfmt_version="v3.7.0"
-          local arch
-          arch=$(uname -m)
-          case $arch in
-            x86_64) arch="amd64" ;;
-            aarch64) arch="arm64" ;;
-            *) arch="amd64" ;; # Default fallback
-          esac
-
-          wget -O /tmp/shfmt "https://github.com/mvdan/sh/releases/download/${shfmt_version}/shfmt_${shfmt_version}_linux_${arch}"
-          chmod +x /tmp/shfmt
-          sudo mv /tmp/shfmt /usr/local/bin/shfmt
-        fi
+  fedora | rhel | centos)
+    # Install shellcheck
+    if ! check_tool_installed shellcheck; then
+      print_status "INSTALL" "Installing shellcheck via dnf/yum..."
+      if command_exists dnf; then
+        sudo dnf install -y ShellCheck
+      elif command_exists yum; then
+        sudo yum install -y ShellCheck
       fi
-      ;;
+    fi
 
-    fedora | rhel | centos)
-      # Install shellcheck
-      if ! check_tool_installed shellcheck; then
-        print_status "INSTALL" "Installing shellcheck via dnf/yum..."
-        if command_exists dnf; then
-          sudo dnf install -y ShellCheck
-        elif command_exists yum; then
-          sudo yum install -y ShellCheck
-        fi
+    # Install shfmt via Go or binary download
+    if ! check_tool_installed shfmt; then
+      if command_exists go; then
+        print_status "INSTALL" "Installing shfmt via Go..."
+        go install mvdan.cc/sh/v3/cmd/shfmt@latest
+      else
+        print_status "INSTALL" "Downloading shfmt binary..."
+        local shfmt_version="v3.7.0"
+        local arch
+        arch=$(uname -m)
+        case $arch in
+        x86_64) arch="amd64" ;;
+        aarch64) arch="arm64" ;;
+        *) arch="amd64" ;;
+        esac
+
+        curl -sSfL "https://github.com/mvdan/sh/releases/download/${shfmt_version}/shfmt_${shfmt_version}_linux_${arch}" -o /tmp/shfmt
+        chmod +x /tmp/shfmt
+        sudo mv /tmp/shfmt /usr/local/bin/shfmt
       fi
+    fi
+    ;;
 
-      # Install shfmt via Go or binary download
-      if ! check_tool_installed shfmt; then
-        if command_exists go; then
-          print_status "INSTALL" "Installing shfmt via Go..."
-          go install mvdan.cc/sh/v3/cmd/shfmt@latest
-        else
-          print_status "INSTALL" "Downloading shfmt binary..."
-          local shfmt_version="v3.7.0"
-          local arch
-          arch=$(uname -m)
-          case $arch in
-            x86_64) arch="amd64" ;;
-            aarch64) arch="arm64" ;;
-            *) arch="amd64" ;;
-          esac
+  arch)
+    # Install shellcheck
+    if ! check_tool_installed shellcheck; then
+      print_status "INSTALL" "Installing shellcheck via pacman..."
+      sudo pacman -S --noconfirm shellcheck
+    fi
 
-          curl -sSfL "https://github.com/mvdan/sh/releases/download/${shfmt_version}/shfmt_${shfmt_version}_linux_${arch}" -o /tmp/shfmt
-          chmod +x /tmp/shfmt
-          sudo mv /tmp/shfmt /usr/local/bin/shfmt
-        fi
+    # Install shfmt
+    if ! check_tool_installed shfmt; then
+      print_status "INSTALL" "Installing shfmt via pacman..."
+      sudo pacman -S --noconfirm shfmt
+    fi
+    ;;
+
+  alpine)
+    # Install shellcheck
+    if ! check_tool_installed shellcheck; then
+      print_status "INSTALL" "Installing shellcheck via apk..."
+      sudo apk add --no-cache shellcheck
+    fi
+
+    # Install shfmt via Go or binary
+    if ! check_tool_installed shfmt; then
+      if command_exists go; then
+        print_status "INSTALL" "Installing shfmt via Go..."
+        go install mvdan.cc/sh/v3/cmd/shfmt@latest
+      else
+        print_status "WARN" "Go not available. Please install Go or download shfmt manually:"
+        echo "  https://github.com/mvdan/sh/releases"
       fi
-      ;;
+    fi
+    ;;
 
-    arch)
-      # Install shellcheck
-      if ! check_tool_installed shellcheck; then
-        print_status "INSTALL" "Installing shellcheck via pacman..."
-        sudo pacman -S --noconfirm shellcheck
-      fi
-
-      # Install shfmt
-      if ! check_tool_installed shfmt; then
-        print_status "INSTALL" "Installing shfmt via pacman..."
-        sudo pacman -S --noconfirm shfmt
-      fi
-      ;;
-
-    alpine)
-      # Install shellcheck
-      if ! check_tool_installed shellcheck; then
-        print_status "INSTALL" "Installing shellcheck via apk..."
-        sudo apk add --no-cache shellcheck
-      fi
-
-      # Install shfmt via Go or binary
-      if ! check_tool_installed shfmt; then
-        if command_exists go; then
-          print_status "INSTALL" "Installing shfmt via Go..."
-          go install mvdan.cc/sh/v3/cmd/shfmt@latest
-        else
-          print_status "WARN" "Go not available. Please install Go or download shfmt manually:"
-          echo "  https://github.com/mvdan/sh/releases"
-        fi
-      fi
-      ;;
-
-    *)
-      print_status "WARN" "Unsupported Linux distribution: $distro"
-      print_status "INFO" "Try installing manually:"
-      echo "  - shellcheck: https://github.com/koalaman/shellcheck#installing"
-      echo "  - shfmt: https://github.com/mvdan/sh#shfmt"
-      echo "  - shellharden: cargo install shellharden"
-      ;;
+  *)
+    print_status "WARN" "Unsupported Linux distribution: $distro"
+    print_status "INFO" "Try installing manually:"
+    echo "  - shellcheck: https://github.com/koalaman/shellcheck#installing"
+    echo "  - shfmt: https://github.com/mvdan/sh#shfmt"
+    echo "  - shellharden: cargo install shellharden"
+    ;;
   esac
 
   # Install shellharden via cargo
@@ -398,23 +398,23 @@ EOF
 parse_args() {
   while [[ $# -gt 0 ]]; do
     case $1 in
-      --help | -h)
-        show_help
-        exit 0
-        ;;
-      --verbose | -v)
-        VERBOSE=true
-        shift
-        ;;
-      --nix)
-        USE_NIX=true
-        shift
-        ;;
-      *)
-        echo "Unknown option: $1"
-        echo "Use --help for usage information"
-        exit 1
-        ;;
+    --help | -h)
+      show_help
+      exit 0
+      ;;
+    --verbose | -v)
+      VERBOSE=true
+      shift
+      ;;
+    --nix)
+      USE_NIX=true
+      shift
+      ;;
+    *)
+      echo "Unknown option: $1"
+      echo "Use --help for usage information"
+      exit 1
+      ;;
     esac
   done
 }
@@ -435,20 +435,20 @@ main() {
   else
     # Platform-specific installation
     case $os in
-      macos)
-        install_macos
-        ;;
-      linux)
-        install_linux
-        ;;
-      windows)
-        install_windows
-        ;;
-      *)
-        print_status "ERROR" "Unsupported operating system: $os"
-        print_status "INFO" "Try using --nix for universal installation"
-        exit 1
-        ;;
+    macos)
+      install_macos
+      ;;
+    linux)
+      install_linux
+      ;;
+    windows)
+      install_windows
+      ;;
+    *)
+      print_status "ERROR" "Unsupported operating system: $os"
+      print_status "INFO" "Try using --nix for universal installation"
+      exit 1
+      ;;
     esac
   fi
 

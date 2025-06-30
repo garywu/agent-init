@@ -37,14 +37,14 @@ print_status() {
   local status=$1
   local message=$2
   case $status in
-    "INFO") echo -e "${BLUE}[INFO]${NC} $message" ;;
-    "PASS") echo -e "${GREEN}[✓]${NC} $message" ;;
-    "FIX")
-      echo -e "${YELLOW}[FIX]${NC} $message"
-      ((FIXES_APPLIED++))
-      ;;
-    "ERROR") echo -e "${RED}[✗]${NC} $message" ;;
-    "WARN") echo -e "${YELLOW}[WARN]${NC} $message" ;;
+  "INFO") echo -e "${BLUE}[INFO]${NC} $message" ;;
+  "PASS") echo -e "${GREEN}[✓]${NC} $message" ;;
+  "FIX")
+    echo -e "${YELLOW}[FIX]${NC} $message"
+    ((FIXES_APPLIED++))
+    ;;
+  "ERROR") echo -e "${RED}[✗]${NC} $message" ;;
+  "WARN") echo -e "${YELLOW}[WARN]${NC} $message" ;;
   esac
 }
 
@@ -256,20 +256,20 @@ OPTIONS:
 
 DESCRIPTION:
     This script provides comprehensive automated fixing for shell scripts using:
-    
+
     • shellharden  - Security-focused shell script hardening
-    • shellcheck   - Static analysis with auto-fixes  
+    • shellcheck   - Static analysis with auto-fixes
     • shfmt        - Consistent code formatting
-    
+
     The script will:
     1. Find all shell scripts in the project
     2. Apply security fixes with shellharden
     3. Apply shellcheck auto-fixes
     4. Format code with shfmt
-    
+
 CONFIGURATION:
     Place .shellcheckrc and .shfmt files in your project root for custom settings.
-    
+
 INSTALLATION:
     Required tools:
     • shellcheck: brew install shellcheck
@@ -287,23 +287,23 @@ EOF
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --help | -h)
-      show_usage
-      exit 0
-      ;;
-    --verbose | -v)
-      VERBOSE=true
-      shift
-      ;;
-    --dry-run | -n)
-      DRY_RUN=true
-      shift
-      ;;
-    *)
-      echo "Unknown option: $1"
-      echo "Use --help for usage information"
-      exit 1
-      ;;
+  --help | -h)
+    show_usage
+    exit 0
+    ;;
+  --verbose | -v)
+    VERBOSE=true
+    shift
+    ;;
+  --dry-run | -n)
+    DRY_RUN=true
+    shift
+    ;;
+  *)
+    echo "Unknown option: $1"
+    echo "Use --help for usage information"
+    exit 1
+    ;;
   esac
 done
 

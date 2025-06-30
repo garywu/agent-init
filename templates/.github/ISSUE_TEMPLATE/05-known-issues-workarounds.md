@@ -20,7 +20,7 @@ This issue tracks known problems, limitations, and their workarounds until perma
 - **Component**: [Component name]
 - **Description**: What's broken
 - **Impact**: Who/what is affected
-- **Workaround**: 
+- **Workaround**:
   ```bash
   # Temporary fix steps
   ```

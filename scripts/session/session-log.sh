@@ -210,58 +210,58 @@ main() {
 
 # Special command handling
 case "${1:-}" in
-  "--file")
-    # Log file modification
-    shift
-    for file in "$@"; do
-      log_file_modification "$file"
-      log_info "Logged file modification: $file"
-    done
-    ;;
-  "--command")
-    # Log command execution
-    shift
-    log_command "$*"
-    log_info "Logged command execution"
-    ;;
-  "--issue")
-    # Log issue work
-    shift
-    issue_number="$1"
-    issue_title="${2:-}"
-    action="${3:-worked}"
-    log_issue_work "$issue_number" "$issue_title" "$action"
-    log_info "Logged work on issue #$issue_number"
-    ;;
-  "--help" | "-h")
-    echo "Usage: $0 \"message\" [type]"
-    echo "       $0 --file file1 [file2 ...]"
-    echo "       $0 --command \"command string\""
-    echo "       $0 --issue number [title] [action]"
-    echo ""
-    echo "Log activities to the current development session."
-    echo ""
-    echo "Activity Types:"
-    echo "  general       - General development activity"
-    echo "  feature       - New feature implementation"
-    echo "  bug-fix       - Bug fixing"
-    echo "  testing       - Test creation or execution"
-    echo "  documentation - Documentation updates"
-    echo "  refactoring   - Code refactoring"
-    echo "  deployment    - Deployment activities"
-    echo "  code-review   - Code review activities"
-    echo "  planning      - Planning and design"
-    echo ""
-    echo "Special Commands:"
-    echo "  --file        Log file modifications"
-    echo "  --command     Log command execution"
-    echo "  --issue       Log GitHub issue work"
-    echo ""
-    echo "The activity type is auto-detected if not specified."
-    exit 0
-    ;;
-  *)
-    # Regular activity logging
-    main "$@"
-    ;;
+"--file")
+  # Log file modification
+  shift
+  for file in "$@"; do
+    log_file_modification "$file"
+    log_info "Logged file modification: $file"
+  done
+  ;;
+"--command")
+  # Log command execution
+  shift
+  log_command "$*"
+  log_info "Logged command execution"
+  ;;
+"--issue")
+  # Log issue work
+  shift
+  issue_number="$1"
+  issue_title="${2:-}"
+  action="${3:-worked}"
+  log_issue_work "$issue_number" "$issue_title" "$action"
+  log_info "Logged work on issue #$issue_number"
+  ;;
+"--help" | "-h")
+  echo "Usage: $0 \"message\" [type]"
+  echo "       $0 --file file1 [file2 ...]"
+  echo "       $0 --command \"command string\""
+  echo "       $0 --issue number [title] [action]"
+  echo ""
+  echo "Log activities to the current development session."
+  echo ""
+  echo "Activity Types:"
+  echo "  general       - General development activity"
+  echo "  feature       - New feature implementation"
+  echo "  bug-fix       - Bug fixing"
+  echo "  testing       - Test creation or execution"
+  echo "  documentation - Documentation updates"
+  echo "  refactoring   - Code refactoring"
+  echo "  deployment    - Deployment activities"
+  echo "  code-review   - Code review activities"
+  echo "  planning      - Planning and design"
+  echo ""
+  echo "Special Commands:"
+  echo "  --file        Log file modifications"
+  echo "  --command     Log command execution"
+  echo "  --issue       Log GitHub issue work"
+  echo ""
+  echo "The activity type is auto-detected if not specified."
+  exit 0
+  ;;
+*)
+  # Regular activity logging
+  main "$@"
+  ;;
 esac

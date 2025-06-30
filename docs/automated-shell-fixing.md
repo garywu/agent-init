@@ -174,14 +174,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Install shell tools
         run: |
           sudo apt-get update
           sudo apt-get install -y shellcheck
           curl -sSfL https://github.com/mvdan/sh/releases/latest/download/shfmt_v3.7.0_linux_amd64 -o shfmt
           chmod +x shfmt && sudo mv shfmt /usr/local/bin/
-          
+
       - name: Run shell linting
         run: |
           find . -name "*.sh" | xargs shellcheck
@@ -198,7 +198,7 @@ repos:
     rev: v0.9.0.6
     hooks:
       - id: shellcheck
-        
+
   - repo: https://github.com/pre-commit/mirrors-shfmt
     rev: v3.7.0
     hooks:
@@ -335,19 +335,19 @@ The key insight: **Prevention through configuration beats manual fixing every ti
    ```bash
    # Automated cross-platform installation
    ./scripts/install-shell-tools.sh
-   
+
    # Or use Makefile
    make shell-toolchain
-   
+
    # Or platform-specific:
    # macOS:
    brew install shellcheck shfmt && cargo install shellharden
-   
+
    # Ubuntu/Debian:
    sudo apt-get install shellcheck
    go install mvdan.cc/sh/v3/cmd/shfmt@latest
    cargo install shellharden
-   
+
    # Via Nix (universal):
    nix-env -iA nixpkgs.shellcheck nixpkgs.shfmt
    cargo install shellharden

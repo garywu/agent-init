@@ -159,12 +159,12 @@ project:
   type: "node"
   root: "."
   main_branch: "main"
-  
+
 commands:
   test: "npm test"
   build: "npm run build"
   dev: "npm run dev"
-  
+
 paths:
   source: "./src"
   tests: "./tests"
@@ -208,7 +208,7 @@ If using VS Code with Claude:
 Start conversations with context verification:
 
 ```bash
-"Current directory is $(pwd), on git branch $(git branch --show-current). 
+"Current directory is $(pwd), on git branch $(git branch --show-current).
 Please help me..."
 ```
 
@@ -306,7 +306,7 @@ Create a wrapper that always provides context:
 
 claude_with_context() {
     local context_file="/tmp/claude_context_$$.txt"
-    
+
     # Gather context
     cat > "$context_file" << EOF
 === Current Context ===
@@ -320,15 +320,15 @@ Time: $(date)
 ===================
 
 EOF
-    
+
     # Prepend context to Claude input
     echo "Context:" >&2
     cat "$context_file" >&2
     echo "" >&2
-    
+
     # Call Claude with context
     claude "$@" --context-file "$context_file"
-    
+
     rm -f "$context_file"
 }
 

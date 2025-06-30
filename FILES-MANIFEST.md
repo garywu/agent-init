@@ -7,7 +7,7 @@ This manifest lists all files created/modified for the shell script automation c
 ### Template Configuration Files
 ```
 templates/.shellcheckrc          - Production-ready shellcheck configuration
-templates/.shfmt                 - Shell script formatting configuration  
+templates/.shfmt                 - Shell script formatting configuration
 ```
 
 ### Enhanced Scripts
@@ -45,7 +45,7 @@ FILES-MANIFEST.md                      - This file listing (for reference)
 cp templates/.shellcheckrc .
 cp templates/.shfmt .
 
-# Automation scripts  
+# Automation scripts
 cp scripts/fix-shell-issues-enhanced.sh scripts/
 cp scripts/install-shell-tools.sh scripts/
 chmod +x scripts/*.sh
@@ -93,7 +93,7 @@ make shell-toolchain
 # Apply fixes
 make fix-shell
 
-# Lint scripts  
+# Lint scripts
 make lint-shell
 ```
 
@@ -116,7 +116,7 @@ make lint-shell
 
 ### Runtime Dependencies
 - `shellcheck` - Static analysis (all platforms)
-- `shfmt` - Formatting (all platforms)  
+- `shfmt` - Formatting (all platforms)
 - `shellharden` - Security hardening (via Cargo)
 
 ### Installation Dependencies
@@ -140,7 +140,7 @@ make format-shell    # Format only
 make shell-toolchain # Install tools
 ```
 
-### CI/CD Integration  
+### CI/CD Integration
 ```yaml
 # GitHub Actions example
 - name: Shell Script Quality

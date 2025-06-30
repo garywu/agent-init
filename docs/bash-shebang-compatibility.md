@@ -77,10 +77,10 @@ while IFS= read -r -d '' file; do
     if [[ ! -f "$file" ]]; then
         continue
     fi
-    
+
     if [[ "$file" == *.sh ]] || head -1 "$file" 2>/dev/null | grep -q "^#!.*sh"; then
         shebang=$(head -1 "$file" 2>/dev/null || echo "")
-        
+
         if [[ "$shebang" == "#!/bin/bash" ]] || [[ "$shebang" == "#!/usr/bin/bash" ]]; then
             echo -e "${RED}ERROR:${NC} Hardcoded bash path in $file"
             echo -e "  Found: ${YELLOW}$shebang${NC}"

@@ -93,8 +93,8 @@ generate_summary() {
   cat >"$summary_file" <<EOF
 # Session Summary: $session_id
 
-**Duration**: $started → $ended ($duration)  
-**Project**: $(echo "$session_data" | jq -r '.project_info.path')  
+**Duration**: $started → $ended ($duration)
+**Project**: $(echo "$session_data" | jq -r '.project_info.path')
 **Type**: $(echo "$session_data" | jq -r '.project_info.type')
 
 ## 📊 Session Metrics
@@ -126,8 +126,8 @@ EOF
 
   # Group activities by type
   echo "$session_data" | jq -r '
-        .activities 
-        | group_by(.type) 
+        .activities
+        | group_by(.type)
         | map({
             type: .[0].type,
             count: length,
@@ -295,41 +295,41 @@ main() {
 
 # Handle options
 case "${1:-}" in
-  "--help" | "-h")
-    echo "Usage: $0 [--force]"
-    echo ""
-    echo "End the current development session with a comprehensive summary."
-    echo ""
-    echo "Options:"
-    echo "  --force    End session without confirmation"
-    echo ""
-    echo "The session summary includes:"
-    echo "  - Duration and timeline"
-    echo "  - Activities performed"
-    echo "  - Files modified"
-    echo "  - GitHub issues worked"
-    echo "  - Commits made"
-    echo "  - Health score changes"
-    echo "  - Key takeaways"
-    exit 0
-    ;;
-  "--force")
-    main
-    ;;
-  *)
-    # Confirm before ending
-    if [[ -f $SESSION_FILE ]]; then
-      local session_id=$(jq -r '.id' "$SESSION_FILE")
-      echo -e "${YELLOW}About to end session: $session_id${NC}"
-      read -p "Are you sure? (y/N): " -n 1 -r
-      echo
-      if [[ $REPLY =~ ^[Yy]$ ]]; then
-        main
-      else
-        log_info "Session end cancelled"
-      fi
+"--help" | "-h")
+  echo "Usage: $0 [--force]"
+  echo ""
+  echo "End the current development session with a comprehensive summary."
+  echo ""
+  echo "Options:"
+  echo "  --force    End session without confirmation"
+  echo ""
+  echo "The session summary includes:"
+  echo "  - Duration and timeline"
+  echo "  - Activities performed"
+  echo "  - Files modified"
+  echo "  - GitHub issues worked"
+  echo "  - Commits made"
+  echo "  - Health score changes"
+  echo "  - Key takeaways"
+  exit 0
+  ;;
+"--force")
+  main
+  ;;
+*)
+  # Confirm before ending
+  if [[ -f $SESSION_FILE ]]; then
+    local session_id=$(jq -r '.id' "$SESSION_FILE")
+    echo -e "${YELLOW}About to end session: $session_id${NC}"
+    read -p "Are you sure? (y/N): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      main
     else
-      log_error "No active session found"
+      log_info "Session end cancelled"
     fi
-    ;;
+  else
+    log_error "No active session found"
+  fi
+  ;;
 esac

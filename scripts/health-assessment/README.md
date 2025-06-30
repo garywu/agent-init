@@ -49,7 +49,7 @@ Each dimension is scored 0-100 and weighted to produce an overall health score:
 ## Health Grades
 
 - **90-100%**: EXCELLENT - Maintain current standards
-- **70-89%**: GOOD - Minor improvements recommended  
+- **70-89%**: GOOD - Minor improvements recommended
 - **50-69%**: MODERATE - Several areas need attention
 - **0-49%**: CRITICAL - Major improvements needed
 
@@ -96,7 +96,7 @@ The health assessment integrates with CI pipelines:
 # GitHub Actions example
 - name: Run health check
   run: make health-ci
-  
+
 # Fails the build if score < 70%
 ```
 

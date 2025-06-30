@@ -33,7 +33,7 @@ cargo install shellharden
 # macOS with Homebrew
 brew install shellcheck
 
-# Ubuntu/Debian  
+# Ubuntu/Debian
 apt-get install shellcheck
 
 # Via Nix
@@ -64,7 +64,7 @@ Instead of manual fixes, use automated tooling:
 
 # Or use the three-tool pipeline:
 shellharden --transform script.sh    # Security fixes
-shellcheck -f diff script.sh | patch # Auto-fixes  
+shellcheck -f diff script.sh | patch # Auto-fixes
 shfmt -w -i 2 -ci script.sh          # Formatting
 ```
 
@@ -293,10 +293,10 @@ fi
 main() {
     # Parse arguments
     parse_args "$@"
-    
+
     # Validate environment
     validate_prerequisites
-    
+
     # Do the work
     perform_validation
 }
@@ -404,13 +404,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@master
         with:
           severity: warning
           check_together: 'yes'
-          
+
       # Alternative: Direct shellcheck
       - name: Run ShellCheck (Alternative)
         run: |
@@ -438,7 +438,7 @@ Based on our experience fixing ShellCheck issues in the dotfiles project:
    ```bash
    # Count total issues
    find . -name "*.sh" -exec shellcheck {} \; 2>&1 | grep -c "^In"
-   
+
    # Group by severity
    find . -name "*.sh" -exec shellcheck -f json {} \; | \
      jq -r '.[] | .level' | sort | uniq -c

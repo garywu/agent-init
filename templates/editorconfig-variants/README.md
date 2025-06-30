@@ -23,18 +23,18 @@ This directory contains project-type-specific EditorConfig templates that solve 
 ## Available Templates
 
 ### `.editorconfig-web`
-**For**: Frontend/web projects  
-**Indentation**: 2-space default  
+**For**: Frontend/web projects
+**Indentation**: 2-space default
 **Use when**: JavaScript, TypeScript, CSS, HTML projects
 
-### `.editorconfig-infrastructure` 
-**For**: Systems/DevOps projects  
-**Indentation**: 4-space for shells/Python, 2-space for configs  
+### `.editorconfig-infrastructure`
+**For**: Systems/DevOps projects
+**Indentation**: 4-space for shells/Python, 2-space for configs
 **Use when**: Shell scripts, Python tools, Docker, CI/CD
 
 ### `.editorconfig-fullstack`
-**For**: Multi-language projects  
-**Indentation**: Language-specific rules  
+**For**: Multi-language projects
+**Indentation**: Language-specific rules
 **Use when**: Web + backend, mixed technology stacks
 
 ## Usage
@@ -83,7 +83,7 @@ For projects with **multiple technologies**, the fullstack template uses **langu
 [*.{js,ts,css,html}]
 indent_size = 2
 
-# Backend gets systems standards  
+# Backend gets systems standards
 [*.{py,sh,bash}]
 indent_size = 4
 
@@ -130,7 +130,7 @@ indent_size = 2  # Perfect for React/Vue/etc
 indent_size = 2  # Web standards
 ```
 
-### Infrastructure Project  
+### Infrastructure Project
 ```ini
 # Result: .editorconfig-infrastructure applied
 [*]
@@ -158,11 +158,11 @@ indent_style = tab  # Language convention
 
 ## Benefits
 
-✅ **No more global conflicts** - Each project gets appropriate settings  
-✅ **Language-aware** - Respects ecosystem standards  
-✅ **Automatic detection** - No manual decision making  
-✅ **Backward compatible** - Works with existing projects  
-✅ **Override friendly** - Can still manually customize  
+✅ **No more global conflicts** - Each project gets appropriate settings
+✅ **Language-aware** - Respects ecosystem standards
+✅ **Automatic detection** - No manual decision making
+✅ **Backward compatible** - Works with existing projects
+✅ **Override friendly** - Can still manually customize
 
 ## Future Enhancements
 

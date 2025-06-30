@@ -244,24 +244,24 @@ display_session_summary() {
 
   # Show recommendations based on project type
   case "$(echo "$session_data" | jq -r '.project_info.type')" in
-    "web-app")
-      echo -e "${YELLOW}🎯 Recommended Actions${NC}"
-      echo "  • Run 'make dev-web' to start development server"
-      echo "  • Use 'make lighthouse' for performance audit"
-      echo "  • Check 'make build-web' before deployment"
-      ;;
-    "api")
-      echo -e "${YELLOW}🎯 Recommended Actions${NC}"
-      echo "  • Run 'make dev-api' to start API server"
-      echo "  • Use 'make test-api' for integration tests"
-      echo "  • Generate docs with 'make docs-api'"
-      ;;
-    "library")
-      echo -e "${YELLOW}🎯 Recommended Actions${NC}"
-      echo "  • Run 'make test' to verify functionality"
-      echo "  • Use 'make build-lib' before publishing"
-      echo "  • Update docs with 'make docs-lib'"
-      ;;
+  "web-app")
+    echo -e "${YELLOW}🎯 Recommended Actions${NC}"
+    echo "  • Run 'make dev-web' to start development server"
+    echo "  • Use 'make lighthouse' for performance audit"
+    echo "  • Check 'make build-web' before deployment"
+    ;;
+  "api")
+    echo -e "${YELLOW}🎯 Recommended Actions${NC}"
+    echo "  • Run 'make dev-api' to start API server"
+    echo "  • Use 'make test-api' for integration tests"
+    echo "  • Generate docs with 'make docs-api'"
+    ;;
+  "library")
+    echo -e "${YELLOW}🎯 Recommended Actions${NC}"
+    echo "  • Run 'make test' to verify functionality"
+    echo "  • Use 'make build-lib' before publishing"
+    echo "  • Update docs with 'make docs-lib'"
+    ;;
   esac
   echo ""
 }

@@ -122,7 +122,7 @@ templates/
 │   ├── astro.config.mjs         # Astro documentation site
 │   └── package.json             # Docs dependencies
 ├── CLAUDE.md                     # AI session tracking
-├── CONTRIBUTING.md               # Contribution guidelines  
+├── CONTRIBUTING.md               # Contribution guidelines
 ├── SECURITY.md                  # Security policy
 ├── Makefile                     # Common development tasks
 ├── .pre-commit-config.yaml      # Code quality hooks
@@ -189,7 +189,7 @@ Agent-init includes a standardized GitHub label system for consistent issue trac
 The standardized label set includes:
 
 - **Issue Types**: bug, enhancement, documentation, question, chore, refactor
-- **Priority Levels**: critical, high, medium, low  
+- **Priority Levels**: critical, high, medium, low
 - **Status**: blocked, in-progress, needs-review, help wanted
 - **Categories**: security, performance, testing, ci-cd, dependencies
 - **Size Labels**: xs, s, m, l, xl (for PRs)
@@ -259,7 +259,7 @@ These tools are pre-installed on the system and can greatly enhance Claude CLI's
 - `fzf` - Fuzzy finder
 - `broot` - Interactive tree navigation
 
-### File Operations  
+### File Operations
 - `bat` - Better cat with syntax highlighting
 - `eza` - Better ls with colors/icons
 - `sd` - Better sed for find/replace
@@ -281,7 +281,7 @@ These tools are pre-installed on the system and can greatly enhance Claude CLI's
 
 1. **Always start with CLAUDE.md** - Document the session and plan
 2. **Create issues before code changes** - Track all work
-3. **Use GitHub CLI (`gh`)** - For issue and PR management  
+3. **Use GitHub CLI (`gh`)** - For issue and PR management
 4. **Run linters before committing** - Maintain code quality
 5. **Document as you go** - Keep everything up to date
 
@@ -300,7 +300,7 @@ When contributing to this repository, remember our core principle: **provide inf
 ### What to Avoid
 
 - **Rigid scripts**: That assume one way is right
-- **Hardcoded values**: That won't work everywhere  
+- **Hardcoded values**: That won't work everywhere
 - **Single solutions**: Without alternatives
 - **Assumptions**: About project structure or preferences
 
@@ -348,7 +348,7 @@ This repository embodies a key principle: **Every debugging session is a learnin
   - 3.5 hours debugging missing pages
   - Root cause: `astro sync` requirement not documented
   - Solution documented in [Documentation Site Setup](docs/documentation-site-setup.md)
-  
+
 - **Cross-Platform CI Failures**
   - Multiple hours debugging package-lock.json issues
   - Platform-specific behaviors on macOS vs Linux

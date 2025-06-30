@@ -149,9 +149,9 @@ Run `npm install` and `npm build` to build the docs.
    ```bash
    npm run build
    ```
-   
-   Note: This runs `astro sync` first, which is required for 
-   content collections. Without it, your content pages won't 
+
+   Note: This runs `astro sync` first, which is required for
+   content collections. Without it, your content pages won't
    be included in the build.
 
 3. Preview locally:

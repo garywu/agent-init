@@ -155,7 +155,7 @@ docs: update installation instructions
    ```bash
    # Python projects
    pip install -r requirements-dev.txt
-   
+
    # Node.js projects
    npm install
    ```

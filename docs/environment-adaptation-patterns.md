@@ -48,7 +48,7 @@ prompt_user() {
     local prompt=$1
     local default=$2
     local options=${3:-}  # Optional: "yes/no", "1-5", etc.
-    
+
     # In CI, always use defaults
     if [[ "${CI_MODE:-false}" == "true" ]]; then
         echo "$prompt"
@@ -56,7 +56,7 @@ prompt_user() {
         echo "$default"
         return
     fi
-    
+
     # In interactive mode, actually prompt
     local response
     if [[ -n "$options" ]]; then
@@ -64,7 +64,7 @@ prompt_user() {
     else
         read -p "$prompt [$default]: " response
     fi
-    
+
     echo "${response:-$default}"
 }
 
@@ -72,13 +72,13 @@ prompt_user() {
 confirm() {
     local prompt=$1
     local default=${2:-"n"}  # Default to "no" for safety
-    
+
     if [[ "${CI_MODE:-false}" == "true" ]]; then
         echo "$prompt [Auto-confirming: $default]"
         [[ "$default" =~ ^[Yy]$ ]]
         return $?
     fi
-    
+
     local response
     read -p "$prompt [y/N]: " response
     [[ "${response:-$default}" =~ ^[Yy]$ ]]
@@ -89,14 +89,14 @@ select_option() {
     local prompt=$1
     shift
     local options=("$@")
-    
+
     if [[ "${CI_MODE:-false}" == "true" ]]; then
         echo "$prompt"
         echo "→ Auto-selected (CI mode): ${options[0]}"
         echo "${options[0]}"
         return
     fi
-    
+
     echo "$prompt"
     select opt in "${options[@]}"; do
         if [[ -n "$opt" ]]; then
@@ -115,7 +115,7 @@ show_progress() {
     local task=$1
     local current=${2:-}
     local total=${3:-}
-    
+
     if [[ "${CI_MODE:-false}" == "true" ]]; then
         # Simple output for CI logs
         if [[ -n "$current" && -n "$total" ]]; then
@@ -129,13 +129,13 @@ show_progress() {
             local percentage=$((current * 100 / total))
             local filled=$((percentage / 2))
             local empty=$((50 - filled))
-            
+
             printf "\r[%s%s] %3d%% %s" \
                 "$(printf '=%.0s' $(seq 1 $filled))" \
                 "$(printf ' %.0s' $(seq 1 $empty))" \
                 "$percentage" \
                 "$task"
-            
+
             if [[ $current -eq $total ]]; then
                 echo " ✓"
             fi
@@ -148,7 +148,7 @@ show_progress() {
 # Conditional verbose output
 debug_log() {
     local message=$1
-    
+
     if [[ "${DEBUG:-false}" == "true" ]] || \
        [[ "${VERBOSE:-false}" == "true" ]] || \
        [[ "${CI_MODE:-false}" == "true" && "${CI_DEBUG:-false}" == "true" ]]; then
@@ -168,7 +168,7 @@ detect_platform() {
     local arch=""
     local distro=""
     local version=""
-    
+
     # Detect OS
     case "$(uname -s)" in
         Darwin*)
@@ -207,20 +207,20 @@ detect_platform() {
             arch=$(uname -m)
             ;;
     esac
-    
+
     # Normalize architecture names
     case "$arch" in
         x86_64) arch="amd64" ;;
         aarch64) arch="arm64" ;;
         armv7l) arch="arm" ;;
     esac
-    
+
     # Export results
     export OS="$os"
     export ARCH="$arch"
     export DISTRO="$distro"
     export VERSION="$version"
-    
+
     debug_log "Platform: OS=$os, ARCH=$arch, DISTRO=$distro, VERSION=$version"
 }
 ```
@@ -231,7 +231,7 @@ detect_platform() {
 # Package manager abstraction
 install_package() {
     local package=$1
-    
+
     case "$OS" in
         macos)
             if command -v brew > /dev/null; then
@@ -275,13 +275,13 @@ ensure_command() {
     local primary_cmd=$1
     local package_name=${2:-$1}
     local alternatives=${3:-}
-    
+
     # Check primary command
     if command -v "$primary_cmd" > /dev/null; then
         debug_log "Found command: $primary_cmd"
         return 0
     fi
-    
+
     # Check alternatives
     if [[ -n "$alternatives" ]]; then
         for alt in $alternatives; do
@@ -293,7 +293,7 @@ ensure_command() {
             fi
         done
     fi
-    
+
     # Try to install
     echo "Command '$primary_cmd' not found. Attempting to install..."
     if install_package "$package_name"; then
@@ -311,7 +311,7 @@ ensure_command() {
 # Cross-platform path handling
 normalize_path() {
     local path=$1
-    
+
     case "$OS" in
         windows)
             # Convert Unix paths to Windows paths
@@ -357,7 +357,7 @@ get_cache_dir() {
 create_temp_dir() {
     local prefix=${1:-"tmp"}
     local temp_dir
-    
+
     case "$OS" in
         macos|linux|wsl)
             temp_dir=$(mktemp -d "/tmp/${prefix}.XXXXXX")
@@ -366,7 +366,7 @@ create_temp_dir() {
             temp_dir=$(mktemp -d "${TEMP}/${prefix}.XXXXXX")
             ;;
     esac
-    
+
     echo "$temp_dir"
 }
 ```
@@ -378,7 +378,7 @@ create_temp_dir() {
 configure_shell() {
     local shell_name=$(basename "${SHELL:-/bin/sh}")
     local config_file=""
-    
+
     case "$shell_name" in
         bash)
             if [[ "$OS" == "macos" ]]; then
@@ -398,7 +398,7 @@ configure_shell() {
             config_file="$HOME/.profile"
             ;;
     esac
-    
+
     echo "$config_file"
 }
 
@@ -422,7 +422,7 @@ setup_terminal() {
         export BLUE=''
         export NC=''
     fi
-    
+
     # Unicode support detection
     if locale -a 2>/dev/null | grep -qi utf-8; then
         export UNICODE_SUPPORT=true
@@ -461,18 +461,18 @@ detect_container() {
 # Adjust behavior for containers
 setup_container_environment() {
     local container_type=$(detect_container)
-    
+
     if [[ "$container_type" != "none" ]]; then
         export IN_CONTAINER=true
         export CONTAINER_TYPE="$container_type"
-        
+
         # Disable features that don't work in containers
         export NO_SYSTEMD=true
         export NO_SUDO_PROMPT=true
-        
+
         # Use non-interactive package installation
         export DEBIAN_FRONTEND=noninteractive
-        
+
         debug_log "Running in $container_type container"
     fi
 }
@@ -488,18 +488,18 @@ setup_proxy() {
         export http_proxy="${http_proxy:-$HTTP_PROXY}"
         export https_proxy="${https_proxy:-$HTTPS_PROXY}"
         export no_proxy="${no_proxy:-$NO_PROXY}"
-        
+
         # Configure tools to use proxy
         if command -v git > /dev/null; then
             git config --global http.proxy "$http_proxy"
             git config --global https.proxy "$https_proxy"
         fi
-        
+
         if command -v npm > /dev/null; then
             npm config set proxy "$http_proxy"
             npm config set https-proxy "$https_proxy"
         fi
-        
+
         debug_log "Proxy configured: $http_proxy"
     fi
 }
@@ -511,14 +511,14 @@ check_connectivity() {
         "https://google.com"
         "https://cloudflare.com"
     )
-    
+
     for url in "${test_urls[@]}"; do
         if curl -s --head --max-time 5 "$url" > /dev/null; then
             debug_log "Network connectivity confirmed via $url"
             return 0
         fi
     done
-    
+
     echo "Warning: No network connectivity detected"
     return 1
 }
@@ -532,19 +532,19 @@ run_with_privileges() {
     local command=$1
     shift
     local args=("$@")
-    
+
     # If already root, just run the command
     if [[ $EUID -eq 0 ]]; then
         "$command" "${args[@]}"
         return $?
     fi
-    
+
     # In CI or non-interactive, fail if not root
     if [[ "${CI_MODE:-false}" == "true" ]] || [[ "${NO_SUDO_PROMPT:-false}" == "true" ]]; then
         echo "Error: This operation requires root privileges"
         return 1
     fi
-    
+
     # Check if user has sudo access
     if sudo -n true 2>/dev/null; then
         sudo "$command" "${args[@]}"
@@ -560,16 +560,16 @@ run_with_privileges() {
 # Check write permissions
 ensure_writable() {
     local path=$1
-    
+
     if [[ -w "$path" ]]; then
         return 0
     fi
-    
+
     if [[ "${CI_MODE:-false}" == "true" ]]; then
         echo "Error: No write permission for $path"
         return 1
     fi
-    
+
     echo "Need write permission for $path"
     if confirm "Attempt to fix permissions?"; then
         run_with_privileges chmod u+w "$path"

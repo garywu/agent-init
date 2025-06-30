@@ -36,25 +36,25 @@ add_finding() {
   local score_impact="$3"
 
   case "$severity" in
-    "CRITICAL")
-      CRITICAL_ISSUES+=("$message")
-      SECURITY_SCORE=$((SECURITY_SCORE - score_impact))
-      ;;
-    "HIGH")
-      HIGH_ISSUES+=("$message")
-      SECURITY_SCORE=$((SECURITY_SCORE - score_impact))
-      ;;
-    "MEDIUM")
-      MEDIUM_ISSUES+=("$message")
-      SECURITY_SCORE=$((SECURITY_SCORE - score_impact))
-      ;;
-    "LOW")
-      LOW_ISSUES+=("$message")
-      SECURITY_SCORE=$((SECURITY_SCORE - score_impact))
-      ;;
-    "INFO")
-      INFO_ITEMS+=("$message")
-      ;;
+  "CRITICAL")
+    CRITICAL_ISSUES+=("$message")
+    SECURITY_SCORE=$((SECURITY_SCORE - score_impact))
+    ;;
+  "HIGH")
+    HIGH_ISSUES+=("$message")
+    SECURITY_SCORE=$((SECURITY_SCORE - score_impact))
+    ;;
+  "MEDIUM")
+    MEDIUM_ISSUES+=("$message")
+    SECURITY_SCORE=$((SECURITY_SCORE - score_impact))
+    ;;
+  "LOW")
+    LOW_ISSUES+=("$message")
+    SECURITY_SCORE=$((SECURITY_SCORE - score_impact))
+    ;;
+  "INFO")
+    INFO_ITEMS+=("$message")
+    ;;
   esac
 
   # Ensure score doesn't go below 0
@@ -364,8 +364,8 @@ generate_recommendations() {
 # Output results
 output_results() {
   case "$OUTPUT_FORMAT" in
-    "json")
-      cat <<EOF
+  "json")
+    cat <<EOF
 {
   "security_score": $SECURITY_SCORE,
   "findings": {
@@ -384,80 +384,80 @@ output_results() {
   "recommendations": $(generate_recommendations | jq -R . | jq -s .)
 }
 EOF
-      ;;
-    "human" | *)
-      echo -e "${BLUE}🔒 SECURITY ASSESSMENT${NC}"
-      echo "===================="
-      echo ""
+    ;;
+  "human" | *)
+    echo -e "${BLUE}🔒 SECURITY ASSESSMENT${NC}"
+    echo "===================="
+    echo ""
 
-      # Score with color
-      local score_color="$GREEN"
-      [[ $SECURITY_SCORE -lt 80 ]] && score_color="$YELLOW"
-      [[ $SECURITY_SCORE -lt 60 ]] && score_color="$RED"
+    # Score with color
+    local score_color="$GREEN"
+    [[ $SECURITY_SCORE -lt 80 ]] && score_color="$YELLOW"
+    [[ $SECURITY_SCORE -lt 60 ]] && score_color="$RED"
 
-      echo -e "Security Score: ${score_color}${SECURITY_SCORE}/100${NC}"
-      echo ""
+    echo -e "Security Score: ${score_color}${SECURITY_SCORE}/100${NC}"
+    echo ""
 
-      # Summary
-      echo -e "${CYAN}Summary:${NC}"
-      echo "• Critical Issues: ${#CRITICAL_ISSUES[@]}"
-      echo "• High Issues: ${#HIGH_ISSUES[@]}"
-      echo "• Medium Issues: ${#MEDIUM_ISSUES[@]}"
-      echo "• Low Issues: ${#LOW_ISSUES[@]}"
-      echo ""
+    # Summary
+    echo -e "${CYAN}Summary:${NC}"
+    echo "• Critical Issues: ${#CRITICAL_ISSUES[@]}"
+    echo "• High Issues: ${#HIGH_ISSUES[@]}"
+    echo "• Medium Issues: ${#MEDIUM_ISSUES[@]}"
+    echo "• Low Issues: ${#LOW_ISSUES[@]}"
+    echo ""
 
-      # Critical findings
-      if [[ ${#CRITICAL_ISSUES[@]} -gt 0 ]]; then
-        echo -e "${RED}🚨 CRITICAL FINDINGS:${NC}"
-        for issue in "${CRITICAL_ISSUES[@]}"; do
-          echo "  ⚠️  $issue"
-        done
-        echo ""
-      fi
-
-      # High findings
-      if [[ ${#HIGH_ISSUES[@]} -gt 0 ]]; then
-        echo -e "${RED}❗ HIGH SEVERITY:${NC}"
-        for issue in "${HIGH_ISSUES[@]}"; do
-          echo "  • $issue"
-        done
-        echo ""
-      fi
-
-      # Medium findings
-      if [[ ${#MEDIUM_ISSUES[@]} -gt 0 ]]; then
-        echo -e "${YELLOW}⚠️  MEDIUM SEVERITY:${NC}"
-        for issue in "${MEDIUM_ISSUES[@]}"; do
-          echo "  • $issue"
-        done
-        echo ""
-      fi
-
-      # Low findings
-      if [[ ${#LOW_ISSUES[@]} -gt 0 ]]; then
-        echo -e "${BLUE}ℹ️  LOW SEVERITY:${NC}"
-        for issue in "${LOW_ISSUES[@]}"; do
-          echo "  • $issue"
-        done
-        echo ""
-      fi
-
-      # Info items
-      if [[ ${#INFO_ITEMS[@]} -gt 0 ]]; then
-        echo -e "${GREEN}📋 INFORMATIONAL:${NC}"
-        for item in "${INFO_ITEMS[@]}"; do
-          echo "  • $item"
-        done
-        echo ""
-      fi
-
-      # Recommendations
-      echo -e "${GREEN}💡 RECOMMENDATIONS:${NC}"
-      generate_recommendations | while IFS= read -r rec; do
-        echo "  • $rec"
+    # Critical findings
+    if [[ ${#CRITICAL_ISSUES[@]} -gt 0 ]]; then
+      echo -e "${RED}🚨 CRITICAL FINDINGS:${NC}"
+      for issue in "${CRITICAL_ISSUES[@]}"; do
+        echo "  ⚠️  $issue"
       done
       echo ""
-      ;;
+    fi
+
+    # High findings
+    if [[ ${#HIGH_ISSUES[@]} -gt 0 ]]; then
+      echo -e "${RED}❗ HIGH SEVERITY:${NC}"
+      for issue in "${HIGH_ISSUES[@]}"; do
+        echo "  • $issue"
+      done
+      echo ""
+    fi
+
+    # Medium findings
+    if [[ ${#MEDIUM_ISSUES[@]} -gt 0 ]]; then
+      echo -e "${YELLOW}⚠️  MEDIUM SEVERITY:${NC}"
+      for issue in "${MEDIUM_ISSUES[@]}"; do
+        echo "  • $issue"
+      done
+      echo ""
+    fi
+
+    # Low findings
+    if [[ ${#LOW_ISSUES[@]} -gt 0 ]]; then
+      echo -e "${BLUE}ℹ️  LOW SEVERITY:${NC}"
+      for issue in "${LOW_ISSUES[@]}"; do
+        echo "  • $issue"
+      done
+      echo ""
+    fi
+
+    # Info items
+    if [[ ${#INFO_ITEMS[@]} -gt 0 ]]; then
+      echo -e "${GREEN}📋 INFORMATIONAL:${NC}"
+      for item in "${INFO_ITEMS[@]}"; do
+        echo "  • $item"
+      done
+      echo ""
+    fi
+
+    # Recommendations
+    echo -e "${GREEN}💡 RECOMMENDATIONS:${NC}"
+    generate_recommendations | while IFS= read -r rec; do
+      echo "  • $rec"
+    done
+    echo ""
+    ;;
   esac
 }
 

@@ -235,7 +235,7 @@ show_diff() {
     light = false
     side-by-side = true
     line-numbers = true
-    
+
 [interactive]
     diffFilter = delta --color-only
 ```
@@ -307,7 +307,7 @@ interactive_rebase() {
 project_replace() {
     local old_text=$(gum input --placeholder "Text to find...")
     local new_text=$(gum input --placeholder "Replace with...")
-    
+
     rg -l "$old_text" | \
         fzf --multi --preview "rg --color=always '$old_text' {}" | \
         xargs -I {} sd "$old_text" "$new_text" {}
@@ -323,7 +323,7 @@ docker_exec() {
 create_from_template() {
     local template=$(ls ~/.templates | gum choose)
     local name=$(gum input --placeholder "Project name...")
-    
+
     cp -r ~/.templates/"$template" "./$name"
     cd "$name" && git init
 }
@@ -375,7 +375,7 @@ safe_search() {
 # Install interactive CLI tools
 install_cli_tools() {
     echo "Installing interactive CLI tools..."
-    
+
     local tools=(
         "fzf:junegunn/fzf"
         "bat:sharkdp/bat"
@@ -389,13 +389,13 @@ install_cli_tools() {
         "lazygit:jesseduffield/lazygit"
         "tig:jonas/tig"
     )
-    
+
     for tool_info in "${tools[@]}"; do
         IFS=: read -r tool repo <<< "$tool_info"
-        
+
         if ! command -v "$tool" > /dev/null; then
             echo "Installing $tool..."
-            
+
             case "$OS" in
                 macos)
                     brew install "$tool"

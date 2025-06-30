@@ -360,9 +360,9 @@ generate_recommendations() {
 # Output results
 output_results() {
   case "$OUTPUT_FORMAT" in
-    "json")
-      local bundle_size_human=$(bytes_to_human ${PERFORMANCE_METRICS[bundle_size]})
-      cat <<EOF
+  "json")
+    local bundle_size_human=$(bytes_to_human ${PERFORMANCE_METRICS[bundle_size]})
+    cat <<EOF
 {
   "performance_score": ${PERFORMANCE_METRICS[optimization_score]},
   "metrics": {
@@ -373,55 +373,55 @@ output_results() {
   "recommendations": $(printf '%s\n' "${RECOMMENDATIONS[@]}" | jq -R . | jq -s .)
 }
 EOF
-      ;;
-    "human" | *)
-      echo -e "${BLUE}🚀 PERFORMANCE ANALYSIS${NC}"
-      echo "======================"
+    ;;
+  "human" | *)
+    echo -e "${BLUE}🚀 PERFORMANCE ANALYSIS${NC}"
+    echo "======================"
+    echo ""
+
+    # Score with color
+    local score_color="$GREEN"
+    [[ ${PERFORMANCE_METRICS[optimization_score]} -lt 80 ]] && score_color="$YELLOW"
+    [[ ${PERFORMANCE_METRICS[optimization_score]} -lt 60 ]] && score_color="$RED"
+
+    echo -e "Performance Score: ${score_color}${PERFORMANCE_METRICS[optimization_score]}/100${NC}"
+    echo ""
+
+    # Metrics
+    if [[ ${PERFORMANCE_METRICS[bundle_size]} -gt 0 ]]; then
+      echo -e "${CYAN}Metrics:${NC}"
+      echo "• Bundle Size: $(bytes_to_human ${PERFORMANCE_METRICS[bundle_size]})"
       echo ""
+    fi
 
-      # Score with color
-      local score_color="$GREEN"
-      [[ ${PERFORMANCE_METRICS[optimization_score]} -lt 80 ]] && score_color="$YELLOW"
-      [[ ${PERFORMANCE_METRICS[optimization_score]} -lt 60 ]] && score_color="$RED"
-
-      echo -e "Performance Score: ${score_color}${PERFORMANCE_METRICS[optimization_score]}/100${NC}"
+    # Issues
+    if [[ ${#PERFORMANCE_ISSUES[@]} -gt 0 ]]; then
+      echo -e "${YELLOW}⚠️  Performance Issues:${NC}"
+      for issue in "${PERFORMANCE_ISSUES[@]}"; do
+        echo "  • $issue"
+      done
       echo ""
+    fi
 
-      # Metrics
-      if [[ ${PERFORMANCE_METRICS[bundle_size]} -gt 0 ]]; then
-        echo -e "${CYAN}Metrics:${NC}"
-        echo "• Bundle Size: $(bytes_to_human ${PERFORMANCE_METRICS[bundle_size]})"
-        echo ""
-      fi
+    # Recommendations
+    if [[ ${#RECOMMENDATIONS[@]} -gt 0 ]]; then
+      echo -e "${GREEN}💡 Recommendations:${NC}"
+      for rec in "${RECOMMENDATIONS[@]}"; do
+        echo "  • $rec"
+      done
+      echo ""
+    fi
 
-      # Issues
-      if [[ ${#PERFORMANCE_ISSUES[@]} -gt 0 ]]; then
-        echo -e "${YELLOW}⚠️  Performance Issues:${NC}"
-        for issue in "${PERFORMANCE_ISSUES[@]}"; do
-          echo "  • $issue"
-        done
-        echo ""
-      fi
-
-      # Recommendations
-      if [[ ${#RECOMMENDATIONS[@]} -gt 0 ]]; then
-        echo -e "${GREEN}💡 Recommendations:${NC}"
-        for rec in "${RECOMMENDATIONS[@]}"; do
-          echo "  • $rec"
-        done
-        echo ""
-      fi
-
-      # Summary
-      echo -e "${PURPLE}📊 Summary:${NC}"
-      if [[ ${PERFORMANCE_METRICS[optimization_score]} -ge 90 ]]; then
-        echo "Excellent performance optimization! Keep monitoring metrics."
-      elif [[ ${PERFORMANCE_METRICS[optimization_score]} -ge 70 ]]; then
-        echo "Good performance baseline. Consider implementing suggested optimizations."
-      else
-        echo "Significant performance improvements needed. Prioritize critical issues."
-      fi
-      ;;
+    # Summary
+    echo -e "${PURPLE}📊 Summary:${NC}"
+    if [[ ${PERFORMANCE_METRICS[optimization_score]} -ge 90 ]]; then
+      echo "Excellent performance optimization! Keep monitoring metrics."
+    elif [[ ${PERFORMANCE_METRICS[optimization_score]} -ge 70 ]]; then
+      echo "Good performance baseline. Consider implementing suggested optimizations."
+    else
+      echo "Significant performance improvements needed. Prioritize critical issues."
+    fi
+    ;;
   esac
 }
 

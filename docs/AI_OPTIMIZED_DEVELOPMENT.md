@@ -146,12 +146,12 @@ Document complex functions with examples:
 /**
  * Calculates the optimal grid layout for items within viewport constraints.
  * Uses dynamic programming to minimize wasted space.
- * 
+ *
  * @param viewport - Available width and height
  * @param itemConstraints - Min/max dimensions for items
  * @param gaps - Spacing configuration
  * @returns Optimal rows, columns, and item dimensions
- * 
+ *
  * @example
  * const layout = calculateOptimalGrid(
  *   { width: 1200, height: 800 },
@@ -179,13 +179,13 @@ interface DashboardProps {
    * User data to display. If null, shows loading state.
    */
   user: User | null;
-  
+
   /**
-   * Called when user requests refresh. 
+   * Called when user requests refresh.
    * Should update the user prop asynchronously.
    */
   onRefresh: () => void;
-  
+
   /**
    * Optional custom styling classes.
    * @default ""
@@ -196,10 +196,10 @@ interface DashboardProps {
 /**
  * Main dashboard component showing user statistics and recent activity.
  * Automatically polls for updates every 30 seconds when visible.
- * 
+ *
  * @example
- * <Dashboard 
- *   user={currentUser} 
+ * <Dashboard
+ *   user={currentUser}
  *   onRefresh={handleRefresh}
  *   className="max-w-7xl mx-auto"
  * />
@@ -218,7 +218,7 @@ Document error handling patterns:
 
 /**
  * API client with automatic retry and error handling.
- * 
+ *
  * Error scenarios:
  * - Network errors: Retries up to 3 times with exponential backoff
  * - 401: Redirects to login
@@ -249,15 +249,15 @@ describe('Shopping Cart', () => {
     it('should add new item to empty cart', async () => {
       // Test implementation
     });
-    
+
     it('should increment quantity for existing item', async () => {
       // Test implementation
     });
-    
+
     it('should respect maximum quantity limit of 99', async () => {
       // Test implementation
     });
-    
+
     it('should maintain cart state across page refreshes', async () => {
       // Test implementation
     });
@@ -345,7 +345,7 @@ export class ErrorBoundary extends Component<PropsWithChildren, ErrorBoundarySta
   render() {
     if (this.state.hasError) {
       return (
-        <ErrorFallback 
+        <ErrorFallback
           error={this.state.error}
           resetError={() => this.setState({ hasError: false, error: null })}
         />

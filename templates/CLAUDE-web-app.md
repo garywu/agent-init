@@ -26,8 +26,8 @@ gh pr create --title "" --body "Resolves #"
 
 - **Date**: [YYYY-MM-DD]
 - **Framework**: [ ] Next.js [ ] React [ ] Vue [ ] Other: ___
-- **Primary Focus**: 
-- **Active Branch**: 
+- **Primary Focus**:
+- **Active Branch**:
 
 ### Session Checklist
 - [ ] Check package vulnerabilities with `npm audit`
@@ -81,13 +81,13 @@ gh pr create --title "" --body "Resolves #"
 export const Component: FC<Props> = ({ prop1, prop2 }) => {
   // Hooks at the top
   const [state, setState] = useState();
-  
+
   // Event handlers
   const handleClick = useCallback(() => {}, []);
-  
+
   // Effects
   useEffect(() => {}, []);
-  
+
   // Render
   return <div>{/* JSX */}</div>;
 };

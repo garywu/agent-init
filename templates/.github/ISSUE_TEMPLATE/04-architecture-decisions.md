@@ -28,11 +28,11 @@ This issue documents all architectural decisions using the ADR (Architecture Dec
 ### ADR-002: [Decision Title]
 - **Date**: YYYY-MM-DD
 - **Status**: Accepted
-- **Context**: 
-- **Decision**: 
-- **Consequences**: 
+- **Context**:
+- **Decision**:
+- **Consequences**:
 - **Alternatives Considered**:
-- **Related Issues**: 
+- **Related Issues**:
 
 ## Architecture Principles
 

@@ -26,7 +26,7 @@ curl -X POST http://localhost:3000/api/users -H "Content-Type: application/json"
 - **Date**: [YYYY-MM-DD]
 - **API Type**: [ ] REST [ ] GraphQL [ ] gRPC
 - **Database**: [ ] PostgreSQL [ ] MongoDB [ ] MySQL [ ] Other: ___
-- **Primary Focus**: 
+- **Primary Focus**:
 
 ### Session Checklist
 - [ ] Update API documentation

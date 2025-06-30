@@ -165,13 +165,13 @@ export const navigation = {
     if (level) params.set('level', level);
     return `/assessment?${params}`;
   },
-  
+
   toLesson: (subject: string, lesson: string, section?: number) => {
     let path = `/learn/${subject}/${lesson}`;
     if (section) path += `#section-${section}`;
     return path;
   },
-  
+
   toProfile: (userId?: string) => {
     return userId ? `/profile/${userId}` : '/profile';
   }
@@ -214,11 +214,11 @@ const DashboardParams = z.object({
 export function useDashboardParams() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  
+
   const params = DashboardParams.parse(
     Object.fromEntries(searchParams.entries())
   );
-  
+
   const updateParams = (updates: Partial<z.infer<typeof DashboardParams>>) => {
     const newParams = new URLSearchParams(searchParams);
     Object.entries(updates).forEach(([key, value]) => {
@@ -230,7 +230,7 @@ export function useDashboardParams() {
     });
     router.push(`?${newParams}`);
   };
-  
+
   return { params, updateParams };
 }
 ```
@@ -248,19 +248,19 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get('auth-token');
   const isAuthRoute = request.nextUrl.pathname.startsWith('/(auth)');
   const isProtectedRoute = request.nextUrl.pathname.startsWith('/(app)');
-  
+
   // Redirect authenticated users away from auth routes
   if (token && isAuthRoute) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
-  
+
   // Redirect unauthenticated users to login
   if (!token && isProtectedRoute) {
     const redirectUrl = new URL('/login', request.url);
     redirectUrl.searchParams.set('from', request.nextUrl.pathname);
     return NextResponse.redirect(redirectUrl);
   }
-  
+
   return NextResponse.next();
 }
 
@@ -299,14 +299,14 @@ describe('Navigation', () => {
     expect(response.status).toBe(302);
     expect(response.headers.get('location')).toBe('/login?from=/dashboard');
   });
-  
+
   it('preserves query params through navigation', async () => {
     render(<DashboardPage />, {
       initialEntries: ['/dashboard?view=list&sort=name']
     });
-    
+
     fireEvent.click(screen.getByText('Next Page'));
-    
+
     expect(window.location.search).toBe('?view=list&sort=name&page=2');
   });
 });

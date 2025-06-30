@@ -21,7 +21,7 @@ if [[ -d "server" || -d "api" || -f "requirements.txt" ]]; then
 fi
 ```
 
-### Simple → Infrastructure  
+### Simple → Infrastructure
 **Trigger Indicators**:
 - Multiple shell scripts: `scripts/*.sh` (>3 files)
 - Container files: `Dockerfile`, `docker-compose.yml`
@@ -139,7 +139,7 @@ graph TD
     B -->|Yes| C{Has Frontend Code?}
     B -->|No| D{Many Shell Scripts?}
     C -->|Yes| E[Fullstack Config]
-    C -->|No| F[Backend Config] 
+    C -->|No| F[Backend Config]
     D -->|Yes| G[Infrastructure Config]
     D -->|No| H{Library Indicators?}
     H -->|Yes| I[Library Config]
@@ -168,7 +168,7 @@ indent_size = 2
 [apps/frontend/**/*.{js,ts,jsx,tsx}]
 indent_size = 2
 
-# Backend packages  
+# Backend packages
 [packages/api/**/*.{js,ts,py}]
 indent_size = 4
 
@@ -197,13 +197,13 @@ breaking_changes:
     from: "spaces"
     to: "tabs"
     action: "Warn user, require confirmation"
-    
+
   global_indent_change:
     from: "2"
     to: "4"
     impact: "All files affected"
     action: "Auto-fix with backup"
-    
+
   new_language_rules:
     trigger: "New file types detected"
     action: "Update config, notify user"
@@ -214,7 +214,7 @@ breaking_changes:
 ### Gradual Evolution
 ```bash
 # Pattern: Start simple, evolve naturally
-simple_project → 
+simple_project →
   add_backend → fullstack_config →
   add_infrastructure → enhanced_fullstack →
   add_packages → monorepo_config
@@ -225,13 +225,13 @@ simple_project →
 # Always validate after evolution
 validate_config() {
   echo "Validating new configuration..."
-  
+
   # Check syntax
   editorconfig-checker . || return 1
-  
+
   # Check pre-commit compatibility
   pre-commit run --all-files editorconfig-checker || return 1
-  
+
   echo "✓ Configuration valid"
 }
 ```
@@ -240,7 +240,7 @@ validate_config() {
 
 ### For Claude CLI:
 1. **Before any edit**: Check if project evolved
-2. **After adding files**: Re-evaluate project type  
+2. **After adding files**: Re-evaluate project type
 3. **Before commit**: Validate configuration
 4. **On conflicts**: Auto-fix with appropriate rules
 

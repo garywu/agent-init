@@ -411,17 +411,17 @@ export const componentMachine = createMachine({...});
 // ComponentName.hooks.ts
 export function useComponentMachine() {
   const [state, send] = useMachine(componentMachine);
-  
+
   // Selectors
   const isLoading = state.matches('loading');
   const hasError = state.matches('error');
-  
+
   // Actions
   const actions = {
     submit: (data) => send({ type: 'SUBMIT', data }),
     reset: () => send('RESET')
   };
-  
+
   return {
     state: state.value,
     context: state.context,
@@ -434,7 +434,7 @@ export function useComponentMachine() {
 // ComponentName.tsx
 export function ComponentName() {
   const machine = useComponentMachine();
-  
+
   return (
     <div>
       {machine.isLoading && <Spinner />}
@@ -455,22 +455,22 @@ import { interpret } from 'xstate';
 describe('FetchMachine', () => {
   it('should transition from idle to loading on FETCH', () => {
     const service = interpret(fetchMachine).start();
-    
+
     service.send('FETCH');
     expect(service.state.value).toBe('loading');
   });
-  
+
   it('should retry up to 3 times', () => {
     const service = interpret(fetchMachine).start();
-    
+
     // Simulate failures
     service.send('FETCH');
     service.state.context.retryCount = 2;
     service.send({ type: 'error.platform.fetchData' });
-    
+
     expect(service.state.value).toBe('error');
     expect(service.state.can('RETRY')).toBe(true);
-    
+
     // Fourth failure should not allow retry
     service.state.context.retryCount = 3;
     expect(service.state.can('RETRY')).toBe(false);
@@ -486,12 +486,12 @@ import userEvent from '@testing-library/user-event';
 
 it('should show loading state during fetch', async () => {
   render(<DataFetcher />);
-  
+
   const fetchButton = screen.getByText('Fetch Data');
   userEvent.click(fetchButton);
-  
+
   expect(screen.getByText('Loading...')).toBeInTheDocument();
-  
+
   await waitFor(() => {
     expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
   });
