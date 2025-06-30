@@ -4,6 +4,39 @@
 
 agent-init is a repository initialization tool that sets up professional development standards and workflows for new projects. It provides templates and guidelines for AI-assisted development with Claude.
 
+## Key Recommendations for Claude CLI
+
+When using agent-init to set up a new project, follow these recommendations:
+
+### 1. Start with Context Assessment
+- Check if the directory is empty, has git initialized, or contains existing code
+- Identify the primary programming language(s) from existing files
+- Look for existing configuration files (package.json, Cargo.toml, etc.)
+- Respect existing tooling choices unless explicitly asked to change them
+
+### 2. Apply Templates Incrementally
+- Begin with essential files: README.md, .gitignore, CLAUDE.md
+- Add development tooling next: .editorconfig, .pre-commit-config.yaml
+- Introduce CI/CD and advanced features only when the project has code
+- Always explain what each addition provides
+
+### 3. Use the GitHub Labels System
+- Run `./scripts/setup-github-labels.sh` early in project setup
+- This provides a professional issue tracking system immediately
+- Add platform/tool-specific labels based on project type
+
+### 4. Prioritize Developer Experience
+- Set up linting and formatting early to prevent technical debt
+- Use the smart EditorConfig system to prevent indentation conflicts
+- Configure pre-commit hooks but keep them reasonable
+- Document everything in CLAUDE.md for future sessions
+
+### 5. Follow the Information Over Implementation Principle
+- Don't make assumptions about project requirements
+- Provide options and explain trade-offs
+- Let the project context guide your decisions
+- Document why you chose specific approaches
+
 ## Enhancements Implemented
 
 ### 1. Session Tracking System
@@ -134,6 +167,36 @@ This repository serves as a template source. Projects using claude-init should:
 2. Maintain their own customized versions
 3. Contribute improvements back via pull requests
 4. Keep external dependencies properly versioned
+
+## What Claude CLI Should Look For
+
+When you (Claude CLI) encounter agent-init in a project, prioritize reading these resources in order:
+
+### 1. Immediate Context Files
+- **This file (CLAUDE.md)** - For specific instructions and recommendations
+- **README.md** - For understanding available resources
+- **docs/CLAUDE_DECISION_MATRIX.md** - For project type detection patterns
+
+### 2. Template Selection
+Based on project analysis, look for:
+- **templates/** - Contains ready-to-use file templates
+- **templates/editorconfig-variants/** - Project-specific EditorConfig files
+- **templates/github-labels/** - Label system configurations
+- **scripts/** - Automation tools to apply templates
+
+### 3. Documentation for Complex Scenarios
+When facing specific challenges, consult:
+- **docs/debugging-and-troubleshooting.md** - Common issues and solutions
+- **docs/shellcheck-best-practices.md** - Shell script quality
+- **docs/PROJECT_EVOLUTION_PATTERNS.md** - How to handle growing projects
+- **docs/environment-adaptation-patterns.md** - CI/CD and platform handling
+
+### 4. Key Principles to Remember
+- **Never copy blindly** - Always adapt templates to project context
+- **Start minimal** - Add complexity only when needed
+- **Document decisions** - Update project's CLAUDE.md with your choices
+- **Respect existing code** - Work with what's there, don't replace arbitrarily
+- **Use available tools** - Leverage gh, rg, fd, and other CLI tools mentioned in README
 
 ---
 Last Updated: 2025-06-19
