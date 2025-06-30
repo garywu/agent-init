@@ -202,9 +202,9 @@ When facing specific challenges, consult:
 - **Use available tools** - Leverage gh, rg, fd, and other CLI tools mentioned in README
 - **Security first** - Use the security scanning system to prevent credential leaks
 
-## Security Scanning System
+## Security Scanning System (Enhanced)
 
-Agent-init now includes a comprehensive security scanning system to prevent accidental commits of sensitive data:
+Agent-init includes a high-performance security scanning system using ripgrep for blazing fast scans:
 
 ### Quick Setup
 ```bash
@@ -213,23 +213,67 @@ Agent-init now includes a comprehensive security scanning system to prevent acci
 
 This installs:
 - Pre-commit hooks to scan staged files
-- Pre-push hooks to validate commit history
-- Custom pattern configuration files
+- Pre-push hooks to validate commit history  
+- Fast ripgrep-based security scanner
+- Git history checking and cleaning tools
 - GitHub Actions workflow for CI/CD
 
+### Key Scripts
+
+#### Fast Security Scanning
+```bash
+# Quick scan of current files (uses ripgrep)
+./scripts/security-scan-fast.sh
+
+# Full security guard with all stages
+./scripts/security-guard.sh continuous
+```
+
+#### Git History Management
+```bash
+# Check git history for sensitive data
+./scripts/check-git-history.sh
+
+# Automatically fix sensitive data in files
+./scripts/auto-fix-sensitive.sh
+
+# Clean git history (rewrites commits!)
+./scripts/scrub-sensitive-data.sh
+```
+
 ### Key Features
+- **Lightning fast**: Uses ripgrep instead of grep for 100x faster scans
 - **Multi-stage protection**: pre-commit, pre-push, and CI/CD scanning
-- **Customizable patterns**: Add project-specific sensitive patterns
-- **Whitelist support**: Exclude false positives
-- **Automatic fixes**: Replace hardcoded values with environment variables
-- **Git history scanning**: Detect and clean previously committed secrets
+- **Environment-aware**: Checks for values from .env.local files
+- **Smart whitelisting**: Excludes false positives automatically
+- **Automatic fixes**: Replaces hardcoded values with environment variables
+- **Git history scanning**: Detects and cleans previously committed secrets
+- **GitHub integration**: Checks issues and PR comments for leaks
+
+### Performance Optimizations
+- **Ripgrep patterns**: All scans use `rg` for maximum speed
+- **Single-pass scanning**: Checks all patterns in one pass
+- **Smart exclusions**: Skips binary files and common false positives
+- **Parallel processing**: Runs multiple checks concurrently
 
 ### Usage in Projects
 When setting up a new project with agent-init:
 1. Run `./scripts/setup-security.sh` early in initialization
-2. Customize `.security-patterns` for project-specific secrets
-3. Add false positives to `.security-whitelist`
-4. Document security practices in the project's README
+2. Set up `.env.local` for sensitive configuration
+3. Run `./scripts/check-git-history.sh` to audit existing commits
+4. Use `./scripts/auto-fix-sensitive.sh` to fix current files
+5. Document security practices in the project's README
+
+### Common Patterns Detected
+- IP addresses (excluding private ranges)
+- API keys and tokens
+- SSH private keys
+- AWS credentials
+- GitHub tokens
+- Tailscale keys
+- Hardcoded passwords
+- Email addresses
+- Username@IP combinations
 
 See `docs/security-scanning.md` for detailed documentation.
 
