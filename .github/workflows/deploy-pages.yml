@@ -50,11 +50,11 @@ jobs:
         run: |
           # CRITICAL: This includes astro sync!
           npm run build
-          
+
           # Verify pages were built
           PAGE_COUNT=$(find dist -name "*.html" | wc -l)
           echo "Built $PAGE_COUNT pages"
-          
+
           if [ "$PAGE_COUNT" -lt 5 ]; then
             echo "Error: Expected at least 5 pages, got $PAGE_COUNT"
             find dist -name "*.html"

@@ -40,7 +40,7 @@ jobs:
           else
             echo "has_stable=false" >> $GITHUB_OUTPUT
           fi
-          
+
           if git show-ref --verify --quiet refs/remotes/origin/beta; then
             echo "has_beta=true" >> $GITHUB_OUTPUT
           else
@@ -54,7 +54,7 @@ jobs:
           echo "Syncing stable → beta"
           git checkout beta
           git pull origin beta
-          
+
           # Try to merge stable into beta
           if git merge origin/stable --no-edit -m "chore: sync stable → beta"; then
             git push origin beta
@@ -62,23 +62,23 @@ jobs:
           else
             echo "❌ Merge conflict syncing stable → beta"
             git merge --abort
-            
+
             # Create a PR for manual resolution
             BRANCH_NAME="sync/stable-to-beta-$(date +%Y%m%d-%H%M%S)"
             git checkout -b "$BRANCH_NAME" origin/beta
             git merge origin/stable --no-commit --no-ff || true
-            
+
             # If there are changes, create a PR
             if ! git diff --cached --quiet; then
               git commit -m "chore: sync stable → beta (manual resolution needed)"
               git push origin "$BRANCH_NAME"
-              
+
               gh pr create \
                 --title "🔄 Sync stable → beta (Manual Resolution Needed)" \
                 --body "This PR syncs changes from stable to beta branch.
-                
+
                 ⚠️ **Manual conflict resolution is required**
-                
+
                 Please review and resolve conflicts before merging." \
                 --base beta \
                 --head "$BRANCH_NAME" \
@@ -93,7 +93,7 @@ jobs:
           echo "Syncing beta → main"
           git checkout main
           git pull origin main
-          
+
           # Try to merge beta into main
           if git merge origin/beta --no-edit -m "chore: sync beta → main"; then
             git push origin main
@@ -101,23 +101,23 @@ jobs:
           else
             echo "❌ Merge conflict syncing beta → main"
             git merge --abort
-            
+
             # Create a PR for manual resolution
             BRANCH_NAME="sync/beta-to-main-$(date +%Y%m%d-%H%M%S)"
             git checkout -b "$BRANCH_NAME" origin/main
             git merge origin/beta --no-commit --no-ff || true
-            
+
             # If there are changes, create a PR
             if ! git diff --cached --quiet; then
               git commit -m "chore: sync beta → main (manual resolution needed)"
               git push origin "$BRANCH_NAME"
-              
+
               gh pr create \
                 --title "🔄 Sync beta → main (Manual Resolution Needed)" \
                 --body "This PR syncs changes from beta to main branch.
-                
+
                 ⚠️ **Manual conflict resolution is required**
-                
+
                 Please review and resolve conflicts before merging." \
                 --base main \
                 --head "$BRANCH_NAME" \
@@ -131,10 +131,10 @@ jobs:
           # Compare branches to see if they're in sync
           BEHIND_STABLE_BETA=$(git rev-list --count origin/beta..origin/stable 2>/dev/null || echo "0")
           BEHIND_BETA_MAIN=$(git rev-list --count origin/main..origin/beta 2>/dev/null || echo "0")
-          
+
           echo "## Branch Sync Status" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           if [[ "${{ steps.branches.outputs.has_stable }}" == "true" ]]; then
             echo "### stable → beta" >> $GITHUB_STEP_SUMMARY
             if [[ $BEHIND_STABLE_BETA -eq 0 ]]; then
@@ -143,9 +143,9 @@ jobs:
               echo "⚠️ Beta is $BEHIND_STABLE_BETA commits behind stable" >> $GITHUB_STEP_SUMMARY
             fi
           fi
-          
+
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           if [[ "${{ steps.branches.outputs.has_beta }}" == "true" ]]; then
             echo "### beta → main" >> $GITHUB_STEP_SUMMARY
             if [[ $BEHIND_BETA_MAIN -eq 0 ]]; then
@@ -161,27 +161,27 @@ jobs:
         with:
           script: |
             const date = new Date().toISOString().split('T')[0];
-            
+
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `🔄 Branch Sync Required - ${date}`,
               body: `The automated branch sync workflow has detected issues that require manual intervention.
-              
+
               ## Status
               - **Workflow Run**: [${context.runId}](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
               - **Date**: ${date}
-              
+
               ## Required Actions
               1. Check for open sync PRs
               2. Resolve any merge conflicts
               3. Ensure branches are properly synchronized
-              
+
               ## Branch Strategy Reminder
               - **stable**: Production releases only
               - **beta**: Weekly beta releases from main
               - **main**: Active development
-              
+
               Changes should flow: main → beta → stable
               Hotfixes should be backported: stable → beta → main
               `,

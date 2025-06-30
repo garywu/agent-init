@@ -124,9 +124,26 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - `test`: Adding missing tests
 - `chore`: Maintain tasks, dependency updates
 
+### Pre-Commit Hook Management
+
+**IMPORTANT**: Always fix issues before committing to avoid frustration!
+
+```bash
+# Before EVERY commit, run:
+make pre-commit-fix
+
+# Or use smart commit:
+git smart-commit "feat: add new feature (#123)"
+```
+
 ### Commit Process
 
-1. **Stage changes selectively**:
+1. **Fix pre-commit issues first**:
+   ```bash
+   make pre-commit-fix
+   ```
+
+2. **Stage changes selectively**:
    ```bash
    git add -p  # Interactive staging
    # OR

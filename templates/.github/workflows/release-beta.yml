@@ -53,16 +53,16 @@ jobs:
           # Get the latest tag
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
           LATEST_STABLE=${LATEST_TAG%-beta.*}
-          
+
           # Extract version parts
           VERSION=${LATEST_STABLE#v}
           IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
-          
+
           # Determine version bump type
           if [[ "${{ inputs.version_type }}" == "auto" ]]; then
             # Analyze commits since last tag
             COMMITS=$(git log ${LATEST_TAG}..HEAD --pretty=format:"%s")
-            
+
             if echo "$COMMITS" | grep -qE "^(feat!|fix!|BREAKING CHANGE)"; then
               BUMP_TYPE="major"
             elif echo "$COMMITS" | grep -q "^feat"; then
@@ -73,7 +73,7 @@ jobs:
           else
             BUMP_TYPE="${{ inputs.version_type }}"
           fi
-          
+
           # Calculate new version
           case $BUMP_TYPE in
             major)
@@ -89,17 +89,17 @@ jobs:
               PATCH=$((PATCH + 1))
               ;;
           esac
-          
+
           NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
-          
+
           # Find next beta number
           BETA_NUM=1
           while git tag -l "${NEW_VERSION}-beta.${BETA_NUM}" | grep -q .; do
             BETA_NUM=$((BETA_NUM + 1))
           done
-          
+
           BETA_VERSION="${NEW_VERSION}-beta.${BETA_NUM}"
-          
+
           echo "version=${BETA_VERSION}" >> $GITHUB_OUTPUT
           echo "bump_type=${BUMP_TYPE}" >> $GITHUB_OUTPUT
           echo "Beta version: ${BETA_VERSION} (${BUMP_TYPE} bump)"
@@ -108,46 +108,46 @@ jobs:
         id: notes
         run: |
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          
+
           if [[ -z "$LATEST_TAG" ]]; then
             RANGE="HEAD"
           else
             RANGE="${LATEST_TAG}..HEAD"
           fi
-          
+
           # Generate release notes
           cat > RELEASE_NOTES.md << EOF
           ## Beta Release ${{ steps.version.outputs.version }}
-          
+
           ### Changes since last release
-          
+
           EOF
-          
+
           # Categorize commits
           echo "#### 🚀 Features" >> RELEASE_NOTES.md
           git log $RANGE --grep="^feat" --pretty=format:"- %s (%h)" >> RELEASE_NOTES.md || echo "- No features" >> RELEASE_NOTES.md
-          
+
           echo -e "\n\n#### 🐛 Bug Fixes" >> RELEASE_NOTES.md
           git log $RANGE --grep="^fix" --pretty=format:"- %s (%h)" >> RELEASE_NOTES.md || echo "- No fixes" >> RELEASE_NOTES.md
-          
+
           echo -e "\n\n#### 📚 Documentation" >> RELEASE_NOTES.md
           git log $RANGE --grep="^docs" --pretty=format:"- %s (%h)" >> RELEASE_NOTES.md || echo "- No documentation changes" >> RELEASE_NOTES.md
-          
+
           echo -e "\n\n#### 🔧 Other Changes" >> RELEASE_NOTES.md
           git log $RANGE --not --grep="^feat" --not --grep="^fix" --not --grep="^docs" --pretty=format:"- %s (%h)" >> RELEASE_NOTES.md || echo "- No other changes" >> RELEASE_NOTES.md
-          
+
           # Add testing notes
           cat >> RELEASE_NOTES.md << EOF
-          
+
           ### Testing
-          
+
           This is a beta release. Please test thoroughly before using in production.
-          
+
           To use this beta version:
           \`\`\`bash
           git submodule add -b beta https://github.com/${{ github.repository }}.git
           \`\`\`
-          
+
           Report any issues at: https://github.com/${{ github.repository }}/issues
           EOF
 
@@ -181,26 +181,26 @@ jobs:
           script: |
             const version = '${{ steps.version.outputs.version }}';
             const bumpType = '${{ steps.version.outputs.bump_type }}';
-            
+
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `Beta Release ${version} Published`,
               body: `A new beta release has been published!
-              
+
               **Version**: ${version}
               **Type**: ${bumpType} version bump
               **Branch**: beta
               **Date**: ${new Date().toISOString()}
-              
+
               [View Release](https://github.com/${context.repo.owner}/${context.repo.repo}/releases/tag/${version})
-              
+
               ## Next Steps
               - [ ] Test beta release thoroughly
               - [ ] Gather feedback from early adopters
               - [ ] Fix any critical issues
               - [ ] Prepare for stable release promotion
-              
+
               ## Testing Checklist
               - [ ] Installation works correctly
               - [ ] All templates function properly

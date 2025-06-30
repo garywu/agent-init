@@ -57,7 +57,7 @@ jobs:
           # Checkout the beta tag
           git checkout "${{ inputs.beta_version }}"
           BETA_COMMIT=$(git rev-parse HEAD)
-          
+
           # Return to stable and merge
           git checkout stable
           git merge $BETA_COMMIT --no-edit -m "chore(release): promote ${{ inputs.beta_version }} to stable"
@@ -68,7 +68,7 @@ jobs:
           # Extract stable version from beta version
           BETA_VERSION="${{ inputs.beta_version }}"
           STABLE_VERSION=${BETA_VERSION%-beta.*}
-          
+
           echo "stable_version=${STABLE_VERSION}" >> $GITHUB_OUTPUT
           echo "Stable version: ${STABLE_VERSION}"
 
@@ -77,56 +77,56 @@ jobs:
         run: |
           STABLE_VERSION="${{ steps.version.outputs.stable_version }}"
           BETA_VERSION="${{ inputs.beta_version }}"
-          
+
           # Find previous stable version
           PREV_STABLE=$(git tag -l "v*" | grep -v "beta" | grep -v "rc" | sort -V | tail -2 | head -1 || echo "v0.0.0")
-          
+
           # Generate release notes
           cat > RELEASE_NOTES.md << EOF
           ## Stable Release ${STABLE_VERSION}
-          
+
           This stable release has been thoroughly tested through beta version ${BETA_VERSION}.
-          
+
           ${{ inputs.release_notes }}
-          
+
           ### Changes since ${PREV_STABLE}
-          
+
           EOF
-          
+
           # Get all commits between previous stable and this release
           echo "#### 🚀 Features" >> RELEASE_NOTES.md
           git log ${PREV_STABLE}..HEAD --grep="^feat" --pretty=format:"- %s (%h)" >> RELEASE_NOTES.md || echo "- No features" >> RELEASE_NOTES.md
-          
+
           echo -e "\n\n#### 🐛 Bug Fixes" >> RELEASE_NOTES.md
           git log ${PREV_STABLE}..HEAD --grep="^fix" --pretty=format:"- %s (%h)" >> RELEASE_NOTES.md || echo "- No fixes" >> RELEASE_NOTES.md
-          
+
           echo -e "\n\n#### 📚 Documentation" >> RELEASE_NOTES.md
           git log ${PREV_STABLE}..HEAD --grep="^docs" --pretty=format:"- %s (%h)" >> RELEASE_NOTES.md || echo "- No documentation changes" >> RELEASE_NOTES.md
-          
+
           echo -e "\n\n#### ⚠️ Breaking Changes" >> RELEASE_NOTES.md
           git log ${PREV_STABLE}..HEAD --grep="BREAKING CHANGE\|^feat!\|^fix!" --pretty=format:"- %s (%h)" >> RELEASE_NOTES.md || echo "- No breaking changes" >> RELEASE_NOTES.md
-          
+
           # Add installation instructions
           cat >> RELEASE_NOTES.md << EOF
-          
+
           ### Installation
-          
+
           For new projects:
           \`\`\`bash
           git submodule add -b stable https://github.com/${{ github.repository }}.git
           \`\`\`
-          
+
           To update existing projects:
           \`\`\`bash
           git submodule update --remote --merge
           \`\`\`
-          
+
           ### Beta Testing
-          
+
           This release was tested as ${BETA_VERSION} before promotion to stable.
-          
+
           EOF
-          
+
           # Add contributor acknowledgments
           echo "### Contributors" >> RELEASE_NOTES.md
           echo "" >> RELEASE_NOTES.md
@@ -144,20 +144,20 @@ jobs:
             # Create temporary file with new release info
             cat > CHANGELOG.tmp.md << EOF
           ## [${{ steps.version.outputs.stable_version }}] - $(date +%Y-%m-%d)
-          
+
           _Promoted from ${{ inputs.beta_version }}_
-          
+
           EOF
-            
+
             # Extract changes from release notes
             sed -n '/### Changes since/,/### Installation/p' RELEASE_NOTES.md | sed '1d;$d' >> CHANGELOG.tmp.md
-            
+
             echo "" >> CHANGELOG.tmp.md
-            
+
             # Append existing changelog
             cat CHANGELOG.md >> CHANGELOG.tmp.md
             mv CHANGELOG.tmp.md CHANGELOG.md
-            
+
             git add CHANGELOG.md
             git commit -m "docs(changelog): add ${{ steps.version.outputs.stable_version }} release notes"
           fi
@@ -186,37 +186,37 @@ jobs:
           script: |
             const stableVersion = '${{ steps.version.outputs.stable_version }}';
             const betaVersion = '${{ inputs.beta_version }}';
-            
+
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `🎉 Stable Release ${stableVersion} Now Available`,
               body: `We're excited to announce that **${stableVersion}** is now available as a stable release!
-              
+
               ## Release Information
               - **Version**: ${stableVersion}
               - **Promoted from**: ${betaVersion}
               - **Branch**: stable
               - **Date**: ${new Date().toISOString().split('T')[0]}
-              
+
               ## What's New
               [View the full release notes](https://github.com/${context.repo.owner}/${context.repo.repo}/releases/tag/${stableVersion})
-              
+
               ## Upgrading
-              
+
               To upgrade to the latest stable version:
-              
+
               \`\`\`bash
               cd your-project
               git submodule update --remote --merge
               \`\`\`
-              
+
               ## Feedback
-              
+
               If you encounter any issues or have feedback, please:
               - [Report bugs](https://github.com/${context.repo.owner}/${context.repo.repo}/issues/new?labels=bug)
               - [Request features](https://github.com/${context.repo.owner}/${context.repo.repo}/issues/new?labels=enhancement)
-              
+
               Thank you to all our contributors and beta testers who made this release possible! 🙏
               `,
               labels: ['stable-release', 'announcement']
@@ -228,7 +228,7 @@ jobs:
           git checkout beta
           git merge stable --no-edit -m "chore: sync stable changes back to beta"
           git push origin beta
-          
+
           # Merge beta back to main
           git checkout main
           git merge beta --no-edit -m "chore: sync beta changes back to main"
