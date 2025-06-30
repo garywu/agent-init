@@ -112,11 +112,12 @@ templates/
 │   │   └── release-stable.yml   # Stable release workflow
 │   └── pull_request_template.md
 ├── scripts/
-│   └── session/                  # Session management tools
-│       ├── session-start.sh
-│       ├── session-end.sh
-│       ├── session-status.sh
-│       └── session-log.sh
+│   ├── session/                  # Session management tools
+│   │   ├── session-start.sh
+│   │   ├── session-end.sh
+│   │   ├── session-status.sh
+│   │   └── session-log.sh
+│   └── setup-github-labels.sh    # Standardized label system
 ├── docs/                         # Documentation templates
 │   ├── astro.config.mjs         # Astro documentation site
 │   └── package.json             # Docs dependencies
@@ -165,6 +166,40 @@ Claude CLI can automatically detect project type and apply the correct configura
 2. **Evolution Support**: Handles project growth (e.g., web → full-stack)
 3. **Conflict Resolution**: Eliminates global vs project-specific indentation conflicts
 4. **Claude CLI Integration**: Provides exact commands for zero-error operation
+
+## GitHub Labels System
+
+Agent-init includes a standardized GitHub label system for consistent issue tracking:
+
+### 🏷️ Quick Setup
+
+```bash
+# Basic labels for any project
+./scripts/setup-github-labels.sh
+
+# With platform-specific labels
+./templates/github-labels/setup-with-platforms.sh
+
+# For dotfiles projects
+./templates/github-labels/setup-dotfiles-labels.sh
+```
+
+### 📋 Label Categories
+
+The standardized label set includes:
+
+- **Issue Types**: bug, enhancement, documentation, question, chore, refactor
+- **Priority Levels**: critical, high, medium, low  
+- **Status**: blocked, in-progress, needs-review, help wanted
+- **Categories**: security, performance, testing, ci-cd, dependencies
+- **Size Labels**: xs, s, m, l, xl (for PRs)
+
+Optional extensions available for:
+- Platform-specific labels (macos, linux, windows, etc.)
+- Tool-specific labels (docker, kubernetes, npm, etc.)
+- Shell-specific labels (bash, zsh, fish, powershell)
+
+See [`templates/github-labels/README.md`](templates/github-labels/README.md) for customization options.
 
 ### 📚 Documentation
 
