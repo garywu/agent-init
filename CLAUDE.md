@@ -200,6 +200,38 @@ When facing specific challenges, consult:
 - **Document decisions** - Update project's CLAUDE.md with your choices
 - **Respect existing code** - Work with what's there, don't replace arbitrarily
 - **Use available tools** - Leverage gh, rg, fd, and other CLI tools mentioned in README
+- **Security first** - Use the security scanning system to prevent credential leaks
+
+## Security Scanning System
+
+Agent-init now includes a comprehensive security scanning system to prevent accidental commits of sensitive data:
+
+### Quick Setup
+```bash
+./scripts/setup-security.sh
+```
+
+This installs:
+- Pre-commit hooks to scan staged files
+- Pre-push hooks to validate commit history
+- Custom pattern configuration files
+- GitHub Actions workflow for CI/CD
+
+### Key Features
+- **Multi-stage protection**: pre-commit, pre-push, and CI/CD scanning
+- **Customizable patterns**: Add project-specific sensitive patterns
+- **Whitelist support**: Exclude false positives
+- **Automatic fixes**: Replace hardcoded values with environment variables
+- **Git history scanning**: Detect and clean previously committed secrets
+
+### Usage in Projects
+When setting up a new project with agent-init:
+1. Run `./scripts/setup-security.sh` early in initialization
+2. Customize `.security-patterns` for project-specific secrets
+3. Add false positives to `.security-whitelist`
+4. Document security practices in the project's README
+
+See `docs/security-scanning.md` for detailed documentation.
 
 ---
 Last Updated: 2025-06-19
