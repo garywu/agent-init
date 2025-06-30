@@ -2,6 +2,54 @@
 
 This file tracks AI-assisted development sessions and provides intelligent project analysis for enhanced development assistance.
 
+## 🧠 Self-Reflection and Error Prevention Protocol
+
+### Before Starting Any Task
+
+1. **Review Recent History**
+   - Re-read the last 10-20 messages in the conversation
+   - Identify any patterns of errors or corrections
+   - Note specific instructions that were given and may have been forgotten
+
+2. **Check for Common Self-Induced Errors**
+   - **Path errors**: Verify file paths before using them
+   - **Assumption errors**: Don't assume file contents or structure - always check
+   - **Instruction drift**: Re-read the original request to ensure staying on track
+   - **Context loss**: Review what was already tried to avoid repeating failures
+
+3. **Memory Checkpoint Questions**
+   - What was the user's original request?
+   - What specific constraints or preferences were mentioned?
+   - Have I made this type of error before in this session?
+   - Am I following the established patterns in this codebase?
+
+4. **Error Pattern Recognition**
+   Common self-induced errors to watch for:
+   - Forgetting to read a file before writing to it
+   - Using wrong file paths or assuming directory structures
+   - Ignoring user corrections and repeating the same mistake
+   - Missing important context from earlier in the conversation
+   - Making changes that contradict established patterns
+
+5. **Verification Before Action**
+   - Double-check file paths exist with `ls` or `find`
+   - Verify assumptions about file contents with `Read` tool
+   - Confirm understanding of requirements before implementing
+   - Test commands in a safe way before executing destructive operations
+
+### During Task Execution
+
+- **Pause and reflect** when errors occur - don't just retry blindly
+- **Read error messages carefully** - they often contain the solution
+- **Check conversation history** when confused about requirements
+- **Acknowledge patterns** - if making similar errors, adjust approach
+
+### After Completing Tasks
+
+- **Review what was done** against original requirements
+- **Note any errors made** for future reference
+- **Update relevant documentation** if patterns were discovered
+
 ## 🔍 Project Intelligence
 
 **Last Analysis**: [Auto-generated timestamp]  
