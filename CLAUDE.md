@@ -186,6 +186,9 @@ Based on project analysis, look for:
 
 ### 3. Documentation for Complex Scenarios
 When facing specific challenges, consult:
+- **docs/claude-error-prevention.md** - Self-reflection and error prevention patterns
+- **docs/workflow-efficiency.md** - Time-saving patterns and command optimization
+- **docs/atomic-commits-guide.md** - Clean commits and issue management
 - **docs/debugging-and-troubleshooting.md** - Common issues and solutions
 - **docs/shellcheck-best-practices.md** - Shell script quality
 - **docs/PROJECT_EVOLUTION_PATTERNS.md** - How to handle growing projects
