@@ -80,6 +80,22 @@ cp -r templates/.github .github 2>/dev/null || true
 cp templates/.gitignore .gitignore 2>/dev/null || true
 cp templates/CONTRIBUTING.md CONTRIBUTING.md 2>/dev/null || true
 
+# Set up .gitattributes for consistent line endings
+echo "🔧 Setting up .gitattributes..."
+if [[ -f "scripts/setup-gitattributes.sh" ]]; then
+  echo "Running .gitattributes setup..."
+  bash scripts/setup-gitattributes.sh
+elif [[ -f "$SCRIPT_DIR/scripts/setup-gitattributes.sh" ]]; then
+  echo "Copying and running .gitattributes setup..."
+  mkdir -p scripts
+  cp "$SCRIPT_DIR/scripts/setup-gitattributes.sh" scripts/
+  chmod +x scripts/setup-gitattributes.sh
+  bash scripts/setup-gitattributes.sh
+else
+  echo "Copying .gitattributes template..."
+  cp templates/.gitattributes .gitattributes 2>/dev/null || true
+fi
+
 # Create aliases file if it doesn't exist
 if [[ ! -f ".claude-aliases" ]]; then
   echo "🔧 Creating .claude-aliases..."
