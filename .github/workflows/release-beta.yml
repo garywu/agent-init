@@ -188,24 +188,24 @@ jobs:
               title: `Beta Release ${version} Published`,
               body: `A new beta release has been published!
 
-              **Version**: ${version}
-              **Type**: ${bumpType} version bump
-              **Branch**: beta
-              **Date**: ${new Date().toISOString()}
+            **Version**: ${version}
+            **Type**: ${bumpType} version bump
+            **Branch**: beta
+            **Date**: ${new Date().toISOString()}
 
-              [View Release](https://github.com/${context.repo.owner}/${context.repo.repo}/releases/tag/${version})
+            [View Release](https://github.com/${context.repo.owner}/${context.repo.repo}/releases/tag/${version})
 
-              ## Next Steps
-              - [ ] Test beta release thoroughly
-              - [ ] Gather feedback from early adopters
-              - [ ] Fix any critical issues
-              - [ ] Prepare for stable release promotion
+            ## Next Steps
+            - [ ] Test beta release thoroughly
+            - [ ] Gather feedback from early adopters
+            - [ ] Fix any critical issues
+            - [ ] Prepare for stable release promotion
 
-              ## Testing Checklist
-              - [ ] Installation works correctly
-              - [ ] All templates function properly
-              - [ ] No breaking changes for existing users
-              - [ ] Documentation is accurate
-              `,
+            ## Testing Checklist
+            - [ ] Installation works correctly
+            - [ ] All templates function properly
+            - [ ] No breaking changes for existing users
+            - [ ] Documentation is accurate
+            `,
               labels: ['beta-release', 'testing']
             });

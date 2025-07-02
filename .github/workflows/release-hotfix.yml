@@ -81,32 +81,32 @@ jobs:
               base: 'stable',
               body: `## Hotfix Information
 
-              **Version**: ${currentVersion} → ${hotfixVersion}
-              **Severity**: ${severity}
-              **Description**: ${description}
+            **Version**: ${currentVersion} → ${hotfixVersion}
+            **Severity**: ${severity}
+            **Description**: ${description}
 
-              ## Checklist
+            ## Checklist
 
-              - [ ] Fix has been implemented
-              - [ ] Tests have been added/updated
-              - [ ] Documentation has been updated (if needed)
-              - [ ] Fix has been verified locally
+            - [ ] Fix has been implemented
+            - [ ] Tests have been added/updated
+            - [ ] Documentation has been updated (if needed)
+            - [ ] Fix has been verified locally
 
-              ## Release Process
+            ## Release Process
 
-              Once this PR is merged, the hotfix will be:
-              1. Tagged as ${hotfixVersion}
-              2. Released to the stable channel
-              3. Backported to beta and main branches
+            Once this PR is merged, the hotfix will be:
+            1. Tagged as ${hotfixVersion}
+            2. Released to the stable channel
+            3. Backported to beta and main branches
 
-              ## Testing Instructions
+            ## Testing Instructions
 
-              _Please add specific testing instructions here_
+            _Please add specific testing instructions here_
 
-              ---
+            ---
 
-              ⚠️ **This is a ${severity} severity hotfix and should be expedited through review.**
-              `,
+            ⚠️ **This is a ${severity} severity hotfix and should be expedited through review.**
+            `,
               draft: false
             });
 
@@ -135,32 +135,32 @@ jobs:
               title: `🚨 Hotfix ${hotfixVersion} in Progress`,
               body: `A ${severity} severity hotfix is currently being prepared.
 
-              ## Details
-              - **Version**: ${hotfixVersion}
-              - **Description**: ${description}
-              - **PR**: #${prNumber}
-              - **Started**: ${new Date().toISOString()}
+            ## Details
+            - **Version**: ${hotfixVersion}
+            - **Description**: ${description}
+            - **PR**: #${prNumber}
+            - **Started**: ${new Date().toISOString()}
 
-              ## Process
-              1. [ ] Hotfix implemented in PR #${prNumber}
-              2. [ ] Tests passing
-              3. [ ] PR reviewed and approved
-              4. [ ] Merged to stable
-              5. [ ] Released as ${hotfixVersion}
-              6. [ ] Backported to beta
-              7. [ ] Backported to main
+            ## Process
+            1. [ ] Hotfix implemented in PR #${prNumber}
+            2. [ ] Tests passing
+            3. [ ] PR reviewed and approved
+            4. [ ] Merged to stable
+            5. [ ] Released as ${hotfixVersion}
+            6. [ ] Backported to beta
+            7. [ ] Backported to main
 
-              ## Impact
-              _To be filled by the implementer_
+            ## Impact
+            _To be filled by the implementer_
 
-              ## Rollback Plan
-              If this hotfix causes issues, rollback to the previous stable version using:
-              \`\`\`bash
-              git checkout stable
-              git reset --hard ${currentVersion}
-              git push --force-with-lease origin stable
-              \`\`\`
-              `,
+            ## Rollback Plan
+            If this hotfix causes issues, rollback to the previous stable version using:
+            \`\`\`bash
+            git checkout stable
+            git reset --hard ${currentVersion}
+            git push --force-with-lease origin stable
+            \`\`\`
+            `,
               labels: ['hotfix', severity, 'tracking']
             });
 

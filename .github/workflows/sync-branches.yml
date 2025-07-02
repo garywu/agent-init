@@ -77,9 +77,9 @@ jobs:
                 --title "🔄 Sync stable → beta (Manual Resolution Needed)" \
                 --body "This PR syncs changes from stable to beta branch.
 
-                ⚠️ **Manual conflict resolution is required**
+              ⚠️ **Manual conflict resolution is required**
 
-                Please review and resolve conflicts before merging." \
+              Please review and resolve conflicts before merging." \
                 --base beta \
                 --head "$BRANCH_NAME" \
                 --label "sync,needs-review"
@@ -116,9 +116,9 @@ jobs:
                 --title "🔄 Sync beta → main (Manual Resolution Needed)" \
                 --body "This PR syncs changes from beta to main branch.
 
-                ⚠️ **Manual conflict resolution is required**
+              ⚠️ **Manual conflict resolution is required**
 
-                Please review and resolve conflicts before merging." \
+              Please review and resolve conflicts before merging." \
                 --base main \
                 --head "$BRANCH_NAME" \
                 --label "sync,needs-review"
@@ -168,22 +168,22 @@ jobs:
               title: `🔄 Branch Sync Required - ${date}`,
               body: `The automated branch sync workflow has detected issues that require manual intervention.
 
-              ## Status
-              - **Workflow Run**: [${context.runId}](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
-              - **Date**: ${date}
+            ## Status
+            - **Workflow Run**: [${context.runId}](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
+            - **Date**: ${date}
 
-              ## Required Actions
-              1. Check for open sync PRs
-              2. Resolve any merge conflicts
-              3. Ensure branches are properly synchronized
+            ## Required Actions
+            1. Check for open sync PRs
+            2. Resolve any merge conflicts
+            3. Ensure branches are properly synchronized
 
-              ## Branch Strategy Reminder
-              - **stable**: Production releases only
-              - **beta**: Weekly beta releases from main
-              - **main**: Active development
+            ## Branch Strategy Reminder
+            - **stable**: Production releases only
+            - **beta**: Weekly beta releases from main
+            - **main**: Active development
 
-              Changes should flow: main → beta → stable
-              Hotfixes should be backported: stable → beta → main
-              `,
+            Changes should flow: main → beta → stable
+            Hotfixes should be backported: stable → beta → main
+            `,
               labels: ['sync', 'maintenance']
             });

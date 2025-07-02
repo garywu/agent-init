@@ -24,131 +24,131 @@ jobs:
       critical_issues: ${{ steps.health_check.outputs.critical_issues }}
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # Full history for better analysis
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better analysis
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
 
-    - name: Setup Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-        cache: 'pip'
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
 
-    - name: Setup Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: '1.21'
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
 
-    - name: Install health assessment tools
-      run: |
-        # Install required tools
-        npm install -g eslint prettier typescript
-        pip install flake8 black mypy safety bandit
-        go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+      - name: Install health assessment tools
+        run: |
+          # Install required tools
+          npm install -g eslint prettier typescript
+          pip install flake8 black mypy safety bandit
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 
-        # Install analysis tools
-        sudo apt-get update
-        sudo apt-get install -y jq ripgrep
+          # Install analysis tools
+          sudo apt-get update
+          sudo apt-get install -y jq ripgrep
 
-    - name: Run health assessment
-      id: health_check
-      env:
-        VERBOSE: ${{ github.event.inputs.verbose || 'false' }}
-      run: |
-        # Make scripts executable
-        chmod +x scripts/health-assessment/*.sh
-        chmod +x scripts/health-assessment/languages/*.sh
+      - name: Run health assessment
+        id: health_check
+        env:
+          VERBOSE: ${{ github.event.inputs.verbose || 'false' }}
+        run: |
+          # Make scripts executable
+          chmod +x scripts/health-assessment/*.sh
+          chmod +x scripts/health-assessment/languages/*.sh
 
-        # Run core health check
-        HEALTH_OUTPUT=$(scripts/health-assessment/core-health.sh . json)
-        echo "$HEALTH_OUTPUT" > health-report.json
+          # Run core health check
+          HEALTH_OUTPUT=$(scripts/health-assessment/core-health.sh . json)
+          echo "$HEALTH_OUTPUT" > health-report.json
 
-        # Extract key metrics
-        OVERALL_SCORE=$(echo "$HEALTH_OUTPUT" | jq -r '.overall_score')
-        CRITICAL_ISSUES=$(echo "$HEALTH_OUTPUT" | jq -r '.summary.critical_issues')
+          # Extract key metrics
+          OVERALL_SCORE=$(echo "$HEALTH_OUTPUT" | jq -r '.overall_score')
+          CRITICAL_ISSUES=$(echo "$HEALTH_OUTPUT" | jq -r '.summary.critical_issues')
 
-        # Set outputs
-        echo "overall_score=$OVERALL_SCORE" >> $GITHUB_OUTPUT
-        echo "critical_issues=$CRITICAL_ISSUES" >> $GITHUB_OUTPUT
+          # Set outputs
+          echo "overall_score=$OVERALL_SCORE" >> $GITHUB_OUTPUT
+          echo "critical_issues=$CRITICAL_ISSUES" >> $GITHUB_OUTPUT
 
-        # Display summary
-        echo "## Health Check Summary" >> $GITHUB_STEP_SUMMARY
-        echo "Overall Score: **$OVERALL_SCORE/100**" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
+          # Display summary
+          echo "## Health Check Summary" >> $GITHUB_STEP_SUMMARY
+          echo "Overall Score: **$OVERALL_SCORE/100**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
-        # Add detailed results to summary
-        scripts/health-assessment/core-health.sh . human >> $GITHUB_STEP_SUMMARY
+          # Add detailed results to summary
+          scripts/health-assessment/core-health.sh . human >> $GITHUB_STEP_SUMMARY
 
-    - name: Run security scan
-      if: always()
-      run: |
-        echo "## Security Scan" >> $GITHUB_STEP_SUMMARY
-        scripts/health-assessment/security-scanner.sh . human >> $GITHUB_STEP_SUMMARY || true
+      - name: Run security scan
+        if: always()
+        run: |
+          echo "## Security Scan" >> $GITHUB_STEP_SUMMARY
+          scripts/health-assessment/security-scanner.sh . human >> $GITHUB_STEP_SUMMARY || true
 
-    - name: Run performance analysis
-      if: always()
-      run: |
-        echo "## Performance Analysis" >> $GITHUB_STEP_SUMMARY
-        scripts/health-assessment/performance-analyzer.sh . human >> $GITHUB_STEP_SUMMARY || true
+      - name: Run performance analysis
+        if: always()
+        run: |
+          echo "## Performance Analysis" >> $GITHUB_STEP_SUMMARY
+          scripts/health-assessment/performance-analyzer.sh . human >> $GITHUB_STEP_SUMMARY || true
 
-    - name: Upload health report
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: health-report
-        path: |
-          health-report.json
-          health-report.md
+      - name: Upload health report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: health-report
+          path: |
+            health-report.json
+            health-report.md
 
-    - name: Comment PR with results
-      if: github.event_name == 'pull_request'
-      uses: actions/github-script@v7
-      with:
-        script: |
-          const score = '${{ steps.health_check.outputs.overall_score }}';
-          const critical = '${{ steps.health_check.outputs.critical_issues }}';
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const score = '${{ steps.health_check.outputs.overall_score }}';
+            const critical = '${{ steps.health_check.outputs.critical_issues }}';
 
-          let status = '🟢 Excellent';
-          if (score < 90) status = '🟡 Good';
-          if (score < 70) status = '🟠 Needs Attention';
-          if (score < 50) status = '🔴 Critical';
+            let status = '🟢 Excellent';
+            if (score < 90) status = '🟡 Good';
+            if (score < 70) status = '🟠 Needs Attention';
+            if (score < 50) status = '🔴 Critical';
 
-          const comment = `## 🏥 Health Check Results
+            const comment = `## 🏥 Health Check Results
 
-          **Overall Score**: ${score}/100 ${status}
-          **Critical Issues**: ${critical}
+            **Overall Score**: ${score}/100 ${status}
+            **Critical Issues**: ${critical}
 
-          [View detailed report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            [View detailed report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
-          <details>
-          <summary>Quick Actions</summary>
+            <details>
+            <summary>Quick Actions</summary>
 
-          - Run \`make health\` locally for detailed analysis
-          - Check the Actions summary for specific recommendations
-          - Review security and performance sections
+            - Run \`make health\` locally for detailed analysis
+            - Check the Actions summary for specific recommendations
+            - Review security and performance sections
 
-          </details>`;
+            </details>`;
 
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: comment
-          });
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
 
-    - name: Fail if critical issues
-      if: steps.health_check.outputs.critical_issues != '0'
-      run: |
-        echo "❌ Build failed due to critical health issues"
-        echo "Run 'make health' locally to see detailed report"
-        exit 1
+      - name: Fail if critical issues
+        if: steps.health_check.outputs.critical_issues != '0'
+        run: |
+          echo "❌ Build failed due to critical health issues"
+          echo "Run 'make health' locally to see detailed report"
+          exit 1
 
   language-specific-checks:
     runs-on: ubuntu-latest
@@ -159,29 +159,29 @@ jobs:
       fail-fast: false
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Check if language is used
-      id: check_language
-      run: |
-        case "${{ matrix.language }}" in
-          javascript)
-            if [ -f "package.json" ]; then echo "found=true" >> $GITHUB_OUTPUT; fi
-            ;;
-          python)
-            if [ -f "requirements.txt" ] || [ -f "pyproject.toml" ]; then echo "found=true" >> $GITHUB_OUTPUT; fi
-            ;;
-          go)
-            if [ -f "go.mod" ]; then echo "found=true" >> $GITHUB_OUTPUT; fi
-            ;;
-        esac
+      - name: Check if language is used
+        id: check_language
+        run: |
+          case "${{ matrix.language }}" in
+            javascript)
+              if [ -f "package.json" ]; then echo "found=true" >> $GITHUB_OUTPUT; fi
+              ;;
+            python)
+              if [ -f "requirements.txt" ] || [ -f "pyproject.toml" ]; then echo "found=true" >> $GITHUB_OUTPUT; fi
+              ;;
+            go)
+              if [ -f "go.mod" ]; then echo "found=true" >> $GITHUB_OUTPUT; fi
+              ;;
+          esac
 
-    - name: Run language-specific health check
-      if: steps.check_language.outputs.found == 'true'
-      run: |
-        chmod +x scripts/health-assessment/languages/${{ matrix.language }}.sh
-        scripts/health-assessment/languages/${{ matrix.language }}.sh . human
+      - name: Run language-specific health check
+        if: steps.check_language.outputs.found == 'true'
+        run: |
+          chmod +x scripts/health-assessment/languages/${{ matrix.language }}.sh
+          scripts/health-assessment/languages/${{ matrix.language }}.sh . human
 
   health-trends:
     runs-on: ubuntu-latest
@@ -189,43 +189,43 @@ jobs:
     if: github.ref == 'refs/heads/main'
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Download previous reports
-      uses: dawidd6/action-download-artifact@v6
-      with:
-        workflow: health-check.yml
-        name: health-report
-        path: previous-reports
-        if_no_artifact_found: warn
+      - name: Download previous reports
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: health-check.yml
+          name: health-report
+          path: previous-reports
+          if_no_artifact_found: warn
 
-    - name: Generate trend analysis
-      run: |
-        # Create trends directory
-        mkdir -p health-trends
+      - name: Generate trend analysis
+        run: |
+          # Create trends directory
+          mkdir -p health-trends
 
-        # Analyze trends if previous reports exist
-        if [ -d "previous-reports" ]; then
-          echo "Analyzing health trends..."
-          # Add trend analysis logic here
-        fi
+          # Analyze trends if previous reports exist
+          if [ -d "previous-reports" ]; then
+            echo "Analyzing health trends..."
+            # Add trend analysis logic here
+          fi
 
-    - name: Update health badge
-      if: success()
-      run: |
-        SCORE="${{ needs.health-assessment.outputs.overall_score }}"
-        COLOR="brightgreen"
-        if [ "$SCORE" -lt 90 ]; then COLOR="green"; fi
-        if [ "$SCORE" -lt 70 ]; then COLOR="yellow"; fi
-        if [ "$SCORE" -lt 50 ]; then COLOR="red"; fi
+      - name: Update health badge
+        if: success()
+        run: |
+          SCORE="${{ needs.health-assessment.outputs.overall_score }}"
+          COLOR="brightgreen"
+          if [ "$SCORE" -lt 90 ]; then COLOR="green"; fi
+          if [ "$SCORE" -lt 70 ]; then COLOR="yellow"; fi
+          if [ "$SCORE" -lt 50 ]; then COLOR="red"; fi
 
-        # Create badge JSON
-        echo "{\"schemaVersion\": 1, \"label\": \"health\", \"message\": \"$SCORE/100\", \"color\": \"$COLOR\"}" > health-badge.json
+          # Create badge JSON
+          echo "{\"schemaVersion\": 1, \"label\": \"health\", \"message\": \"$SCORE/100\", \"color\": \"$COLOR\"}" > health-badge.json
 
-    - name: Upload badge data
-      if: success()
-      uses: actions/upload-artifact@v4
-      with:
-        name: health-badge
-        path: health-badge.json
+      - name: Upload badge data
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: health-badge
+          path: health-badge.json

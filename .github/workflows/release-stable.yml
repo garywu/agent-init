@@ -193,32 +193,32 @@ jobs:
               title: `🎉 Stable Release ${stableVersion} Now Available`,
               body: `We're excited to announce that **${stableVersion}** is now available as a stable release!
 
-              ## Release Information
-              - **Version**: ${stableVersion}
-              - **Promoted from**: ${betaVersion}
-              - **Branch**: stable
-              - **Date**: ${new Date().toISOString().split('T')[0]}
+            ## Release Information
+            - **Version**: ${stableVersion}
+            - **Promoted from**: ${betaVersion}
+            - **Branch**: stable
+            - **Date**: ${new Date().toISOString().split('T')[0]}
 
-              ## What's New
-              [View the full release notes](https://github.com/${context.repo.owner}/${context.repo.repo}/releases/tag/${stableVersion})
+            ## What's New
+            [View the full release notes](https://github.com/${context.repo.owner}/${context.repo.repo}/releases/tag/${stableVersion})
 
-              ## Upgrading
+            ## Upgrading
 
-              To upgrade to the latest stable version:
+            To upgrade to the latest stable version:
 
-              \`\`\`bash
-              cd your-project
-              git submodule update --remote --merge
-              \`\`\`
+            \`\`\`bash
+            cd your-project
+            git submodule update --remote --merge
+            \`\`\`
 
-              ## Feedback
+            ## Feedback
 
-              If you encounter any issues or have feedback, please:
-              - [Report bugs](https://github.com/${context.repo.owner}/${context.repo.repo}/issues/new?labels=bug)
-              - [Request features](https://github.com/${context.repo.owner}/${context.repo.repo}/issues/new?labels=enhancement)
+            If you encounter any issues or have feedback, please:
+            - [Report bugs](https://github.com/${context.repo.owner}/${context.repo.repo}/issues/new?labels=bug)
+            - [Request features](https://github.com/${context.repo.owner}/${context.repo.repo}/issues/new?labels=enhancement)
 
-              Thank you to all our contributors and beta testers who made this release possible! 🙏
-              `,
+            Thank you to all our contributors and beta testers who made this release possible! 🙏
+            `,
               labels: ['stable-release', 'announcement']
             });
 
