@@ -85,6 +85,26 @@ Based on the current session analysis, Claude should:
 - **Apply conventions**: [Project-specific coding standards]
 - **Prioritize**: [Current session goals and issues]
 
+### Best Practices from Anthropic Engineering
+
+#### Workflow Strategy
+- **Use EPCC Workflow**: Explore → Plan → Code → Commit
+- **Apply TDD**: Write tests first for complex logic
+- **Visual Iteration**: Use screenshots for UI development
+- **Parallel Development**: Use multiple Claude instances when beneficial
+
+#### Essential Setup
+- **CLAUDE.md**: Maintain comprehensive project context
+- **GitHub CLI**: Use `gh` for all GitHub interactions
+- **Permissions**: Configure with `/permissions` command
+- **Clear Context**: Use `/clear` when switching tasks
+
+#### Communication Principles
+- **Be Specific**: Provide exact requirements and constraints
+- **Course-Correct Early**: Address misunderstandings immediately
+- **Visual References**: Include screenshots for UI work
+- **Atomic Commits**: Make small, focused changes
+
 ### Intelligent Suggestions
 <!-- Auto-generated based on project state -->
 - **Next Actions**: [Recommended based on current progress]
@@ -125,6 +145,16 @@ make session-status     # View current session details
 make session-end        # End session with summary
 make session-log MSG="activity description"  # Log activity
 
+# Claude Code Commands
+/permissions           # Configure tool permissions
+/clear                # Clear context when switching tasks
+/help                 # Get command help
+
+# Development Workflows
+make epcc             # Use Explore-Plan-Code-Commit workflow
+make tdd              # Start Test-Driven Development
+make visual           # Visual iteration workflow
+
 # Health & Analysis
 make session-health     # Update project health score
 make analyze           # Run project analysis
@@ -142,10 +172,39 @@ make issue-session     # Create issue from session
 
 ### Session Workflow
 1. **Start**: `make session-start` - Initializes tracking with project analysis
-2. **Work**: Development activities are auto-tracked
-3. **Log**: `make session-log MSG="..."` - Add specific activities
-4. **Review**: `make session-status` - Check progress
-5. **End**: `make session-end` - Generate comprehensive summary
+2. **Configure**: Set permissions and tools based on project needs
+3. **Work**: Follow EPCC workflow (Explore → Plan → Code → Commit)
+4. **Log**: `make session-log MSG="..."` - Add specific activities
+5. **Context**: Use `/clear` when switching between unrelated tasks
+6. **Review**: `make session-status` - Check progress
+7. **End**: `make session-end` - Generate comprehensive summary
+
+### Advanced Techniques
+
+#### Using Subagents
+Launch subagents for complex tasks:
+```bash
+# Research subagent
+claude "Research best practices for React performance"
+
+# Testing subagent
+claude "Run all tests and fix failures"
+
+# Documentation subagent
+claude "Update API documentation"
+```
+
+#### Think Mode
+For complex architectural decisions:
+```bash
+claude --think "Design scalable architecture for feature X"
+```
+
+#### Headless Mode
+For automation and CI/CD:
+```bash
+claude --headless "Review PR and suggest improvements"
+```
 
 ## 🔗 External Integrations
 

@@ -287,6 +287,80 @@ session-log: ## Log activity (usage: make session-log MSG="message")
 .PHONY: session-health
 session-health: health ## Update session with health check
 
+# ========== Claude Code Workflows ==========
+
+.PHONY: epcc
+epcc: ## Start Explore-Plan-Code-Commit workflow
+	@echo "$(BLUE)Starting EPCC Workflow (Explore → Plan → Code → Commit)$(NC)"
+	@echo ""
+	@echo "$(YELLOW)1. EXPLORE Phase:$(NC)"
+	@echo "   - Read relevant files to understand the codebase"
+	@echo "   - Identify existing patterns and conventions"
+	@echo "   - Check for related functionality"
+	@echo ""
+	@echo "$(YELLOW)2. PLAN Phase:$(NC)"
+	@echo "   - Create a detailed implementation plan"
+	@echo "   - Break down into logical steps"
+	@echo "   - Consider edge cases and testing"
+	@echo ""
+	@echo "$(YELLOW)3. CODE Phase:$(NC)"
+	@echo "   - Implement one step at a time"
+	@echo "   - Test each component before proceeding"
+	@echo "   - Follow project conventions"
+	@echo ""
+	@echo "$(YELLOW)4. COMMIT Phase:$(NC)"
+	@echo "   - Review all changes: git diff"
+	@echo "   - Run tests: make test"
+	@echo "   - Create atomic commits with clear messages"
+	@echo ""
+	@echo "$(GREEN)See templates/workflows/epcc-workflow.md for detailed guide$(NC)"
+
+.PHONY: tdd
+tdd: ## Start Test-Driven Development workflow
+	@echo "$(BLUE)Starting TDD Workflow (Red → Green → Refactor)$(NC)"
+	@echo ""
+	@echo "$(RED)1. RED Phase - Write Failing Tests:$(NC)"
+	@echo "   - Define expected behavior through tests"
+	@echo "   - Cover edge cases and error conditions"
+	@echo "   - Run tests to confirm they fail"
+	@echo ""
+	@echo "$(GREEN)2. GREEN Phase - Make Tests Pass:$(NC)"
+	@echo "   - Write minimal code to pass tests"
+	@echo "   - Don't add unnecessary features"
+	@echo "   - Run tests frequently"
+	@echo ""
+	@echo "$(BLUE)3. REFACTOR Phase - Improve Code:$(NC)"
+	@echo "   - Clean up implementation"
+	@echo "   - Remove duplication"
+	@echo "   - Ensure tests still pass"
+	@echo ""
+	@echo "$(GREEN)See templates/workflows/tdd-workflow.md for detailed guide$(NC)"
+
+.PHONY: visual
+visual: ## Start Visual Iteration workflow for UI development
+	@echo "$(BLUE)Starting Visual Iteration Workflow$(NC)"
+	@echo ""
+	@echo "$(YELLOW)1. Provide Visual Reference:$(NC)"
+	@echo "   - Share screenshot or mockup"
+	@echo "   - Include design specifications"
+	@echo "   - Note specific requirements"
+	@echo ""
+	@echo "$(YELLOW)2. Initial Implementation:$(NC)"
+	@echo "   - Create first version matching design"
+	@echo "   - Focus on structure and layout"
+	@echo ""
+	@echo "$(YELLOW)3. Screenshot & Compare:$(NC)"
+	@echo "   - Take screenshot of current state"
+	@echo "   - Compare with original design"
+	@echo "   - Identify differences"
+	@echo ""
+	@echo "$(YELLOW)4. Iterate & Refine:$(NC)"
+	@echo "   - Adjust based on feedback"
+	@echo "   - Fine-tune spacing, colors, interactions"
+	@echo "   - Repeat until pixel-perfect"
+	@echo ""
+	@echo "$(GREEN)See templates/workflows/visual-iteration-workflow.md for detailed guide$(NC)"
+
 # ========== Git Workflow (Enhanced) ==========
 
 .PHONY: status
